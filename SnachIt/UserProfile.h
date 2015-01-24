@@ -18,7 +18,8 @@
 @property (nonatomic,strong) NSString *lastName;
 @property (nonatomic,strong) NSString *dateOfBirth;
 @property (nonatomic,strong) NSString *joiningDate;
-
+/*
+This instance will be used to access currently logged in user info*/
 + (UserProfile *)sharedInstance;
 
 
