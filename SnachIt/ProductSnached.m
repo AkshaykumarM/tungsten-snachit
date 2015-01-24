@@ -7,18 +7,26 @@
 //
 
 #import "ProductSnached.h"
+#import "SnoopingUserDetails.h"
 
+@interface ProductSnached()
+
+@end
 @implementation ProductSnached
-
+{
+    SnoopingUserDetails *userDetails;
+}
 
 -(void)viewDidLoad{
     [super viewDidLoad];
     [self initialize];
+   
   }
 -(void)initialize{
-    self.fullNameLbl.text=self.fullName;
-    self.streetAddressLbl.text=self.streetAddress;
-    self.cityStateZipLbl.text=self.cityStateZip;
+     userDetails=[SnoopingUserDetails sharedInstance];
+    self.fullNameLbl.text=userDetails.shipFullName;
+    self.streetAddressLbl.text=userDetails.shipStreetName;
+    self.cityStateZipLbl.text=[NSString stringWithFormat:@"%@,%@,%@",userDetails.shipCity,userDetails.shipState,userDetails.shipZipCode];
 
 }
 - (IBAction)snachMoreBtn:(id)sender {

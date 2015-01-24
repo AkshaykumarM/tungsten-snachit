@@ -25,7 +25,7 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 {
     [super viewDidLoad];
     
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
     
 }
@@ -48,7 +48,7 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 }
 - (IBAction)doneBtn:(id)sender {
     if([self.cardNumber hasText]&&[self.expDateTxtField hasText]&&[self.cvvTextField hasText]&&[self.fullNameTextField hasText] &&[self.streetTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
-        NSString *query = [NSString stringWithFormat:@"insert into paymentInfo values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",@"American Express",self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",@"American Express",self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
         
         // Execute the query.
         

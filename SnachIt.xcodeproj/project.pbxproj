@@ -10,6 +10,11 @@
 		871F7EE01A7209F400808AB4 /* UserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EDF1A7209F400808AB4 /* UserProfile.m */; };
 		871F7EE31A72565500808AB4 /* SnoopedProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EE21A72565500808AB4 /* SnoopedProduct.m */; };
 		871F7EE61A7285CF00808AB4 /* PaymentOverviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EE51A7285CF00808AB4 /* PaymentOverviewCell.m */; };
+		872BB28B1A737643009C3E2D /* snachit.db in Resources */ = {isa = PBXBuildFile; fileRef = 872BB28A1A737643009C3E2D /* snachit.db */; };
+		872BB28C1A737A61009C3E2D /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 874A339F1A6CEDB8004038D4 /* libsqlite3.dylib */; };
+		872BB28E1A737EC9009C3E2D /* snachit.sql in Resources */ = {isa = PBXBuildFile; fileRef = 872BB28D1A737EC9009C3E2D /* snachit.sql */; };
+		872BB2911A7385B9009C3E2D /* SnoopingUserDetails.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BB2901A7385B9009C3E2D /* SnoopingUserDetails.m */; };
+		872BB2941A73ACBB009C3E2D /* Order.m in Sources */ = {isa = PBXBuildFile; fileRef = 872BB2931A73ACBB009C3E2D /* Order.m */; };
 		874A32391A6CEB91004038D4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 874A32381A6CEB91004038D4 /* main.m */; };
 		874A32441A6CEB91004038D4 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 874A32431A6CEB91004038D4 /* Images.xcassets */; };
 		874A32531A6CEB91004038D4 /* SnachItTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 874A32521A6CEB91004038D4 /* SnachItTests.m */; };
@@ -134,7 +139,6 @@
 		874A339B1A6CED7D004038D4 /* OAToken.m in Sources */ = {isa = PBXBuildFile; fileRef = 874A33851A6CED7D004038D4 /* OAToken.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		874A339C1A6CED7D004038D4 /* OATokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 874A33871A6CED7D004038D4 /* OATokenManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		874A339D1A6CED7D004038D4 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 874A33891A6CED7D004038D4 /* README */; };
-		874A33A01A6CEDB8004038D4 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 874A339F1A6CEDB8004038D4 /* libsqlite3.dylib */; };
 		874A33A21A6CEDCF004038D4 /* CoreMotion.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874A33A11A6CEDCF004038D4 /* CoreMotion.framework */; };
 		874A33A41A6CEDD7004038D4 /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874A33A31A6CEDD7004038D4 /* AssetsLibrary.framework */; };
 		874A33A61A6CEDDD004038D4 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 874A33A51A6CEDDD004038D4 /* AddressBook.framework */; };
@@ -176,8 +180,12 @@
 		871F7EE21A72565500808AB4 /* SnoopedProduct.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnoopedProduct.m; sourceTree = "<group>"; };
 		871F7EE41A7285CF00808AB4 /* PaymentOverviewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PaymentOverviewCell.h; sourceTree = "<group>"; };
 		871F7EE51A7285CF00808AB4 /* PaymentOverviewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PaymentOverviewCell.m; sourceTree = "<group>"; };
-		871F7EEA1A729ED500808AB4 /* snach.it.sql */ = {isa = PBXFileReference; lastKnownFileType = file; path = snach.it.sql; sourceTree = "<group>"; };
-		871F7EEB1A72A27100808AB4 /* snach.sql */ = {isa = PBXFileReference; lastKnownFileType = file; path = snach.sql; sourceTree = "<group>"; };
+		872BB28A1A737643009C3E2D /* snachit.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = snachit.db; sourceTree = "<group>"; };
+		872BB28D1A737EC9009C3E2D /* snachit.sql */ = {isa = PBXFileReference; lastKnownFileType = file; path = snachit.sql; sourceTree = "<group>"; };
+		872BB28F1A7385B9009C3E2D /* SnoopingUserDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnoopingUserDetails.h; sourceTree = "<group>"; };
+		872BB2901A7385B9009C3E2D /* SnoopingUserDetails.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnoopingUserDetails.m; sourceTree = "<group>"; };
+		872BB2921A73ACBB009C3E2D /* Order.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Order.h; sourceTree = "<group>"; };
+		872BB2931A73ACBB009C3E2D /* Order.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Order.m; sourceTree = "<group>"; };
 		874A32331A6CEB91004038D4 /* SnachIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnachIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		874A32371A6CEB91004038D4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		874A32381A6CEB91004038D4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -411,11 +419,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				872BB28C1A737A61009C3E2D /* libsqlite3.dylib in Frameworks */,
 				874A33A81A6CEDF6004038D4 /* MediaPlayer.framework in Frameworks */,
 				874A33A61A6CEDDD004038D4 /* AddressBook.framework in Frameworks */,
 				874A33A41A6CEDD7004038D4 /* AssetsLibrary.framework in Frameworks */,
 				874A33A21A6CEDCF004038D4 /* CoreMotion.framework in Frameworks */,
-				874A33A01A6CEDB8004038D4 /* libsqlite3.dylib in Frameworks */,
 				874A334C1A6CED40004038D4 /* GoogleOpenSource.framework in Frameworks */,
 				874A334D1A6CED40004038D4 /* GooglePlus.framework in Frameworks */,
 				874A33491A6CED36004038D4 /* FacebookSDK.framework in Frameworks */,
@@ -439,6 +447,10 @@
 				871F7EDF1A7209F400808AB4 /* UserProfile.m */,
 				871F7EE11A72565500808AB4 /* SnoopedProduct.h */,
 				871F7EE21A72565500808AB4 /* SnoopedProduct.m */,
+				872BB28F1A7385B9009C3E2D /* SnoopingUserDetails.h */,
+				872BB2901A7385B9009C3E2D /* SnoopingUserDetails.m */,
+				872BB2921A73ACBB009C3E2D /* Order.h */,
+				872BB2931A73ACBB009C3E2D /* Order.m */,
 			);
 			name = Beans;
 			sourceTree = "<group>";
@@ -464,7 +476,6 @@
 		874A32351A6CEB91004038D4 /* SnachIt */ = {
 			isa = PBXGroup;
 			children = (
-				871F7EEB1A72A27100808AB4 /* snach.sql */,
 				871F7EDD1A7209D300808AB4 /* Beans */,
 				874A33C71A6CF46A004038D4 /* Database */,
 				874A339E1A6CED92004038D4 /* Frameworks */,
@@ -833,7 +844,8 @@
 		874A33C71A6CF46A004038D4 /* Database */ = {
 			isa = PBXGroup;
 			children = (
-				871F7EEA1A729ED500808AB4 /* snach.it.sql */,
+				872BB28D1A737EC9009C3E2D /* snachit.sql */,
+				872BB28A1A737643009C3E2D /* snachit.db */,
 				874A333F1A6CECEF004038D4 /* DBManager.h */,
 				874A33401A6CECEF004038D4 /* DBManager.m */,
 			);
@@ -947,6 +959,7 @@
 				874A330D1A6CECD8004038D4 /* snach_timeup.png in Resources */,
 				874A33361A6CECD8004038D4 /* arrow-88-32.png in Resources */,
 				874A33271A6CECD8004038D4 /* inflightIcon.png in Resources */,
+				872BB28E1A737EC9009C3E2D /* snachit.sql in Resources */,
 				874A33CE1A6CFCEB004038D4 /* multiply.png in Resources */,
 				874A33231A6CECD8004038D4 /* login_screen.png in Resources */,
 				874A339D1A6CED7D004038D4 /* README in Resources */,
@@ -979,6 +992,7 @@
 				874A33311A6CECD8004038D4 /* profile.png in Resources */,
 				878122DA1A6D286D006C02C5 /* AccountSettingView.xib in Resources */,
 				874A332C1A6CECD8004038D4 /* mikasa.png in Resources */,
+				872BB28B1A737643009C3E2D /* snachit.db in Resources */,
 				874A33381A6CECD8004038D4 /* menu.png in Resources */,
 				874A331B1A6CECD8004038D4 /* myprofile.png in Resources */,
 				874A33201A6CECD8004038D4 /* defbackimg.png in Resources */,
@@ -1041,6 +1055,7 @@
 				874A32BD1A6CEC16004038D4 /* AccountSetting.m in Sources */,
 				874A338B1A6CED7D004038D4 /* NSString+URLEncoding.m in Sources */,
 				874A33991A6CED7D004038D4 /* OAServiceTicket.m in Sources */,
+				872BB2911A7385B9009C3E2D /* SnoopingUserDetails.m in Sources */,
 				874A32B91A6CEC16004038D4 /* MyProfileFreindsCell.m in Sources */,
 				874A32AA1A6CEC16004038D4 /* BillingInfoOverview.m in Sources */,
 				874A32A21A6CEC16004038D4 /* AppDelegate.m in Sources */,
@@ -1055,6 +1070,7 @@
 				874A33951A6CED7D004038D4 /* OAMutableURLRequest.m in Sources */,
 				874A33C51A6CF1D2004038D4 /* AFURLSessionManager.m in Sources */,
 				87CF75781A71035F00ADFD7A /* ShippingOverlay.m in Sources */,
+				872BB2941A73ACBB009C3E2D /* Order.m in Sources */,
 				874A33911A6CED7D004038D4 /* OACall.m in Sources */,
 				874A33C41A6CF1D2004038D4 /* AFURLResponseSerialization.m in Sources */,
 				874A32A71A6CEC16004038D4 /* OrderTotalOverview.m in Sources */,
@@ -1194,7 +1210,7 @@
 					"$(PROJECT_DIR)/SnachIt",
 				);
 				INFOPLIST_FILE = SnachIt/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SnachIt/SnachIt-Bridging-Header.h";
@@ -1212,7 +1228,7 @@
 					"$(PROJECT_DIR)/SnachIt",
 				);
 				INFOPLIST_FILE = SnachIt/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "SnachIt/SnachIt-Bridging-Header.h";

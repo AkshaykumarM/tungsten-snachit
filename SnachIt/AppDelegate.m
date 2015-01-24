@@ -208,58 +208,58 @@
  
      [FBAppCall handleDidBecomeActive];
     
-    if (FBSession.activeSession.isOpen) {
-        
-        [[FBRequest requestForMe] startWithCompletionHandler:
-         ^(FBRequestConnection *connection,
-           NSDictionary<FBGraphUser> *user,
-           NSError *error) {
-             if (!error) {
-                 NSString *firstName = user.first_name ;
-                 NSString *lastName = user.last_name;
-                 NSString *facebookId = [user objectID];
-                 NSString *email = [user objectForKey:@"email"];
-                 NSString *imageUrl = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
-                 NSString *phoneNo=@"";
-                 NSString *apns=firstName;
-                 
-                 [self getSignUp:firstName LastName:lastName EmailId:email Username:[NSString stringWithFormat:@"%@%@", firstName,lastName] Password:firstName Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"FB" DOB:@"1993-5-7"];
-             
-             }
-         }];
-    }
-    
-    GTLQueryPlus *query = [GTLQueryPlus queryForPeopleGetWithUserId:@"me"];
-    
-    NSLog(@"email %@ ", [NSString stringWithFormat:@"Email: %@",[GPPSignIn sharedInstance].authentication.userEmail]);
-     
-    // 1. Create a |GTLServicePlus| instance to send a request to Google+.
-    GTLServicePlus* plusService = [[GTLServicePlus alloc] init] ;
-    plusService.retryEnabled = YES;
-    
-    // 2. Set a valid |GTMOAuth2Authentication| object as the authorizer.
-    [plusService setAuthorizer:[GPPSignIn sharedInstance].authentication];
-    
-    // 3. Use the "v1" version of the Google+ API.*
-    plusService.apiVersion = @"v1";
-    [plusService executeQuery:query
-            completionHandler:^(GTLServiceTicket *ticket,
-                                GTLPlusPerson *person,
-                                NSError *error) {
-                if (error) {
-                    //Handle Error
-                } else {
-                    NSLog(@"Email= %@", [GPPSignIn sharedInstance].authentication.userEmail);
-                    NSLog(@"GoogleID=%@", person.identifier);
-                    NSLog(@"User Name=%@", [person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName]);
-                    NSLog(@"Gender=%@-----------%@", person.gender,[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"]);
-                   NSString *userName= [[person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName] uppercaseString];
-                   NSString *userProfilePic=[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
-                  // [self getSignUp:person.name.givenName LastName:person.name.familyName EmailId:[GPPSignIn sharedInstance].authentication.userEmail Username:[NSString stringWithFormat:@"%@%@", firstName,lastName] Password:firstName Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"GPlus" DOB:@"1993-5-7"];
-
-                }
-            }];
-
+//    if (FBSession.activeSession.isOpen) {
+//        
+//        [[FBRequest requestForMe] startWithCompletionHandler:
+//         ^(FBRequestConnection *connection,
+//           NSDictionary<FBGraphUser> *user,
+//           NSError *error) {
+//             if (!error) {
+//                 NSString *firstName = user.first_name ;
+//                 NSString *lastName = user.last_name;
+//                 NSString *facebookId = [user objectID];
+//                 NSString *email = [user objectForKey:@"email"];
+//                 NSString *imageUrl = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+//                 NSString *phoneNo=@"";
+//                 NSString *apns=firstName;
+//                 
+//                 [self getSignUp:firstName LastName:lastName EmailId:email Username:[NSString stringWithFormat:@"%@%@", firstName,lastName] Password:firstName Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"FB" DOB:@"1993-5-7"];
+//             
+//             }
+//         }];
+//    }
+//    
+//    GTLQueryPlus *query = [GTLQueryPlus queryForPeopleGetWithUserId:@"me"];
+//    
+//    NSLog(@"email %@ ", [NSString stringWithFormat:@"Email: %@",[GPPSignIn sharedInstance].authentication.userEmail]);
+//     
+//    // 1. Create a |GTLServicePlus| instance to send a request to Google+.
+//    GTLServicePlus* plusService = [[GTLServicePlus alloc] init] ;
+//    plusService.retryEnabled = YES;
+//    
+//    // 2. Set a valid |GTMOAuth2Authentication| object as the authorizer.
+//    [plusService setAuthorizer:[GPPSignIn sharedInstance].authentication];
+//    
+//    // 3. Use the "v1" version of the Google+ API.*
+//    plusService.apiVersion = @"v1";
+//    [plusService executeQuery:query
+//            completionHandler:^(GTLServiceTicket *ticket,
+//                                GTLPlusPerson *person,
+//                                NSError *error) {
+//                if (error) {
+//                    //Handle Error
+//                } else {
+//                    NSLog(@"Email= %@", [GPPSignIn sharedInstance].authentication.userEmail);
+//                    NSLog(@"GoogleID=%@", person.identifier);
+//                    NSLog(@"User Name=%@", [person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName]);
+//                    NSLog(@"Gender=%@-----------%@", person.gender,[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"]);
+//                   NSString *userName= [[person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName] uppercaseString];
+//                   NSString *userProfilePic=[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
+//                  // [self getSignUp:person.name.givenName LastName:person.name.familyName EmailId:[GPPSignIn sharedInstance].authentication.userEmail Username:[NSString stringWithFormat:@"%@%@", firstName,lastName] Password:firstName Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"GPlus" DOB:@"1993-5-7"];
+//
+//                }
+//            }];
+//
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

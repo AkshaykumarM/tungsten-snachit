@@ -10,6 +10,7 @@
 #import "shippingOverlayCell.h"
 #import "OrderTotalOverview.h"
 #import "SnoopedProduct.h"
+#import "Order.h"
 NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 @interface ShippingOverlay()
 @property (nonatomic,strong) NSArray *cellId;
@@ -18,6 +19,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 
 @implementation ShippingOverlay{
     SnoopedProduct *product;
+    Order *order;
 }
 @synthesize productImg,brandImg,productDesc,productNameLbl,productPriceBtn,cellId;
 
@@ -26,7 +28,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     [super viewDidLoad];
     cellId = [NSArray arrayWithObjects: @"shippingCell",@"estDeliveryCell",@"speedCell", @"priceCell",nil];
     
-    
+    order=[Order sharedInstance];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -57,9 +59,9 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     
     shippingOverlayCell *cell = (shippingOverlayCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.estDeliveryLbl.text =@"2/2/015";
-    cell.speedLbl.text=@"2 Day Delivery";
-    cell.priceLbl.text=@"$0.0";
+    cell.estDeliveryLbl.text =order.deliveryDate;
+    cell.speedLbl.text=[NSString stringWithFormat:@"%@ day delivery",order.speed];
+    cell.priceLbl.text=[NSString stringWithFormat:@"$%@",order.shippingCost];
     return cell;
     
 }

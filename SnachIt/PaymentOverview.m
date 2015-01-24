@@ -11,7 +11,7 @@
 #import "AddNewCardForm.h"
 #import "SnachCheckDetails.h"
 #import "SnoopedProduct.h"
-
+#import "SnoopingUserDetails.h"
 #import "DBManager.h"
 NSString *const STPSEAGUE=@"backtoSTP";
 @interface PaymentOverview()
@@ -21,6 +21,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 @implementation PaymentOverview{
     SnoopedProduct *product;
+    SnoopingUserDetails *userDetails;
 }
 @synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl;
 
@@ -28,7 +29,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 {
     [super viewDidLoad];
     
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
     
     [self loadData];
@@ -79,26 +80,30 @@ NSString *const STPSEAGUE=@"backtoSTP";
     // Dequeue the cell.
     PaymentOverviewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"paymentCell" forIndexPath:indexPath];
     NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
-    NSInteger indexOfCardNumber = [self.dbManager.arrColumnNames indexOfObject:@"cardNumber"];
-    NSInteger indexOfExpDate = [self.dbManager.arrColumnNames indexOfObject:@"expDate"];
     NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
-    NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
-    NSInteger indexOfStreetAddress = [self.dbManager.arrColumnNames indexOfObject:@"streetAddress"];
-    NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
-    NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
-    NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
-    NSInteger indexOfPhone = [self.dbManager.arrColumnNames indexOfObject:@"phone"];
+   
     // Set the loaded data to the appropriate cell labels.
     cell.cardImage.image = [UIImage imageNamed:@"amex.png"];
     cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
     
-    cell.cvvLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
+    cell.cvvLbl.text = @"Akshay";[NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
     
+    NSLog(@"cvv%@",[NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]]);
  
     
     return cell;
 }
 
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    NSLog(@"%ld",(long)indexPath.row);
+    //  ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
+    
+    // initializing address details
+    userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+    
+    
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -114,7 +119,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from paymentInfo ";
+    NSString *query = @"select * from payment";
     
     // Get the results.
     if (self.arrPaymentInfo != nil) {

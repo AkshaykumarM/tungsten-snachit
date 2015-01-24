@@ -3,7 +3,7 @@
 //  SQLite3DBSample
 //
 //  Created by Akshay Maldhure on 17/1/015.
-//  Copyright (c) 2014 Appcoda. All rights reserved.
+//  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

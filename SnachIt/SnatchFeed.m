@@ -85,7 +85,7 @@
 -(void)viewDidAppear:(BOOL)animated{
      [self makeProductRequest];
     [_tableView reloadData];
-    [self requestContactBookAccess];
+   [self requestContactBookAccess];
     
     
     // we will finally store the emails in an array so we create it here
@@ -184,7 +184,7 @@
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", brandname, productname] forState:UIControlStateNormal];
     
-    [cell.productPrice setTitle: price forState:UIControlStateNormal];
+    [cell.productPrice setTitle: [NSString stringWithFormat:@"$%@",price] forState:UIControlStateNormal];
    
     //Snoop button view setup
     [cell.snoop setTag:indexPath.row];

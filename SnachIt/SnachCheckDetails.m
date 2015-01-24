@@ -13,10 +13,14 @@
 #import "OrderTotalOverview.h"
 #import "ProductSnached.h"
 #import "SnoopedProduct.h"
+#import "SnoopingUserDetails.h"
+#import "Order.h"
+
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
 NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
 NSString *const STP_SEGUE =@"STPSegue";
+double orderTotal;
 @interface SnachCheckDetails()
 
    @property (nonatomic, strong) NSArray *cellId;
@@ -27,8 +31,11 @@ NSString *const STP_SEGUE =@"STPSegue";
 @implementation SnachCheckDetails
 {
     NSInteger tempQuntity;
-    float price;
+    double price;
     SnoopedProduct *product;
+    SnoopingUserDetails *userdetails;
+    
+    Order *order;
 }
 @synthesize productImg,brandImg,productDescription,description,productPrice,productName,cellId,prodPrice;
 
@@ -40,14 +47,21 @@ NSString *const STP_SEGUE =@"STPSegue";
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
 
     // Set the Label text with the selected recipe
-    
+    userdetails=[SnoopingUserDetails sharedInstance];
+    product=[SnoopedProduct sharedInstance];
+    order=[Order sharedInstance];
+    price= [order.orderTotal doubleValue];
+    prodPrice=order.orderTotal;
+    tempQuntity=[order.orderQuantity intValue];
+  
+
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     [self setViewLookAndFeel];
+
     
-    
-    
+       
 }
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
@@ -55,7 +69,7 @@ NSString *const STP_SEGUE =@"STPSegue";
 }
 -(void)initializeView{
 
-    product=[SnoopedProduct sharedInstance];
+  
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
@@ -76,10 +90,12 @@ NSString *const STP_SEGUE =@"STPSegue";
     SnachConfirmCell *cell = (SnachConfirmCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
         cell.orderQuantity.text = [NSString stringWithFormat:@"%i",tempQuntity];
-        cell.shiptoName.text=@"Diana Remirez";
-        cell.paymentCard.text=@"Visa****1234";
-        cell.orderTotal.text=product.productPrice;
-        NSLog(@"ssasdsdsfdsfdfdsfsfdf%@",product.productName);
+        if(userdetails.shipFullName!=nil)
+        cell.shiptoName.text=userdetails.shipFullName;
+        if(userdetails.paymentCardName!=nil)
+        cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,userdetails.paymentCardCVV];
+        cell.orderTotal.text=[NSString stringWithFormat:@"$%@",prodPrice];
+    
         [cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
         [cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
     [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
@@ -93,27 +109,10 @@ NSString *const STP_SEGUE =@"STPSegue";
 //this function add the product qunatity
 -(void)addQuntity
 {
-    if(tempQuntity<5){
      tempQuntity++;
-    prodPrice=[NSString stringWithFormat:@"%.02f",price*tempQuntity];
+    [self calculateTotal];
     [_tableView reloadData];
-    }
-    else{
-        NSString *message = @"Sorry, stock not available";
-        
-        UIAlertView *toast = [[UIAlertView alloc] initWithTitle:nil
-                                                        message:message
-                                                       delegate:nil
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:nil, nil];
-        [toast show];
-        
-        int duration = 1; // duration in seconds
-        
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, duration * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-            [toast dismissWithClickedButtonIndex:0 animated:YES];
-        });
-    }
+  
 }
 
 //this function substract the product qunatity
@@ -121,7 +120,7 @@ NSString *const STP_SEGUE =@"STPSegue";
 {
     if(tempQuntity>1){
     tempQuntity--;
-    prodPrice=[NSString stringWithFormat:@"%.02f",price*tempQuntity];
+     [self calculateTotal];
     [_tableView reloadData];
     }
 }
@@ -156,7 +155,7 @@ NSString *const STP_SEGUE =@"STPSegue";
 
 }
 -(void)setViewLookAndFeel{
-        if(self.fullName==nil){
+        if(userdetails.shipFullName==nil || userdetails.paymentFullName==nil){
        
         [self.swipeToPay setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];
         [self.swipeToPay setEnabled:NO];
@@ -168,6 +167,22 @@ NSString *const STP_SEGUE =@"STPSegue";
 }
 
 - (IBAction)swipeToSnach:(id)sender {
+
+    NSLog(@"%@",userdetails.getUserShippingDetails);
+  //  NSLog(@"%@",userdetails.getUserPaymentDetails);
+    //NSLog(@"%@",userdetails.getUserCreditCardDetails);
+    
+//  self.emailIds= [NSMutableArray array];
+//    [self.emailIds addObjectsFromArray:[self getallEmailIdsInAddressBook:addressBook]];
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setObject:order.userId forKey:@"userId"];
+    [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
+    [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];
+   [dictionary setObject:userdetails.getUserCreditCardDetails forKey:@"creditCardDetails"];
+  NSError *error;
+    NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
+   NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
+    NSLog(@"jsonData as string:\n%@", jsonString);
     
     
     [self performSegueWithIdentifier:STP_SEGUE sender:self];
@@ -184,6 +199,14 @@ NSString *const STP_SEGUE =@"STPSegue";
     brandImg=nil;
     
     // Release any retained subviews of the main view.
+}
+-(void)calculateTotal{
+    prodPrice=[NSString stringWithFormat:@"%.02f",price*tempQuntity];
+    order.orderQuantity=[NSString stringWithFormat:@"%d",tempQuntity];
+    order.subTotal=prodPrice;
+    orderTotal=0;
+    orderTotal=[order.subTotal doubleValue]+[order.salesTax doubleValue]+[order.shippingCost doubleValue];
+    order.orderTotal=[NSString stringWithFormat:@"%f",orderTotal];
 }
 
 @end

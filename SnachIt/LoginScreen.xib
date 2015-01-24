@@ -39,6 +39,9 @@
                             <include reference="hTF-Fi-aVQ"/>
                         </mask>
                     </variation>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="a2u-13-4K3"/>
+                    </connections>
                 </textField>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="goR-Gn-BUj">
                     <rect key="frame" x="20" y="350" width="280" height="35"/>
@@ -58,6 +61,9 @@
                             <include reference="Uqu-dC-0Iv"/>
                         </mask>
                     </variation>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="TlP-JD-F3x"/>
+                    </connections>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8MM-YY-hrv">
                     <rect key="frame" x="20" y="393" width="280" height="45"/>
@@ -73,8 +79,8 @@
                         <action selector="signInBtn:" destination="-1" eventType="touchUpInside" id="dGx-32-CSe"/>
                     </connections>
                 </button>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="or" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rZo-ib-vsJ">
-                    <rect key="frame" x="152" y="446" width="16" height="21"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="or" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rZo-ib-vsJ">
+                    <rect key="frame" x="0.0" y="0.0" width="16" height="21"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="22" id="mPr-cS-szj"/>
                     </constraints>
@@ -92,8 +98,8 @@
                         </mask>
                     </variation>
                 </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Need an account?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xYS-Mg-Tan">
-                    <rect key="frame" x="0.0" y="548" width="228" height="17"/>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Need an account?" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xYS-Mg-Tan">
+                    <rect key="frame" x="0.0" y="0.0" width="115" height="17"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="17" id="9Xh-4q-ir2"/>
                         <constraint firstAttribute="width" constant="130" id="TTH-cU-T9l"/>
@@ -114,8 +120,8 @@
                         </mask>
                     </variation>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0B3-z4-tED">
-                    <rect key="frame" x="191" y="546" width="84" height="18"/>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0B3-z4-tED">
+                    <rect key="frame" x="0.0" y="0.0" width="84" height="29"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="84" id="1ct-sI-Ngl"/>
                         <constraint firstAttribute="height" constant="17" id="ErQ-l6-mLV"/>
@@ -141,8 +147,8 @@
                         <action selector="signUpHereBtn:" destination="-1" eventType="touchUpInside" id="gC5-vs-BPi"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eCq-E6-S6U">
-                    <rect key="frame" x="50" y="499" width="32" height="32"/>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eCq-E6-S6U">
+                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="32" id="5Hq-Wb-fCy"/>
                         <constraint firstAttribute="width" constant="32" id="TAa-lZ-Gzw"/>
@@ -166,8 +172,8 @@
                         <action selector="fbBtn:" destination="-1" eventType="touchUpInside" id="5cX-VG-bqj"/>
                     </connections>
                 </button>
-                <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="QHh-dH-PXP">
-                    <rect key="frame" x="142" y="275" width="37" height="37"/>
+                <activityIndicatorView hidden="YES" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="QHh-dH-PXP">
+                    <rect key="frame" x="0.0" y="0.0" width="37" height="37"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="37" id="cdY-gv-59v"/>
                         <constraint firstAttribute="width" constant="37" id="chj-ra-hyc"/>
@@ -185,8 +191,8 @@
                         </mask>
                     </variation>
                 </activityIndicatorView>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nUk-6K-HNT">
-                    <rect key="frame" x="162" y="489" width="32" height="32"/>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nUk-6K-HNT">
+                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="32" id="sNj-zf-79V"/>
                         <constraint firstAttribute="height" constant="32" id="zuu-p2-jrH"/>
@@ -210,8 +216,8 @@
                         <action selector="gPlusBtn:" destination="-1" eventType="touchUpInside" id="N8O-hS-vfe"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EEO-8K-deF">
-                    <rect key="frame" x="111" y="499" width="32" height="32"/>
+                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EEO-8K-deF">
+                    <rect key="frame" x="0.0" y="0.0" width="128" height="128"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="32" id="35e-eK-rMy"/>
                         <constraint firstAttribute="height" constant="32" id="UKb-31-wfT"/>

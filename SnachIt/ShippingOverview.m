@@ -12,6 +12,8 @@
 #import "DBManager.h"
 #import "ShippingOverviewAddressCell.h"
 #import "SnoopedProduct.h"
+#import "SnoopingUserDetails.h"
+#import "UserProfile.h"
 @interface ShippingOverview()
 @property (nonatomic, strong) DBManager *dbManager;
 
@@ -27,6 +29,8 @@
 
 @implementation ShippingOverview{
     SnoopedProduct *product;
+    SnoopingUserDetails *userDetails;
+    UserProfile *user;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 
@@ -35,10 +39,11 @@
 {
     [super viewDidLoad];
     
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
   
     [self loadData];
+    user =[UserProfile sharedInstance];
    
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -78,33 +83,32 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
     ShippingOverviewAddressCell *cell = [tableView dequeueReusableCellWithIdentifier:@"addressCell" forIndexPath:indexPath];
-    
+   
     NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
     NSInteger indexOfStreetAddress = [self.dbManager.arrColumnNames indexOfObject:@"streetAddress"];
     NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
      NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
      NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
-       NSInteger indexOfPhone = [self.dbManager.arrColumnNames indexOfObject:@"phone"];
+  
     // Set the loaded data to the appropriate cell labels.
+
     cell.nameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
     
     cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
     
     cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
-    
+ 
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"%@",indexPath);
-    ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
+    NSLog(@"%ld",(long)indexPath.row);
+  //  ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
+
+    // initializing address details
+    userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:1] withShipStreetName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:2] withShipCity:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:3] withShipState:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:4] withShipZipCode:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:5] withShipPhoneNumber:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:6]];
     
-    // perform required operation
-    self.selectedFirstName =selectedCell.nameLbl.text;
-    self.selectedStreetAddress=selectedCell.streetNameLbl.text;
-    self.selectedCityStateZip=selectedCell.cityStateZipLbl.text;
-   
-   
+
 }
 
 
@@ -121,7 +125,7 @@
 }
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from addressInfo";
+    NSString *query = @"select * from address";
     
     // Get the results.
     if (self.arrAddressInfo != nil) {

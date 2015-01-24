@@ -27,8 +27,9 @@
     [super viewDidLoad];
     
 
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
-     
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+    
+    
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
@@ -50,7 +51,9 @@
 - (IBAction)doneBtn:(id)sender {
     
     if([self.fullNameTextField hasText] &&[self.streetAddressTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
-    NSString *query = [NSString stringWithFormat:@"insert into addressInfo values(null, '%@', '%@', '%@' ,'%@','%@','%@')", self.fullNameTextField.text, self.streetAddressTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        
+       //NSString *query=@"create table if not exists address(id integer primary key,fullName text,streetAddress text,city text,state text,zip text,phone text)";
+    NSString *query = [NSString stringWithFormat:@"insert into address values(null, '%@', '%@', '%@' ,'%@','%@','%@')", self.fullNameTextField.text, self.streetAddressTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
     
     // Execute the query.
        

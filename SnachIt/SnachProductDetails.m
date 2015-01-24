@@ -10,9 +10,9 @@
 #import "SnachCheckDetails.h"
 #import <QuartzCore/QuartzCore.h>
 #import "SnoopedProduct.h"
+#import "Order.h"
+#import "SnoopingUserDetails.h"
 @interface SnachProductDetails()
-
-
 
 
 @end
@@ -22,6 +22,8 @@
     NSInteger seconds;
     NSTimer *timer;
     SnoopedProduct *product;
+    Order *order;
+    SnoopingUserDetails *userdetails;
 }
 @synthesize productName,productimage,brandimag,productPrice,productDescription,counter;
 
@@ -49,6 +51,14 @@
     seconds=5;
    [counter setTitle: [NSString stringWithFormat:@"%i",seconds] forState: UIControlStateNormal];
     
+    
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    userdetails=[SnoopingUserDetails sharedInstance];
+    
+    [self initializeOrder];
+
 }
 -(void)initializeView{
    
@@ -138,5 +148,7 @@
     
     // Release any retained subviews of the main view.
 }
-
+-(void)initializeOrder{
+    order=[[Order sharedInstance] initWithUserId:userdetails.userId withProductId:product.productId withOrderQuantity:[NSString stringWithFormat:@"%d",1] withSubTotal:product.productPrice withOrderTotal:product.productPrice withShippingAndHandling:[NSString stringWithFormat:@"%d",5] withSalesTax:[NSString stringWithFormat:@"%d",2] withSpeed:@"2" withShippingCost:[NSString stringWithFormat:@"%d",8] withOrderDate:@"23/1/2015" withDeliveryDate:@"29/1/2015"];
+}
 @end

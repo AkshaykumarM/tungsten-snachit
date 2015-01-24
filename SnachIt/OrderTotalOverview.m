@@ -11,15 +11,20 @@
 #import "SnachCheckDetails.h"
 #import "ShippingOverlay.h"
 #import "SnoopedProduct.h"
+#import "Order.h"
 NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
 NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
+
 @interface OrderTotalOverview()
 @property (nonatomic,strong) NSArray *cellId;
+
 
 @end
 
 @implementation OrderTotalOverview{
     SnoopedProduct *product;
+    Order *order;
+    
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,cellId,productDesc,totalLabel;
 
@@ -28,6 +33,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     [super viewDidLoad];
     cellId = [NSArray arrayWithObjects: @"orderTotalCell",@"subtotalCell", @"shippingCell", @"salesTaxCell",nil];
     // Set the Label text with the selected recipe
+    order=[Order sharedInstance];
     
 }
 
@@ -44,6 +50,11 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
     
+    totalLabel.text=[NSString stringWithFormat:@"$%@",order.orderTotal];
+    
+  
+    
+    
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
@@ -56,9 +67,9 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.subtotalLabel.text = [NSString stringWithFormat:@"%@",product.productPrice];
-    cell.shippingAndhandlingLabel.text=@"Free Shipping";
-    cell.salesTaxLabel.text=@"$0.0";
+    cell.subtotalLabel.text = [NSString stringWithFormat:@"$%@",order.subTotal];
+    cell.shippingAndhandlingLabel.text=order.shippingAndHandling;
+    cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%@",order.salesTax];
     return cell;
     
 }
