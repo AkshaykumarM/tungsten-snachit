@@ -16,7 +16,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
-@property (nonatomic, strong) NSString *productname,*productimgname,*brandimgname,*productprice,*productdesc;
+
+
 - (IBAction)doneBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UITextField *fullNameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *streetAddressTextField;

@@ -8,15 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
+
 @interface SnatchFeedCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 
 @property (weak, nonatomic) IBOutlet UIButton *productName;
 @property (weak, nonatomic) IBOutlet UIButton *productPrice;
-@property (weak, nonatomic) IBOutlet UIButton *followStatus;
-@property (weak, nonatomic) IBOutlet UIButton *freindCount;
+@property (retain, nonatomic) IBOutlet UIButton *followStatus;
+@property (weak, nonatomic) IBOutlet UIButton *freind;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *productImagesContainer;
 @property (weak, nonatomic) IBOutlet UIImageView *snoop;
+@property (weak, nonatomic) IBOutlet UIButton *friendCount;
 
 @end

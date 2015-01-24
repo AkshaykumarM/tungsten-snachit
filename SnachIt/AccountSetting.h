@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-@class SevenSwitch;
+
 @interface AccountSetting : UIViewController
 
 
@@ -19,8 +19,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *emailTextField;
 @property (weak, nonatomic) IBOutlet UITextField *nameTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneNoTextField;
-@property (weak, nonatomic) IBOutlet SevenSwitch *appAlertsSwitch;
-@property (weak, nonatomic) IBOutlet SevenSwitch *emailAlertsSwitch;
-@property (weak, nonatomic) IBOutlet SevenSwitch *smsAlertsSwitch;
+@property (weak, nonatomic) IBOutlet UIImageView *appsTopBar;
+@property (weak, nonatomic) IBOutlet UIImageView *emailTopBar;
+@property (weak, nonatomic) IBOutlet UIImageView *SMSTopBar;
 
 @end

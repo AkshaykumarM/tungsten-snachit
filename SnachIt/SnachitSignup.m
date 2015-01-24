@@ -11,6 +11,7 @@
 #import "SWRevealViewController.h"
 #import "SnatchFeed.h"
 #import "global.h"
+#import "AFNetworking.h"
 @implementation SnachitSignup
 @synthesize emailTextField=_emailTextField;
 @synthesize passwordTextField=_passwordTfield;
@@ -24,7 +25,7 @@ static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
 static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
 static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
-
+NSInteger status=0;
 CGFloat animatedDistance;
 - (void)viewDidLoad
 {
@@ -131,16 +132,104 @@ CGFloat animatedDistance;
 
 
 - (IBAction)signUpBtn:(id)sender {
-   
+    [self.activityIndicator startAnimating];
   //  [self performSegueWithIdentifier: @"signInScreenSegue" sender:self];
-    SnachItLogin *startscreen = [[SnachItLogin alloc]
+    if([self.emailTextField hasText] &&[self.passwordTextField hasText])
+    {
+        [self.errorLbl setHidden:YES];
+        NSString *username= self.emailTextField.text;
+        NSString *password= self.passwordTextField.text;
+        NSString *APNSToken=@"sdfdfs";
+    
+        if([self IsEmailValid:username] && [password length]>=6)
+        {
+            [self.errorLbl setHidden:YES];
+            NSInteger status=[self getSignUp:@"" LastName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSToken SignUpVia:@"SnachIt" DOB:@""];
+            
+            NSLog(@"status%d",status);
+            if(status==1){
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                [defaults setInteger:1 forKey:@"signedUp"];
+                [defaults setObject:userName forKey:@"Username"];
+                [defaults setObject:password forKey:@"Password"];
+                SnachItLogin *startscreen = [[SnachItLogin alloc]
                                  initWithNibName:@"LoginScreen" bundle:nil];
-    [self presentViewController:startscreen animated:YES completion:nil];
-
+                [self presentViewController:startscreen animated:YES completion:nil];
+            }
+        }
+        
+    }else{
+        self.errorLbl.text=@"Please enter username & password";
+         [self.errorLbl setHidden:NO];
+    }
+     [self.activityIndicator stopAnimating];
 }
 - (IBAction)loginHereBtn:(id)sender {
     SnachItLogin *startscreen = [[SnachItLogin alloc]
                                   initWithNibName:@"LoginScreen" bundle:nil];
     [self presentViewController:startscreen animated:YES completion:nil];
 }
+
+
+
+//this function will let signup the user and will provide 1 if success and 0 else
+
+
+-(NSInteger)getSignUp:(NSString*)firstName LastName:(NSString*)lastName EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob{
+    
+    NSLog(@"%@ %@ %@ %@ %@ %@ %@ %@ %@ %@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia,dob);
+    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *response;
+    
+    NSString *url;
+    if(![signUpVia isEqual:@"SnachIt"]){
+        url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signUpFromMobile/?firstName=%@&lastName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@&dob=%@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia,dob];
+    }else{
+        url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signUpFromMobile/?firstName=%@&lastName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
+
+    }
+    
+    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    if (jasonData) {
+        NSError *e = nil;
+        response = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
+        NSLog(@"%@",url);
+        if([[response valueForKey:@"success"] isEqual:@"true"])
+        {
+            //caching userid for sso
+            status=1;
+        }
+        else{
+            status=0;
+        }
+    }
+    else{
+        status=0;
+    }
+    return status;
+    
+}
+
+-(void)clearUserDefault{
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+
+    [defaults setNilValueForKey:@"signedUp"];
+    [defaults setNilValueForKey:@"Username"];
+    [defaults setNilValueForKey:@"Password"];
+}
+
+-(BOOL)IsEmailValid:(NSString *)checkString
+{
+   
+        BOOL stricterFilter = NO;
+        NSString *stricterFilterString = @"[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}";
+        NSString *laxString = @".+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2}[A-Za-z]*";
+        NSString *emailRegex = stricterFilter ? stricterFilterString : laxString;
+        NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", emailRegex];
+        return [emailTest evaluateWithObject:checkString];
+    
+}
+
+
 @end

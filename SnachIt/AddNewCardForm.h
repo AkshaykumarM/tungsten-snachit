@@ -14,10 +14,19 @@
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
 @property (weak, nonatomic) IBOutlet UITextView *productDesc;
-@property (weak, nonatomic) IBOutlet UIButton *doneBtn;
+- (IBAction)doneBtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
-@property (nonatomic, strong) NSString *productname,*productimgname,*brandimgname,*productprice,*productdesc;
+@property (weak, nonatomic) IBOutlet UITextField *cardNumber;
+@property (weak, nonatomic) IBOutlet UITextField *expDateTxtField;
+@property (weak, nonatomic) IBOutlet UITextField *cvvTextField;
+@property (weak, nonatomic) IBOutlet UITextField *fullNameTextField;
+@property (weak, nonatomic) IBOutlet UITextField *streetTextField;
+@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
+@property (weak, nonatomic) IBOutlet UITextField *stateTextField;
+@property (weak, nonatomic) IBOutlet UITextField *zipTextField;
+@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
+
 
 @end

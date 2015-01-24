@@ -19,5 +19,4 @@
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 @property (weak, nonatomic) IBOutlet UILabel *totalLabel;
 
-@property (nonatomic, strong) NSString *productname,*productimgname,*brandimgname,*productprice,*productdesc;
 @end

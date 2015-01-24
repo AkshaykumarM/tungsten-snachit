@@ -19,7 +19,6 @@
 @property (weak, nonatomic) IBOutlet UITextView *productDescription;
 @property (weak, nonatomic) IBOutlet UIButton *productPrice;
 
-@property (nonatomic, strong) NSString *prodName,*prodImgName,*brandImgName,*prodPrice,*prodDesc;
 @property (nonatomic, strong) NSData *brandImageData;
 @property (nonatomic, strong) NSData *productImageData;
 @property (weak, nonatomic) IBOutlet UIButton *counter;

@@ -18,6 +18,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 - (IBAction)addNewAddressbtn:(id)sender;
-@property (nonatomic, strong) NSString *productname,*productimgname,*brandimgname,*productprice,*productdesc;
+
 @property (weak, nonatomic) IBOutlet UITableView *addressTableView;
 @end

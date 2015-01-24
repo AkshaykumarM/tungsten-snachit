@@ -26,4 +26,15 @@
     [self.navigationController popToRootViewControllerAnimated:YES];
 
 }
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    self.fullName=nil;
+    self.streetAddressLbl=nil;
+    self.cityStateZipLbl=nil;
+    // Release any retained subviews of the main view.
+}
+
+
 @end

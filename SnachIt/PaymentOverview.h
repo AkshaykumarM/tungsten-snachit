@@ -12,10 +12,12 @@
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
 @property (weak, nonatomic) IBOutlet UITextView *productDesc;
-@property (weak, nonatomic) IBOutlet UIButton *doneBtn;
+- (IBAction)doneBtn:(id)sender;
+
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 - (IBAction)addNewCardBtn:(id)sender;
-@property (nonatomic, strong) NSString *productname,*productimgname,*brandimgname,*productprice,*productdesc;
+@property (weak, nonatomic) IBOutlet UITableView *paymentTableView;
+
 @end

@@ -9,5 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface PaymentOverviewCell : UITableViewCell
+@property (weak, nonatomic) IBOutlet UIImageView *cardImage;
+@property (weak, nonatomic) IBOutlet UILabel *cardNameLbl;
 
+@property (weak, nonatomic) IBOutlet UILabel *cvvLbl;
 @end

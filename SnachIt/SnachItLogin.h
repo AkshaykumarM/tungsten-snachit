@@ -29,4 +29,5 @@
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *mySpinner;
 -(void)checkSessionIFActive;
+-(void)googleSignIn;
 @end

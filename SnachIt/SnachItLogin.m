@@ -10,11 +10,12 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
 #import <GooglePlus/GooglePlus.h>
-
 #import "AppDelegate.h"
 #import "AFNetworking.h"
 #import "global.h"
 #import "TwitterViewController.h"
+#import "UserProfile.h"
+
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 
 NSString *const SIGNINSEGUE=@"signInSegue";
@@ -47,21 +48,15 @@ CGFloat animatedDistance;
     [super viewDidAppear:animated];
     [self checkSessionIFActive];
     screenName=@"signin";
+    
    
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    NSLog(@"view Will appear");
+}
 -(void)checkSessionIFActive{
-  //  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    // [[NSUserDefaults standardUserDefaults] removeObjectForKey:USER_ID];
-  //  NSString *userId = [defaults objectForKey:USER_ID];
-//    if (userId!=nil) {
-//        
-//      // [self performSegueWithIdentifier:SIGNINSEGUE sender:self];
-//    }
-//    else
+    
     if(FBSession.activeSession.isOpen){
-        NSLog(@"sfdsfdfdff");
-       // [self performSegueWithIdentifier:SIGNINSEGUE sender:self];
     }
 }
 
@@ -171,6 +166,7 @@ CGFloat animatedDistance;
     [super viewDidUnload];
 }
 - (IBAction)fbBtn:(id)sender {
+
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
@@ -183,6 +179,9 @@ CGFloat animatedDistance;
     } else {
         // Open a session showing the user the login UI
         // You must ALWAYS ask for public_profile permissions when opening a session
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"FB" forKey:@"SSOUsing"];
+        
         [FBSession openActiveSessionWithReadPermissions:@[@"public_profile",@"email"]
                                            allowLoginUI:YES
                                       completionHandler:
@@ -193,6 +192,7 @@ CGFloat animatedDistance;
              // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
              [appDelegate sessionStateChanged:session state:state error:error];
          }];
+        
     }
 
     
@@ -201,46 +201,63 @@ CGFloat animatedDistance;
 
 
 - (IBAction)signInBtn:(id)sender {
-    
-  //stop spinner
+   //start spinner
     [self.mySpinner startAnimating];
-    NSLog(@"%@",(UIButton *)sender);
-    if([screenName isEqual:@"signup"]){
-   [[[self presentingViewController] presentingViewController]dismissModalViewControllerAnimated:YES ];
-    }
-    else{
-         [[[[self presentingViewController] presentingViewController]presentingViewController]dismissModalViewControllerAnimated:YES ];
-    }
+    ssousing=@"SnachIt";
+//    if([screenName isEqual:@"signup"]){
+//   [[[self presentingViewController] presentingViewController]dismissModalViewControllerAnimated:YES ];
+//    }
+//    else{
+//         [[[[self presentingViewController] presentingViewController]presentingViewController]dismissModalViewControllerAnimated:YES ];
+//    }
     //request for user auth
-    AFHTTPRequestOperationManager *manager = [AFHTTPRequestOperationManager manager];
-    [self dismissViewControllerAnimated:NO completion:nil];
-    [self.navigationController popToRootViewControllerAnimated:YES];
-    NSString *url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signInFromMobile/?username=%@&password=%@",self.emailTfield.text,self.passwordTfield.text];
-
-        [manager GET:url parameters:nil success:^(AFHTTPRequestOperation *operation, id responseObject)
-         {
-            if(responseObject[@"success"])
-            {
-            [self.mySpinner stopAnimating];
-                
+  
+    if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text]==1){
+           [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    }
+            //[self.mySpinner stopAnimating];
+            
             //caching userid for sso
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-                
-            [defaults setObject:self.emailTfield.text forKey:USER_ID];
-                
+            //NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            //[defaults setObject:@"SnachIt" forKey:@"SSOUsing"];
             //perfoming segue to snach feed screen
-            //[self performSegueWithIdentifier:SIGNINSEGUE sender:self];
-                
-            }
-             
-           
-         } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-             [self.mySpinner stopAnimating];
-             //             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error..!!" message:@"Error Connecting to Server...!!!" delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-             //  [alert show];
-         }];
+          //;
     
+   
+   
+[self.mySpinner stopAnimating];
+//    [self dismissViewControllerAnimated:NO completion:nil];
+//    [self.navigationController popToRootViewControllerAnimated:YES];
     
+}
+
+-(int)performSignIn:(NSString*)username Password:(NSString*)password{
+    NSString *url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signInFromMobile/?username=%@&password=%@",username,password];
+    NSError *e;
+    int status=0;
+    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+    
+    if (jasonData) {
+        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
+        NSLog(@"%@",[response objectForKey:@"success"]);
+        if([[response objectForKey:@"success"] isEqual:@"true"])
+        {
+            NSDictionary *userprofile=[response objectForKey:@"userProfile"];
+            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"]];
+            
+            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+            [defaults setObject:ssousing forKey:@"SSOUsing"];
+            [defaults setObject:self.emailTfield.text forKey:@"Username"];
+            [defaults setObject:self.passwordTfield.text forKey:@"Password"];
+            [defaults setInteger:1  forKey:@"signedUp"];
+            status=1;
+        }
+        else{
+            status=0;
+        }
+        
+    }
+    return status;
 }
 
 - (IBAction)signUpHereBtn:(id)sender {
@@ -282,20 +299,34 @@ CGFloat animatedDistance;
                 completionHandler:^(GTLServiceTicket *ticket,
                                     GTLPlusPerson *person,
                                     NSError *error) {
+                                [self getGoogleInfo:person];
                     if (error) {
                         //Handle Error
                     } else {
-                        NSLog(@"Email= %@", [GPPSignIn sharedInstance].authentication.userEmail);
-                        NSLog(@"GoogleID=%@", person.identifier);
-                        NSLog(@"User Name=%@", [person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName]);
-                        NSLog(@"Gender=%@-----------%@", person.gender,[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"]);
-                        userName= [[person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName] uppercaseString];
-                        userProfilePic=[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
-                       
-                                           }
+                        
+                    }
                 }];
     }
     
+}
+
+-(void)getGoogleInfo:(GTLPlusPerson*)person
+{
+    SnachitSignup *signup =[[SnachitSignup alloc] init];
+    NSString *firstName = person.name.givenName ;
+    NSString *lastName = person.name.familyName;
+    NSString *googleId = person.identifier;
+    NSString *email = [GPPSignIn sharedInstance].authentication.userEmail;
+    NSString *imageUrl = [[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
+    NSString *phoneNo=@"";
+    NSString *apns=firstName;
+    NSLog(@"%@",firstName);
+    NSInteger status=[signup getSignUp:firstName LastName:lastName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"GPlus" DOB:@"1993-5-7"];
+    if(status==1)
+    {
+        [[[[self presentingViewController] presentingViewController]presentingViewController]dismissModalViewControllerAnimated:YES ];
+    }
+
 }
 -(void)refreshInterfaceBasedOnSignIn {
     if ([[GPPSignIn sharedInstance] authentication]) {
@@ -325,6 +356,11 @@ CGFloat animatedDistance;
 
 - (IBAction)gPlusBtn:(id)sender {
     
+    [self googleSignIn];
+}
+
+-(void)googleSignIn{
+    
     GPPSignIn *signIn = [GPPSignIn sharedInstance];
     // You previously set kClientID in the "Initialize the Google+ client" step
     signIn.clientID = kClientId;
@@ -335,15 +371,27 @@ CGFloat animatedDistance;
     signIn.shouldFetchGoogleUserEmail = YES;
     
     signIn.delegate = self;
-    
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"GP" forKey:@"SSOUsing"];
     [signIn authenticate];
-    
-}
+  }
+
+// ---- its call a web service to login with google+ info
 
 - (IBAction)twBtn:(id)sender {
+   
     TwitterViewController *startscreen = [[TwitterViewController alloc]
                                   initWithNibName:@"TwitterView" bundle:nil];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"TW" forKey:@"SSOUsing"];
     [self presentViewController:startscreen animated:YES completion:nil];
 }
 
+-(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate{
+    
+    UserProfile *profile=[[UserProfile
+                           sharedInstance] initWithUserId:userId withUserName:userName withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate];
+    NSLog(@"profile:%@",profile.getUserId);
+    
+}
 @end

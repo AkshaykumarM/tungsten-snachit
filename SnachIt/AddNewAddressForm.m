@@ -9,34 +9,51 @@
 #import "AddNewAddressForm.h"
 #import "ShippingOverview.h"
 #import "DBManager.h"
+#import "SnoopedProduct.h"
 
 @interface AddNewAddressForm()
 @property (nonatomic, strong) DBManager *dbManager;
 
+
 @end
 
-@implementation AddNewAddressForm
-@synthesize brandImg,productname,productImg,productimgname,productNameLbl,brandimgname,productPriceBtn,productprice;
+@implementation AddNewAddressForm{
+    SnoopedProduct *product;
+}
+@synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
 
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
-    productNameLbl.text = productname;
-    brandImg.image=[UIImage imageNamed: brandimgname];
-    productImg.image=[UIImage imageNamed: productimgname];
-    [productPriceBtn setTitle: productprice forState:UIControlStateNormal];
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
+     
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self initializeView];
+}
+-(void)initializeView{
+    
+    product=[SnoopedProduct sharedInstance];
+    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    brandImg.image=[UIImage imageWithData:product.brandImageData];
+    productImg.image=[UIImage imageWithData:product.productImageData];
+    [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
+    productDesc.text=product.productDescription;
     
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+   }
 
 - (IBAction)doneBtn:(id)sender {
     
+    if([self.fullNameTextField hasText] &&[self.streetAddressTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
     NSString *query = [NSString stringWithFormat:@"insert into addressInfo values(null, '%@', '%@', '%@' ,'%@','%@','%@')", self.fullNameTextField.text, self.streetAddressTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
     
     // Execute the query.
+       
     [self.dbManager executeQuery:query];
     
     // If the query was successfully executed then pop the view controller.
@@ -44,24 +61,15 @@
         NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
         
         // Pop the view controller.
-        [self.navigationController popViewControllerAnimated:YES];
+        
     }
     else{
         NSLog(@"Could not execute the query.");
     }
+    }
  [self performSegueWithIdentifier:@"addressaddedseague" sender:self];
 //    [self dismissViewControllerAnimated:true completion:nil];
-
-}
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"addressaddedseague"]) {
-        
-         ShippingOverview *destViewController = segue.destinationViewController;
-        destViewController.productname = productname;
-        destViewController.productimgname=productimgname;
-        destViewController.productprice =productprice;
-        destViewController.brandimgname = brandimgname;
-    }
+    
 }
 
 

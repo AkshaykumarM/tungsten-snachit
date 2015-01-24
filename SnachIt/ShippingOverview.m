@@ -11,6 +11,7 @@
 #import "SnachCheckDetails.h"
 #import "DBManager.h"
 #import "ShippingOverviewAddressCell.h"
+#import "SnoopedProduct.h"
 @interface ShippingOverview()
 @property (nonatomic, strong) DBManager *dbManager;
 
@@ -24,25 +25,42 @@
 
 @end
 
-@implementation ShippingOverview
-@synthesize brandImg,productname,productImg,productimgname,productNameLbl,brandimgname,productPriceBtn,productprice;
+@implementation ShippingOverview{
+    SnoopedProduct *product;
+}
+@synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
     // Set the Label text with the selected recipe
-    productNameLbl.text = productname;
-    
-    brandImg.image=[UIImage imageNamed: brandimgname];
-    productImg.image=[UIImage imageNamed: productimgname];
-    [productPriceBtn setTitle: productprice forState:UIControlStateNormal];
+  
     [self loadData];
    
 }
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self initializeView];
+}
 
+-(void)initializeView{
+    
+    product=[SnoopedProduct sharedInstance];
+    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    brandImg.image=[UIImage imageWithData:product.brandImageData];
+    productImg.image=[UIImage imageWithData:product.productImageData];
+    [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
+    productDesc.text=product.productDescription;
+    
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+  
+    
+}
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -66,7 +84,7 @@
     NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
      NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
      NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
-    
+       NSInteger indexOfPhone = [self.dbManager.arrColumnNames indexOfObject:@"phone"];
     // Set the loaded data to the appropriate cell labels.
     cell.nameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
     
@@ -95,29 +113,7 @@
     
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"addnewaddressseague"]) {
-        
-        AddNewAddressForm *destViewController = segue.destinationViewController;
-        destViewController.productname = productname;
-        destViewController.productimgname=productimgname;
-        destViewController.productprice =productprice;
-        destViewController.brandimgname = brandimgname;
-    }
-    if ([segue.identifier isEqualToString:@"shippingoverviewseague"]) {
-        
-        SnachCheckDetails *destViewController = segue.destinationViewController;
-        destViewController.prodName = productname;
-        destViewController.prodImgName=productimgname;
-        destViewController.prodPrice =productprice;
-        destViewController.brandImgName = brandimgname;
-        destViewController.fullName=self.selectedFirstName;
-        destViewController.streetAddress=self.selectedStreetAddress;
-        destViewController.cityStateZip=self.selectedCityStateZip;
-        
-    }
-    
-}
+
 - (IBAction)doneBtn:(id)sender {
     
     [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
@@ -135,6 +131,16 @@
     
     // Reload the table view.
     [self.addressTableView reloadData];
+}
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+   
+    self.productImg=nil;
+    self.brandImg=nil;
+    productPriceBtn=nil;
+    productNameLbl=nil;
+    // Release any retained subviews of the main view.
 }
 
 @end

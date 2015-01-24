@@ -8,44 +8,70 @@
 
 #import "AddNewCardForm.h"
 #import "PaymentOverview.h"
-
+#import "SnoopedProduct.h"
+#import "DBManager.h"
 NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
 @interface AddNewCardForm()
-
+@property (nonatomic,strong) DBManager *dbManager;
 @end
 
-@implementation AddNewCardForm
-@synthesize brandImg,productname,productImg,productimgname,productNameLbl,brandimgname,productPriceBtn,productprice;
+@implementation AddNewCardForm{
+    SnoopedProduct *product;
+}
+@synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snach.sql"];
     // Set the Label text with the selected recipe
-    productNameLbl.text = productname;
-    brandImg.image=[UIImage imageNamed: brandimgname];
-    productImg.image=[UIImage imageNamed: productimgname];
-    [productPriceBtn setTitle: productprice forState:UIControlStateNormal];
     
 }
-
+-(void)viewDidAppear:(BOOL)animated{
+    [self initializeView];
+}
+-(void)viewWillAppear:(BOOL)animated{
+   
+    
+}
+-(void)initializeView{
+    
+    product=[SnoopedProduct sharedInstance];
+    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    brandImg.image=[UIImage imageWithData:product.brandImageData];
+    productImg.image=[UIImage imageWithData:product.productImageData];
+    [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
+    productDesc.text=product.productDescription;
+    
+}
 - (IBAction)doneBtn:(id)sender {
+    if([self.cardNumber hasText]&&[self.expDateTxtField hasText]&&[self.cvvTextField hasText]&&[self.fullNameTextField hasText] &&[self.streetTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
+        NSString *query = [NSString stringWithFormat:@"insert into paymentInfo values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",@"American Express",self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        
+        // Execute the query.
+        
+        [self.dbManager executeQuery:query];
+        
+        // If the query was successfully executed then pop the view controller.
+        if (self.dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+            
+            // Pop the view controller.
+            
+        }
+        else{
+            NSLog(@"Could not execute the query.");
+        }
+    }
+
     [self performSegueWithIdentifier:BACKTOPAYMENT_OVERVIEW_SEAGUE sender:self];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:BACKTOPAYMENT_OVERVIEW_SEAGUE]) {
-        
-        PaymentOverview *destViewController = segue.destinationViewController;
-        destViewController.productname = productname;
-        destViewController.productimgname=productimgname;
-        destViewController.productprice =productprice;
-        destViewController.brandimgname = brandimgname;
-        
-        
-    }
-}
+
+
+
 
 
 @end

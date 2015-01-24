@@ -12,7 +12,7 @@
 #import "PaymentOverview.h"
 #import "OrderTotalOverview.h"
 #import "ProductSnached.h"
-
+#import "SnoopedProduct.h"
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
 NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
@@ -28,8 +28,9 @@ NSString *const STP_SEGUE =@"STPSegue";
 {
     NSInteger tempQuntity;
     float price;
+    SnoopedProduct *product;
 }
-@synthesize productImg,brandImg,prodName,brandImgName,prodDesc,productDescription,description,productPrice,prodPrice,productName,prodImgName,cellId;
+@synthesize productImg,brandImg,productDescription,description,productPrice,productName,cellId,prodPrice;
 
 
 - (void)viewDidLoad
@@ -39,19 +40,29 @@ NSString *const STP_SEGUE =@"STPSegue";
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
 
     // Set the Label text with the selected recipe
-    productName.text = prodName;
-    brandImg.image=[UIImage imageNamed:brandImgName];
-    productImg.image=[UIImage imageNamed:prodImgName];
-    [productPrice setTitle: prodPrice forState: UIControlStateNormal];
-    tempQuntity=1;
-    price=[[prodPrice stringByReplacingOccurrencesOfString:@"$" withString:@""] floatValue];
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
     [self setViewLookAndFeel];
     
+    
+    
 }
+-(void)viewWillAppear:(BOOL)animated{
+    [self initializeView];
+    
+}
+-(void)initializeView{
 
+    product=[SnoopedProduct sharedInstance];
+    productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    brandImg.image=[UIImage imageWithData:product.brandImageData];
+    productImg.image=[UIImage imageWithData:product.productImageData];
+    [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
+    productDescription.text=product.productDescription;
+    
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
@@ -67,7 +78,8 @@ NSString *const STP_SEGUE =@"STPSegue";
         cell.orderQuantity.text = [NSString stringWithFormat:@"%i",tempQuntity];
         cell.shiptoName.text=@"Diana Remirez";
         cell.paymentCard.text=@"Visa****1234";
-        cell.orderTotal.text=[NSString stringWithFormat:@"%@",prodPrice];
+        cell.orderTotal.text=product.productPrice;
+        NSLog(@"ssasdsdsfdsfdfdsfsfdf%@",product.productName);
         [cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
         [cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
     [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
@@ -132,31 +144,7 @@ NSString *const STP_SEGUE =@"STPSegue";
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
 
-    if ([segue.identifier isEqualToString:SHIPPING_OVERVIEW_SEAGUE]) {
-        
-        ShippingOverview *destViewController = segue.destinationViewController;
-        destViewController.productname = prodName;
-        destViewController.productprice=prodPrice;
-        destViewController.productimgname =prodImgName;
-        destViewController.brandimgname = brandImgName;
-    }
-    if ([segue.identifier isEqualToString:PAYMENT_OVERVIEW_SEAGUE]) {
-        
-        PaymentOverview *destViewController = segue.destinationViewController;
-        destViewController.productname = prodName;
-        destViewController.productprice=prodPrice;
-        destViewController.productimgname =prodImgName;
-        destViewController.brandimgname = brandImgName;
-    }
     
-    if ([segue.identifier isEqualToString:ORDER_TOTAL_OVERVIEW_SEAGUE]) {
-        
-        OrderTotalOverview *destViewController = segue.destinationViewController;
-        destViewController.productname = prodName;
-        destViewController.productprice=prodPrice;
-        destViewController.productimgname =prodImgName;
-        destViewController.brandimgname = brandImgName;
-    }
     if ([segue.identifier isEqualToString:STP_SEGUE]) {
         
         ProductSnached *destViewController = segue.destinationViewController;
@@ -186,5 +174,16 @@ NSString *const STP_SEGUE =@"STPSegue";
     
 }
 
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    
+    productPrice=nil;
+    productName=nil;
+    productImg=nil;
+    brandImg=nil;
+    
+    // Release any retained subviews of the main view.
+}
 
 @end

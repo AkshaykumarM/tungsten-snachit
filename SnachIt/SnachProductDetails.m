@@ -9,7 +9,7 @@
 #import "SnachProductDetails.h"
 #import "SnachCheckDetails.h"
 #import <QuartzCore/QuartzCore.h>
-
+#import "SnoopedProduct.h"
 @interface SnachProductDetails()
 
 
@@ -21,8 +21,9 @@
 {
     NSInteger seconds;
     NSTimer *timer;
+    SnoopedProduct *product;
 }
-@synthesize productName,prodName,productimage,prodImgName,brandimag,brandImgName,productPrice,prodPrice,productDescription,prodDesc,counter,brandImageData,productImageData;
+@synthesize productName,productimage,brandimag,productPrice,productDescription,counter;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -36,11 +37,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self initializeView];
     // Set the Label text with the selected recipe
-    productName.text = prodName;
-    brandimag.image=[UIImage imageWithData:brandImageData];
-    productimage.image=[UIImage imageWithData:productImageData];
-    [productPrice setTitle: prodPrice forState: UIControlStateNormal];
    
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                              target:self
@@ -52,7 +50,24 @@
    [counter setTitle: [NSString stringWithFormat:@"%i",seconds] forState: UIControlStateNormal];
     
 }
+-(void)initializeView{
+   
+    product=[SnoopedProduct sharedInstance];
+    productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+  
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:product.brandImageURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        brandimag.image=[UIImage imageWithData:data];
+        product.brandImageData=data;
+    }];
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:product.productImageURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        productimage.image=[UIImage imageWithData:data];
+        product.productImageData=data;
+    }];
 
+    [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
+    productDescription.text=product.productDescription;
+
+}
 
 - (void)subtractTime {
     // 1
@@ -74,11 +89,6 @@
        // [self performSegueWithIdentifier:@"timeup" sender:self];
     }
 }
-- (void)viewDidUnload
-{
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-}
 
 - (IBAction)snachit:(id)sender {
     NSLog(@"ShowView");
@@ -94,16 +104,7 @@
     
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:@"snachit"]) {
-        
-        SnachCheckDetails *destViewController = segue.destinationViewController;
-        destViewController.prodName = prodName;
-        destViewController.prodPrice =prodPrice;
-        destViewController.prodImgName =prodImgName;
-        destViewController.brandImgName = brandImgName;
-    }
-}
+
 
 
 
@@ -125,6 +126,17 @@
     }
     
     return cell;
+}
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+    self.productimage=nil;
+    self.brandimag=nil;
+    productPrice=nil;
+    productName=nil;
+    
+    
+    // Release any retained subviews of the main view.
 }
 
 @end

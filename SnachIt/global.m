@@ -10,6 +10,7 @@
 NSString *userName;
 NSString *userProfilePic;
 NSString *screenName;
+NSString *ssousing;
 int i=0;//for screen tracking
 @implementation global
 

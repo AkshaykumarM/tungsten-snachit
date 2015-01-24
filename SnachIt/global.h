@@ -11,6 +11,7 @@ extern NSString *userName;
 extern NSString *userProfilePic;
 extern NSString *screenName;
 extern int i;
+extern NSString *ssousing;
 @interface global : NSObject
 
 @end

@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SnachitSignup">
             <connections>
+                <outlet property="activityIndicator" destination="Cl6-p5-gqo" id="sy4-gk-dDQ"/>
                 <outlet property="emailTextField" destination="1ig-26-Cfx" id="MDw-RZ-jl1"/>
+                <outlet property="errorLbl" destination="RIg-fN-vLe" id="eOL-hY-YS3"/>
                 <outlet property="fbBtn" destination="YNQ-UB-AqL" id="AgA-iG-VNq"/>
                 <outlet property="gPlusBtn" destination="Mjk-ht-fnA" id="Mbv-ac-3PV"/>
                 <outlet property="passwordTextField" destination="egq-SY-Kef" id="aTY-b7-4xR"/>
@@ -41,6 +42,9 @@
                             <include reference="92k-ip-2dp"/>
                         </mask>
                     </variation>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="VE5-PL-ymy"/>
+                    </connections>
                 </textField>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="egq-SY-Kef">
                     <rect key="frame" x="20" y="350" width="280" height="35"/>
@@ -60,6 +64,9 @@
                             <include reference="NMd-NL-eyJ"/>
                         </mask>
                     </variation>
+                    <connections>
+                        <outlet property="delegate" destination="-1" id="PFP-qD-c0R"/>
+                    </connections>
                 </textField>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="e97-DZ-Oqe">
                     <rect key="frame" x="20" y="393" width="280" height="45"/>
@@ -228,6 +235,25 @@
                         </mask>
                     </variation>
                 </button>
+                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RIg-fN-vLe">
+                    <rect key="frame" x="20" y="382" width="280" height="10"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="10" id="zCu-RC-veS"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="10"/>
+                    <color key="textColor" red="1" green="0.055564177692276173" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="zCu-RC-veS"/>
+                        </mask>
+                    </variation>
+                    <variation key="widthClass=compact">
+                        <mask key="constraints">
+                            <include reference="zCu-RC-veS"/>
+                        </mask>
+                    </variation>
+                </label>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
@@ -259,22 +285,31 @@
                 <constraint firstItem="ISz-dX-5RU" firstAttribute="top" secondItem="UpA-p7-Ujo" secondAttribute="bottom" constant="2" id="W1Q-rW-Xdc"/>
                 <constraint firstItem="Mjk-ht-fnA" firstAttribute="leading" secondItem="UpA-p7-Ujo" secondAttribute="trailing" constant="41" id="XhJ-6e-lbz"/>
                 <constraint firstAttribute="bottom" secondItem="Yvg-3p-FUt" secondAttribute="bottom" id="YdL-rr-nKg"/>
-                <constraint firstItem="1ig-26-Cfx" firstAttribute="top" secondItem="Cl6-p5-gqo" secondAttribute="bottom" constant="13" id="aMw-Rn-lKV"/>
+                <constraint firstItem="1ig-26-Cfx" firstAttribute="top" secondItem="Cl6-p5-gqo" secondAttribute="bottom" constant="13" id="aMw-Rn-lKV">
+                    <variation key="widthClass=compact" constant="5"/>
+                </constraint>
                 <constraint firstItem="e97-DZ-Oqe" firstAttribute="top" secondItem="Yvg-3p-FUt" secondAttribute="bottom" constant="-175" id="bmh-ua-uK3">
                     <variation key="widthClass=compact" constant="-134"/>
                 </constraint>
                 <constraint firstItem="UpA-p7-Ujo" firstAttribute="leading" secondItem="YNQ-UB-AqL" secondAttribute="trailing" constant="41" id="dKx-Li-EvK"/>
-                <constraint firstItem="e97-DZ-Oqe" firstAttribute="top" secondItem="egq-SY-Kef" secondAttribute="bottom" constant="8" id="edM-RM-fyG"/>
+                <constraint firstItem="e97-DZ-Oqe" firstAttribute="top" secondItem="egq-SY-Kef" secondAttribute="bottom" constant="8" id="edM-RM-fyG">
+                    <variation key="widthClass=compact" constant="15"/>
+                </constraint>
                 <constraint firstItem="1ig-26-Cfx" firstAttribute="leading" secondItem="tbR-xk-bqE" secondAttribute="leading" constant="20" id="gzc-Wb-Wia">
                     <variation key="widthClass=compact" constant="25"/>
                 </constraint>
+                <constraint firstAttribute="trailing" secondItem="RIg-fN-vLe" secondAttribute="trailing" constant="25" id="hJn-ls-pN1"/>
                 <constraint firstItem="CvI-Vc-EGJ" firstAttribute="top" secondItem="e97-DZ-Oqe" secondAttribute="bottom" constant="6" id="k3y-Iw-vft"/>
                 <constraint firstItem="89z-ar-rJC" firstAttribute="top" secondItem="Mjk-ht-fnA" secondAttribute="bottom" constant="2" id="nxM-SD-kEq"/>
+                <constraint firstItem="RIg-fN-vLe" firstAttribute="leading" secondItem="tbR-xk-bqE" secondAttribute="leading" constant="25" id="oFl-4d-pNh"/>
                 <constraint firstAttribute="trailing" secondItem="Yvg-3p-FUt" secondAttribute="trailing" id="poP-z0-Ul9"/>
                 <constraint firstAttribute="trailing" secondItem="egq-SY-Kef" secondAttribute="trailing" constant="20" id="vYm-fO-xfe">
                     <variation key="widthClass=compact" constant="25"/>
                 </constraint>
                 <constraint firstItem="Mjk-ht-fnA" firstAttribute="top" secondItem="e97-DZ-Oqe" secondAttribute="bottom" constant="37" id="vYx-eo-RSu"/>
+                <constraint firstItem="RIg-fN-vLe" firstAttribute="top" secondItem="egq-SY-Kef" secondAttribute="bottom" constant="-4" id="wak-Hy-sx6">
+                    <variation key="widthClass=compact" constant="3"/>
+                </constraint>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">
@@ -286,26 +321,29 @@
                     <exclude reference="C3a-Ss-QA7"/>
                     <exclude reference="DB6-OH-FPz"/>
                     <exclude reference="Foh-5F-iA4"/>
-                    <exclude reference="edM-RM-fyG"/>
-                    <exclude reference="k3y-Iw-vft"/>
-                    <exclude reference="Rhx-xh-IwY"/>
-                    <exclude reference="GqA-AO-ATn"/>
-                    <exclude reference="M8M-Ib-Lcj"/>
-                    <exclude reference="dKx-Li-EvK"/>
-                    <exclude reference="XhJ-6e-lbz"/>
-                    <exclude reference="vYx-eo-RSu"/>
-                    <exclude reference="Jba-w1-tJK"/>
-                    <exclude reference="K4x-Iy-YoI"/>
-                    <exclude reference="W1Q-rW-Xdc"/>
-                    <exclude reference="9t0-Df-Ek3"/>
-                    <exclude reference="Hds-yk-XiT"/>
-                    <exclude reference="nxM-SD-kEq"/>
                     <exclude reference="SRq-w9-Ubn"/>
                     <exclude reference="aMw-Rn-lKV"/>
                     <exclude reference="gzc-Wb-Wia"/>
                     <exclude reference="7Ea-6K-hrS"/>
                     <exclude reference="VcR-5w-m2B"/>
                     <exclude reference="vYm-fO-xfe"/>
+                    <exclude reference="hJn-ls-pN1"/>
+                    <exclude reference="oFl-4d-pNh"/>
+                    <exclude reference="wak-Hy-sx6"/>
+                    <exclude reference="edM-RM-fyG"/>
+                    <exclude reference="k3y-Iw-vft"/>
+                    <exclude reference="Rhx-xh-IwY"/>
+                    <exclude reference="GqA-AO-ATn"/>
+                    <exclude reference="M8M-Ib-Lcj"/>
+                    <exclude reference="dKx-Li-EvK"/>
+                    <exclude reference="Jba-w1-tJK"/>
+                    <exclude reference="K4x-Iy-YoI"/>
+                    <exclude reference="W1Q-rW-Xdc"/>
+                    <exclude reference="XhJ-6e-lbz"/>
+                    <exclude reference="vYx-eo-RSu"/>
+                    <exclude reference="9t0-Df-Ek3"/>
+                    <exclude reference="Hds-yk-XiT"/>
+                    <exclude reference="nxM-SD-kEq"/>
                 </mask>
             </variation>
             <variation key="widthClass=compact">
@@ -317,29 +355,32 @@
                     <include reference="C3a-Ss-QA7"/>
                     <include reference="DB6-OH-FPz"/>
                     <include reference="Foh-5F-iA4"/>
-                    <include reference="edM-RM-fyG"/>
-                    <include reference="k3y-Iw-vft"/>
-                    <include reference="Rhx-xh-IwY"/>
-                    <include reference="GqA-AO-ATn"/>
-                    <include reference="M8M-Ib-Lcj"/>
-                    <include reference="dKx-Li-EvK"/>
-                    <include reference="XhJ-6e-lbz"/>
-                    <include reference="vYx-eo-RSu"/>
-                    <include reference="Jba-w1-tJK"/>
-                    <include reference="K4x-Iy-YoI"/>
-                    <include reference="W1Q-rW-Xdc"/>
-                    <include reference="9t0-Df-Ek3"/>
-                    <include reference="Hds-yk-XiT"/>
-                    <include reference="nxM-SD-kEq"/>
                     <include reference="SRq-w9-Ubn"/>
                     <include reference="aMw-Rn-lKV"/>
                     <include reference="gzc-Wb-Wia"/>
                     <include reference="7Ea-6K-hrS"/>
                     <include reference="VcR-5w-m2B"/>
                     <include reference="vYm-fO-xfe"/>
+                    <include reference="hJn-ls-pN1"/>
+                    <include reference="oFl-4d-pNh"/>
+                    <include reference="wak-Hy-sx6"/>
+                    <include reference="edM-RM-fyG"/>
+                    <include reference="k3y-Iw-vft"/>
+                    <include reference="Rhx-xh-IwY"/>
+                    <include reference="GqA-AO-ATn"/>
+                    <include reference="M8M-Ib-Lcj"/>
+                    <include reference="dKx-Li-EvK"/>
+                    <include reference="Jba-w1-tJK"/>
+                    <include reference="K4x-Iy-YoI"/>
+                    <include reference="W1Q-rW-Xdc"/>
+                    <include reference="XhJ-6e-lbz"/>
+                    <include reference="vYx-eo-RSu"/>
+                    <include reference="9t0-Df-Ek3"/>
+                    <include reference="Hds-yk-XiT"/>
+                    <include reference="nxM-SD-kEq"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="-37" y="-590"/>
+            <point key="canvasLocation" x="-236" y="-640"/>
         </view>
     </objects>
     <resources>

@@ -56,9 +56,7 @@ UIView* backView ;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    [self makeSnachHistoryRequest];
-    [self makeFriendsSnachesRequest];
-    [self makeBrandProductsRequest];
+   
     self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
     self.profilePic.clipsToBounds = YES;
     self.profilePic.layer.borderWidth = 5.0f;
@@ -82,7 +80,12 @@ UIView* backView ;
     self.myImage = [UIImage imageNamed:@"profile.png"];
     
    }
-
+-(void)viewDidAppear:(BOOL)animated{
+    [self makeSnachHistoryRequest];
+    [self makeFriendsSnachesRequest];
+    [self makeBrandProductsRequest];
+    [_tableView reloadData];
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -427,10 +430,10 @@ case 2:
 }
 - (IBAction)snoopButton:(id)sender {
    
-    SnachProductDetails *tempView = [[SnachProductDetails alloc] init];
-    tempView.prodImgName=self.tappedProductImage;
-    tempView.prodName=self.tappedProductName;
-    tempView.prodPrice=self.tappedProductPrice;
+//    SnachProductDetails *tempView = [[SnachProductDetails alloc] init];
+//    tempView.prodImgName=self.tappedProductImage;
+//    tempView.prodName=self.tappedProductName;
+//    tempView.prodPrice=self.tappedProductPrice;
     
 }
 

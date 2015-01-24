@@ -9,26 +9,41 @@
 #import "OrderTotalOverview.h"
 #import "OrderTotalCell.h"
 #import "SnachCheckDetails.h"
+#import "ShippingOverlay.h"
+#import "SnoopedProduct.h"
 NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
+NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 @interface OrderTotalOverview()
 @property (nonatomic,strong) NSArray *cellId;
 
 @end
 
-@implementation OrderTotalOverview
-@synthesize brandImg,productname,productImg,productimgname,productNameLbl,brandimgname,productPriceBtn,productprice,cellId,totalLabel;
+@implementation OrderTotalOverview{
+    SnoopedProduct *product;
+}
+@synthesize brandImg,productImg,productNameLbl,productPriceBtn,cellId,productDesc,totalLabel;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     cellId = [NSArray arrayWithObjects: @"orderTotalCell",@"subtotalCell", @"shippingCell", @"salesTaxCell",nil];
     // Set the Label text with the selected recipe
-    productNameLbl.text = productname;
     
-    brandImg.image=[UIImage imageNamed: brandimgname];
-    productImg.image=[UIImage imageNamed: productimgname];
-    [productPriceBtn setTitle: productprice forState:UIControlStateNormal];
-    totalLabel.text=[NSString stringWithFormat:@"%@",productprice];
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [self initializeView];
+}
+
+-(void)initializeView{
+    
+    product=[SnoopedProduct sharedInstance];
+    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    brandImg.image=[UIImage imageWithData:product.brandImageData];
+    productImg.image=[UIImage imageWithData:product.productImageData];
+    [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
+    productDesc.text=product.productDescription;
+    
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
@@ -41,7 +56,7 @@ NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.subtotalLabel.text = [NSString stringWithFormat:@"%@",productprice];
+    cell.subtotalLabel.text = [NSString stringWithFormat:@"%@",product.productPrice];
     cell.shippingAndhandlingLabel.text=@"Free Shipping";
     cell.salesTaxLabel.text=@"$0.0";
     return cell;
@@ -53,17 +68,16 @@ NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
     [self performSegueWithIdentifier:BACKSTPSEAGUE sender:self];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    if ([segue.identifier isEqualToString:BACKSTPSEAGUE]) {
-        
-        SnachCheckDetails *destViewController = segue.destinationViewController;
-        destViewController.prodName = productname;
-        destViewController.prodImgName=productimgname;
-        destViewController.prodPrice =productprice;
-        destViewController.brandImgName = brandimgname;
-        
-        
-    }
+
+- (void)viewDidUnload
+{
+    [super viewDidUnload];
+   
+    self.productImg=nil;
+    self.brandImg=nil;
+    productPriceBtn=nil;
+    productNameLbl=nil;
+    // Release any retained subviews of the main view.
 }
 
 
