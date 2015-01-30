@@ -62,7 +62,7 @@
 }
 
 -(NSDictionary*)getUserCreditCardDetails{
-    NSDictionary *creditCardDetails=@{@"cardName":self.paymentCardName,@"cardName": self.paymentCardNumber ,@"cardExpDate":self.paymentCardExpDate,@"cardCVV":self.paymentCardCVV};
+    NSDictionary *creditCardDetails=@{@"cardName":self.paymentCardName,@"cardNumber": self.paymentCardNumber ,@"cardExpDate":self.paymentCardExpDate,@"cardCVV":self.paymentCardCVV};
 
 return creditCardDetails;
 }

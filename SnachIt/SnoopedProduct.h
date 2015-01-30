@@ -11,6 +11,7 @@
 @interface SnoopedProduct : NSObject
 @property (nonatomic,strong) NSString *productId;
 @property (nonatomic,strong) NSString *brandId;
+@property (nonatomic,strong) NSString *snachId;
 @property (nonatomic,strong) NSString *productName;
 @property (nonatomic,strong) NSString *brandName;
 @property (nonatomic,strong) NSData *productImageData;
@@ -23,6 +24,6 @@
 + (SnoopedProduct *)sharedInstance;
 
 
--(id)initWithProductId:(NSString*)productId withBrandId:(NSString*)brandId withProductName:(NSString*)productName withBrandName:(NSString*)brandName withProductImageURL:(NSURL*)productImageURL withBrandImageURL:(NSURL*)brandImageURL withProductPrice:(NSString*)productPrice withProductDescription:(NSString*)productDescription;
+-(id)initWithProductId:(NSString*)productId withBrandId:(NSString*)brandId withSnachId:(NSString*)snachId withProductName:(NSString*)productName withBrandName:(NSString*)brandName withProductImageURL:(NSURL*)productImageURL withBrandImageURL:(NSURL*)brandImageURL withProductPrice:(NSString*)productPrice withProductDescription:(NSString*)productDescription;
 
 @end

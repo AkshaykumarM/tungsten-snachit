@@ -20,10 +20,12 @@
     return sharedInstance;
 }
 
--(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingAndHandling:(NSString*)shippingAndHandling withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withShippingCost:(NSString*)shippingCost withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate{
+-(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingAndHandling:(NSString*)shippingAndHandling withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withShippingCost:(NSString*)shippingCost withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate{
     self = [super init];
     self.userId=userId;
     self.productId=productId;
+    self.snachId=snachId;
+    self.emailId=emailId;
     self.orderQuantity=orderQuantity;
     self.subTotal=subTotal;
     self.orderTotal=orderTotal;
@@ -36,6 +38,9 @@
     
     return self;
 }
-
+-(NSDictionary*)getOrderDetails{
+     NSDictionary *orderDetails=@{@"userId":self.userId,@"productId": self.productId,@"snachId": self.snachId,@"userEmail":self.emailId,@"orderQunatity":self.orderQuantity,@"subTotal":self.subTotal,@"orderTotal":self.orderTotal,@"shippingAndHandling":self.shippingAndHandling,@"salesTax": self.salesTax,@"speed":self.speed,@"shippingCost":self.shippingCost,@"orderDate":self.orderDate,@"deliveryDate":self.deliveryDate};
+    return orderDetails;
+}
 
 @end

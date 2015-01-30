@@ -11,7 +11,8 @@
 @interface Order : NSObject
 @property (nonatomic,strong) NSString *userId;
 @property (nonatomic,strong) NSString *productId;
-
+@property (nonatomic,strong) NSString *snachId;
+@property (nonatomic,strong) NSString *emailId;
 @property (nonatomic,strong) NSString *orderQuantity;
 @property (nonatomic,strong) NSString *subTotal;
 @property (nonatomic,strong) NSString *orderTotal;
@@ -25,6 +26,7 @@
 
 +(Order*)sharedInstance;
 
--(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingAndHandling:(NSString*)shippingAndHandling withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withShippingCost:(NSString*)shippingCost withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate;
+-(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingAndHandling:(NSString*)shippingAndHandling withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withShippingCost:(NSString*)shippingCost withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate;
 
+-(NSDictionary*)getOrderDetails;
 @end

@@ -11,6 +11,8 @@
 @interface MyProfile : UIViewController 
 
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
+@property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *tabSelect;
 - (IBAction)indexChanged:(id)sender;
 

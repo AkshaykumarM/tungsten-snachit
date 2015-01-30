@@ -29,6 +29,9 @@
 
 - (IBAction)viewOtherDeals:(id)sender {
     
-    //[self performSegueWithIdentifier:@"viewotherdeals" sender:self];
+    [self dismissViewControllerAnimated:NO completion:nil];
+    [self.navigationController popToRootViewControllerAnimated:YES];
 }
+
+
 @end

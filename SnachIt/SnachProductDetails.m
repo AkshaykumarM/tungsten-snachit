@@ -11,7 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "SnoopedProduct.h"
 #import "Order.h"
-#import "SnoopingUserDetails.h"
+#import "UserProfile.h"
 @interface SnachProductDetails()
 
 
@@ -23,7 +23,7 @@
     NSTimer *timer;
     SnoopedProduct *product;
     Order *order;
-    SnoopingUserDetails *userdetails;
+    UserProfile *user;
 }
 @synthesize productName,productimage,brandimag,productPrice,productDescription,counter;
 
@@ -55,8 +55,8 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    userdetails=[SnoopingUserDetails sharedInstance];
-    
+
+    user=[UserProfile sharedInstance];
     [self initializeOrder];
 
 }
@@ -148,7 +148,10 @@
     
     // Release any retained subviews of the main view.
 }
+
+
+
 -(void)initializeOrder{
-    order=[[Order sharedInstance] initWithUserId:userdetails.userId withProductId:product.productId withOrderQuantity:[NSString stringWithFormat:@"%d",1] withSubTotal:product.productPrice withOrderTotal:product.productPrice withShippingAndHandling:[NSString stringWithFormat:@"%d",5] withSalesTax:[NSString stringWithFormat:@"%d",2] withSpeed:@"2" withShippingCost:[NSString stringWithFormat:@"%d",8] withOrderDate:@"23/1/2015" withDeliveryDate:@"29/1/2015"];
+    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:[NSString stringWithFormat:@"%d",1] withSubTotal:product.productPrice withOrderTotal:product.productPrice withShippingAndHandling:[NSString stringWithFormat:@"%d",5] withSalesTax:[NSString stringWithFormat:@"%d",2] withSpeed:@"2" withShippingCost:[NSString stringWithFormat:@"%d",8] withOrderDate:@"23/1/2015" withDeliveryDate:@"2015-1-29"];
 }
 @end

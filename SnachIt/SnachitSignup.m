@@ -144,13 +144,13 @@ CGFloat animatedDistance;
         if([self IsEmailValid:username] && [password length]>=6)
         {
             [self.errorLbl setHidden:YES];
-            NSInteger status=[self getSignUp:@"" LastName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSToken SignUpVia:@"SnachIt" DOB:@""];
+            NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSToken SignUpVia:@"SnachIt" DOB:@""];
             
             NSLog(@"status%d",status);
             if(status==1){
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 [defaults setInteger:1 forKey:@"signedUp"];
-                [defaults setObject:userName forKey:@"Username"];
+                [defaults setObject:username forKey:@"Username"];
                 [defaults setObject:password forKey:@"Password"];
                 SnachItLogin *startscreen = [[SnachItLogin alloc]
                                  initWithNibName:@"LoginScreen" bundle:nil];
@@ -175,27 +175,24 @@ CGFloat animatedDistance;
 //this function will let signup the user and will provide 1 if success and 0 else
 
 
--(NSInteger)getSignUp:(NSString*)firstName LastName:(NSString*)lastName EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob{
-    
-    NSLog(@"%@ %@ %@ %@ %@ %@ %@ %@ %@ %@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia,dob);
-    
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSDictionary *response;
-    
+-(NSInteger)getSignUp:(NSString*)firstName LastName:(NSString*)lastName FullName:fullname EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob{
     NSString *url;
-    if(![signUpVia isEqual:@"SnachIt"]){
-        url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signUpFromMobile/?firstName=%@&lastName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@&dob=%@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia,dob];
-    }else{
-        url=[NSString stringWithFormat:@"http://192.168.0.121:8000/signUpFromMobile/?firstName=%@&lastName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
-
-    }
     
-    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:url]];
+        url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+    
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    //getting the data
+    NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    NSLog(@"GetSignUp:%@",request);
+
     if (jasonData) {
-        NSError *e = nil;
-        response = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
-        NSLog(@"%@",url);
-        if([[response valueForKey:@"success"] isEqual:@"true"])
+        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+        NSLog(@"GetSignUp:%@",[response valueForKey:@"error_code"]);
+        if([[response valueForKey:@"success"] isEqual:@"true"]|| [[response valueForKey:@"error_code"] integerValue]==2)
         {
             //caching userid for sso
             status=1;

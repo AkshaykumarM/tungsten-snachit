@@ -7,8 +7,10 @@
 //
 
 #import "BillingInfoOverview.h"
-
-@implementation BillingInfoOverview
+#import "UserProfile.h"
+@implementation BillingInfoOverview{
+    UserProfile *user;
+}
 @synthesize cardholderNameTextField=_cardholderNameTextField;
 @synthesize cardnoTextField=_cardnoTextField;
 @synthesize expdateTextField=_expdateTextField;
@@ -31,7 +33,22 @@ CGFloat animatedDistance;
     [self setViewLookAndFeel];
     
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    user=[UserProfile sharedInstance];
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self initialLize];
+}
+-(void)initialLize{
+    
+    if(user.profilePicUrl!=nil){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            self.profilePic.image = [UIImage imageWithData:data];
+        }];
+    }
+}
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     
     if(textField){

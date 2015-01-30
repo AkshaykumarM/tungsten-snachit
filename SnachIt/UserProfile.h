@@ -16,6 +16,7 @@
 @property (nonatomic,strong) NSString *phoneNumber;
 @property (nonatomic,strong) NSString *firstName;
 @property (nonatomic,strong) NSString *lastName;
+@property (nonatomic,strong) NSString *fullName;
 @property (nonatomic,strong) NSString *dateOfBirth;
 @property (nonatomic,strong) NSString *joiningDate;
 /*
@@ -23,7 +24,7 @@ This instance will be used to access currently logged in user info*/
 + (UserProfile *)sharedInstance;
 
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate;
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate;
 
 -(NSString*)getUserId;
 @end

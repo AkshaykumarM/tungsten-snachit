@@ -11,5 +11,8 @@
 @interface SnatchHistory : UIViewController
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 - (IBAction)backBtn:(id)sender;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *snachHistorySegmentControl;
+- (IBAction)snachHistorySegmentChanged:(id)sender;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end

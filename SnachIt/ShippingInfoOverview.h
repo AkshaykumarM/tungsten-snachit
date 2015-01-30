@@ -9,6 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface ShippingInfoOverview : UIViewController<UITextFieldDelegate>
+@property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 @property (strong, nonatomic) IBOutlet UIView *shippingInfoView;
 @property (weak, nonatomic) IBOutlet UIView *uiView;

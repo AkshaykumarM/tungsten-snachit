@@ -7,10 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "CardIOPaymentViewControllerDelegate.h"
 @interface ScanCard : UIViewController<UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
-@property (weak, nonatomic) IBOutlet UIImageView *imageView;
 - (IBAction)closeBtn:(id)sender;
 
 @end

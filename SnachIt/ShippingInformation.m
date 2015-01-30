@@ -9,14 +9,29 @@
 #import "ShippingInformation.h"
 #import "SWRevealViewController.h"
 #import "SnatchFeed.h"
-@implementation ShippingInformation
+#import "UserProfile.h"
 
+@interface ShippingInformation()
+
+@end
+@implementation ShippingInformation
+{
+    UserProfile *user;
+}
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setViewLookAndFeel];
     
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    user=[UserProfile sharedInstance];
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    
+    [self initialLize];
+}
 
 - (void)viewDidUnload
 {
@@ -39,6 +54,21 @@
     self.profilePic.layer.borderWidth = 3.0f;
     self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
 }
+-(void)initialLize{
+    
+    if(user.profilePicUrl!=nil){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            self.profilePic.image = [UIImage imageWithData:data];
+        }];
+    }
+    if(![user.fullName isKindOfClass:[NSNull class]])
+        self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
+    
+    self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    self.fullNameLbl.adjustsFontSizeToFitWidth=YES;
+    self.fullNameLbl.minimumScaleFactor=0.5;
+}
+
 - (IBAction)backBtn:(id)sender {
     UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
     SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];

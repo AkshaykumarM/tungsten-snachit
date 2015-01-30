@@ -19,11 +19,12 @@
     return sharedInstance;
 }
 
--(id)initWithProductId:(NSString*)productId withBrandId:(NSString*)brandId withProductName:(NSString*)productName withBrandName:(NSString*)brandName withProductImageURL:(NSURL*)productImageURL withBrandImageURL:(NSURL*)brandImageURL  withProductPrice:(NSString*)productPrice withProductDescription:(NSString*)productDescription
+-(id)initWithProductId:(NSString*)productId withBrandId:(NSString*)brandId withSnachId:(NSString*)snachId withProductName:(NSString*)productName withBrandName:(NSString*)brandName withProductImageURL:(NSURL*)productImageURL withBrandImageURL:(NSURL*)brandImageURL  withProductPrice:(NSString*)productPrice withProductDescription:(NSString*)productDescription
 {
     self = [super init];
     self.productId=productId;
     self.brandId=brandId;
+    self.snachId=snachId;
     self.productName=productName;
     self.brandName=brandName;
     self.productPrice=productPrice;

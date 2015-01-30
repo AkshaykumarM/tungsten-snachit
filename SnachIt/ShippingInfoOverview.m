@@ -7,8 +7,11 @@
 //
 
 #import "ShippingInfoOverview.h"
-
+#import "UserProfile.h"
 @implementation ShippingInfoOverview
+{
+    UserProfile *user;
+}
 @synthesize firstNameTextField=_firstNameTextField;
 @synthesize lastNameTextField=_lastNameTextField;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -27,6 +30,15 @@ CGFloat animatedDistance;
     [self setViewLookAndFeel];
     
 }
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self initialLize];
+}
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    user=[UserProfile sharedInstance];
+}
+
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     
     if(textField){
@@ -36,7 +48,14 @@ CGFloat animatedDistance;
 }
 
 
-
+-(void)initialLize{
+    
+    if(user.profilePicUrl!=nil){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            self.profilePic.image = [UIImage imageWithData:data];
+        }];
+    }
+}
 -(void)setViewLookAndFeel{
     UIColor *borderColor=[UIColor colorWithRed:0.792 green:0.792 blue:0.792 alpha:0.4];
     self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;

@@ -12,4 +12,5 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 - (IBAction)viewOtherDeals:(id)sender;
 
+
 @end

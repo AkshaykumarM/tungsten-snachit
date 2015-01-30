@@ -12,6 +12,8 @@
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *uiView;
 
+@property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 @property (weak, nonatomic) IBOutlet UIView *billingInfoView;
 @property (weak, nonatomic) IBOutlet UIView *staticTableContainer;

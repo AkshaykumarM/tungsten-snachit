@@ -12,5 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 - (IBAction)backBtn:(id)sender;
+@property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
+@property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 
 @end

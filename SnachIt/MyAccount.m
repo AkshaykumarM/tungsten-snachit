@@ -11,6 +11,7 @@
 #import "SWRevealViewController.h"
 #import "global.h"
 #import "AFNetworking.h"
+#import "UserProfile.h"
 @interface MyAccount ()
 @property(nonatomic,strong) NSArray *options,*icons;
 
@@ -21,7 +22,7 @@
 @implementation MyAccount
 
 {
-   
+    UserProfile *user;
     int  selectFlag;
 }
 @synthesize options ,icons,menuItems,userNameLbl;
@@ -30,13 +31,13 @@
     [super viewDidLoad];
     [self setViewLookAndFeel];
     
- 
+    
     selectFlag= 0;
     options = [NSArray arrayWithObjects:@"My Account", @"Account Setting",@"Billing Information",@"Shipping Information",@"Snach History", nil];
     icons= [NSArray arrayWithObjects:@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
     menuItems = [NSArray arrayWithObjects: @"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
-
-
+    
+    
     // Load the file content and read the data into arrays
     }
 
@@ -53,14 +54,22 @@
     [self initialLize];
 }
 
+-(void)viewWillAppear:(BOOL)animated{
+    user=[UserProfile sharedInstance];
+}
 -(void)initialLize{
     
-    NSString *imageUrl = userProfilePic;
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:imageUrl]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    if(user.profilePicUrl!=nil){
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         self.profilePic.image = [UIImage imageWithData:data];
     }];
-    self.userNameLbl.text=userName;
-    
+    }
+    if(![user.fullName isKindOfClass:[NSNull class]])
+        self.userNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
+
+    self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    self.userNameLbl.adjustsFontSizeToFitWidth=YES;
+    self.userNameLbl.minimumScaleFactor=0.5;
 }
 
 

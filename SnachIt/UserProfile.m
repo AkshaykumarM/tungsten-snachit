@@ -21,7 +21,7 @@
     return sharedInstance;
 }
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate
 {
     self = [super init];
     self.userID=userId;
@@ -31,6 +31,7 @@
     self.phoneNumber=phoneNumber;
     self.firstName=firstName;
     self.lastName=lastName;
+    self.fullName=fullName;
     self.dateOfBirth=dateOfBirth;
     self.joiningDate=joiningDate;
     return self;

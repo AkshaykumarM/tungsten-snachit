@@ -23,6 +23,6 @@
 
 - (IBAction)loginHereBtn:(id)sender;
 
--(int)getSignUp:(NSString*)firstName LastName:(NSString*)lastName EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob;
+-(int)getSignUp:(NSString*)firstName LastName:(NSString*)lastName FullName:(NSString*)fullName EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob;
 
 @end

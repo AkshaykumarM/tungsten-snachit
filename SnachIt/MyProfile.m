@@ -13,10 +13,11 @@
 #import "MyProfileSnachsCell.h"
 #import "SnachProductDetails.h"
 #import "SnatchFeed.h"
+#import "UserProfile.h"
 @interface MyProfile ()
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
-@property(nonatomic,strong) NSArray *options,*profileimg,*productimg,*statusimg,*brandimg,*followimg,*productName,*brandName,*productPrice;
+@property(nonatomic,strong) NSArray *profileimg,*productimg,*brandimg,*followimg,*productName,*brandName,*productPrice;
 @property(nonatomic,strong) NSArray *snachhistoryInflightList;
 @property(nonatomic,strong) NSArray *snachhistoryDeliveredList;
 @property(nonatomic,strong) NSArray *friendsnacheslist;
@@ -46,17 +47,17 @@
 
 {
     NSString *cellId,*subCellId;
-    
+    UserProfile *user;
 }
 
 @synthesize tabSelect=_tabSelect;
 @synthesize subTabSelect=_subTabSelect;
-@synthesize options,menuItems,profileimg,productimg,statusimg,brandimg,followimg,brandName,productName,productPrice;
+@synthesize menuItems,profileimg,productimg,brandimg,followimg,brandName,productName,productPrice;
 UIView* backView ;
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-   
+   [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
     self.profilePic.clipsToBounds = YES;
     self.profilePic.layer.borderWidth = 5.0f;
@@ -64,11 +65,10 @@ UIView* backView ;
     
     cellId=@"friendsCell";
     subCellId=@"all";
-    options = [NSArray arrayWithObjects:@"Diana Remirez", @"Aishwarya Kulkarni",@"Pooja Prajapati",@"Darshana Alone",@"Ankita Lahoti",@"Bhudevi Deshpande", nil];
-    profileimg= [NSArray arrayWithObjects:@"userIcon.png",@"userIcon.png",@"userIcon.png",@"userIcon.png",@"userIcon.png",@"userIcon.png",nil];
+    
+    
     productimg=[NSArray arrayWithObjects:@"staked-cup.png",@"product.png",@"mixer.png",@"staked-cup.png",@"staked-cup.png",@"staked-cup.png", nil];
-    statusimg=[NSArray arrayWithObjects:@"inflightIcon.png",@"deliveredIcon.png",@"deliveredIcon.png",@"deliveredIcon.png",@"deliveredIcon.png",@"inflightIcon.png", nil];
-    menuItems = [NSArray arrayWithObjects: @"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
+
     brandimg=[NSArray arrayWithObjects:@"outer-box.png",@"nike.png",@"outer-box.png",@"nike.png",@"nike.png", @"outer-box.png",nil];
     brandName = [NSArray arrayWithObjects:@"Breville", @"Mikasa",@"Nike",@"Outer-Box",@"Breville", @"Mikasa", nil];
 
@@ -78,14 +78,38 @@ UIView* backView ;
      [_subTabSelect setHidden:YES];//hiding the sub tab
     [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
-    
+
    }
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    user=[UserProfile sharedInstance];
+}
 -(void)viewDidAppear:(BOOL)animated{
+    [self initialLize];
     [self makeSnachHistoryRequest];
     [self makeFriendsSnachesRequest];
     [self makeBrandProductsRequest];
     [_tableView reloadData];
+    
 }
+
+-(void)initialLize{
+    
+    if(user.profilePicUrl!=nil){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            self.profilePic.image = [UIImage imageWithData:data];
+        }];
+    }
+    if(![user.fullName isKindOfClass:[NSNull class]])
+        self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
+    
+    self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    self.fullNameLbl.adjustsFontSizeToFitWidth=YES;
+    self.fullNameLbl.minimumScaleFactor=0.5;
+}
+
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -154,7 +178,8 @@ UIView* backView ;
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:freindProfilePic]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if(!error)
             {
-               cell.friendPic.image = [UIImage imageWithData:data];
+                cell.friendPic.image=[UIImage imageNamed:defaultProfile];
+               //cell.friendPic.image = [UIImage imageWithData:data];
          
             }
             else{
@@ -439,13 +464,14 @@ case 2:
 
 - (IBAction)barButtonItem:(id)sender {
     
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
-
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    [navController setViewControllers: @[rootViewController] animated: YES];
     
-    [self.revealViewController pushFrontViewController:navController animated:YES];
+//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+//    SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
+//
+//    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+//    [navController setViewControllers: @[rootViewController] animated: YES];
+//    
+//    [self.revealViewController pushFrontViewController:navController animated:YES];
     
 }
 -(void)makeSnachHistoryRequest{
@@ -481,5 +507,6 @@ case 2:
         self.brandproductslist=[temp objectForKey:@"data"];
     }   
 }
+
 
 @end

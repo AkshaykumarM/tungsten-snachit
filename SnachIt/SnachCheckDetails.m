@@ -15,7 +15,7 @@
 #import "SnoopedProduct.h"
 #import "SnoopingUserDetails.h"
 #import "Order.h"
-
+#import "global.h"
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
 NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
@@ -167,26 +167,10 @@ double orderTotal;
 }
 
 - (IBAction)swipeToSnach:(id)sender {
-
-    NSLog(@"%@",userdetails.getUserShippingDetails);
-  //  NSLog(@"%@",userdetails.getUserPaymentDetails);
-    //NSLog(@"%@",userdetails.getUserCreditCardDetails);
-    
-//  self.emailIds= [NSMutableArray array];
-//    [self.emailIds addObjectsFromArray:[self getallEmailIdsInAddressBook:addressBook]];
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-    [dictionary setObject:order.userId forKey:@"userId"];
-    [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
-    [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];
-   [dictionary setObject:userdetails.getUserCreditCardDetails forKey:@"creditCardDetails"];
-  NSError *error;
-    NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
-   NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
-    NSLog(@"jsonData as string:\n%@", jsonString);
-    
-    
+    NSLog(@"dsfdfdsdsdfdvvvdvdvdbd%d",[self snachProduct]);
+    if([self snachProduct]==1){
     [self performSegueWithIdentifier:STP_SEGUE sender:self];
-    
+    }
 }
 
 - (void)viewDidUnload
@@ -208,5 +192,43 @@ double orderTotal;
     orderTotal=[order.subTotal doubleValue]+[order.salesTax doubleValue]+[order.shippingCost doubleValue];
     order.orderTotal=[NSString stringWithFormat:@"%f",orderTotal];
 }
+
+
+
+/*
+ This method will return all info related to current order(The product selected by user)
+ */
+-(NSDictionary*)getOrderDetails{
+    
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setObject:order.userId forKey:@"userId"];
+    [dictionary setObject:order.getOrderDetails forKey:@"orderDetails"];
+    [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
+    [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];
+    [dictionary setObject:userdetails.getUserCreditCardDetails forKey:@"creditCardDetails"];
+    return dictionary;
+}
+
+
+/*
+ This method will snach the current product(The product selected by user)
+ */
+-(int)snachProduct{
+    NSError *error;
+    int status=0;
+    NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getOrderDetails] options:NSJSONWritingPrettyPrinted error:&error];
+    NSData *responseData=[global makePostRequest:orderJson requestURL:@"getPlacedOrderByCustomer/" ];
+    if (responseData) {
+                NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
+        
+                if([[response objectForKey:@"success"] isEqual:@"true"])
+                    status=1;
+                else
+                    status=0;
+            }
+
+      return status;
+}
+
 
 @end
