@@ -190,7 +190,7 @@ double orderTotal;
     order.subTotal=prodPrice;
     orderTotal=0;
     orderTotal=[order.subTotal doubleValue]+[order.salesTax doubleValue]+[order.shippingCost doubleValue];
-    order.orderTotal=[NSString stringWithFormat:@"%f",orderTotal];
+    order.orderTotal=[NSString stringWithFormat:@"%.2f",orderTotal];
 }
 
 

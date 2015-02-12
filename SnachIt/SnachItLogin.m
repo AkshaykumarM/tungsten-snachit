@@ -20,7 +20,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
 NSString *const SIGNINSEGUE=@"signInSegue";
 NSString *const USER_ID=@"userId";
-UIActivityIndicatorView *activitySpinner;
+
 UIView *backView;
 @interface SnachItLogin()<GPPSignInDelegate>
 
@@ -63,27 +63,7 @@ CGFloat animatedDistance;
     UIColor *color = [UIColor whiteColor];
     self.emailTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
     self.passwordTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password" attributes:@{NSForegroundColorAttributeName: color}];
-    CALayer *emailborder = [CALayer layer];
-    CALayer *passborder  = [CALayer layer];
-    CGFloat borderWidth = 1;
-    
-    //setting bottom border to email filed
-    emailborder.borderColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    emailborder.frame = CGRectMake(0, self.emailTfield.frame.size.height - borderWidth, self.emailTfield.frame.size.width, self.emailTfield.frame.size.height);
-    emailborder.borderWidth = borderWidth;
-    [self.emailTfield.layer addSublayer:emailborder];
-    self.emailTfield.layer.masksToBounds = YES;
    
-    
-    
-    //setting bottom border to password filed
-    passborder.borderColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    passborder.frame = CGRectMake(0, self.passwordTfield.frame.size.height - borderWidth, self.passwordTfield.frame.size.width, self.passwordTfield.frame.size.height);
-    passborder.borderWidth = borderWidth;
-    [self.passwordTfield.layer addSublayer:passborder];
-    self.passwordTfield.layer.masksToBounds = YES;
-    
-    
     
     
     }
@@ -164,6 +144,7 @@ CGFloat animatedDistance;
 }
 - (IBAction)fbBtn:(id)sender {
     [self startProcessing];
+        isAllreadySignedUp=FALSE;
       ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
@@ -203,7 +184,7 @@ CGFloat animatedDistance;
                           NSString *email = [user objectForKey:@"email"];
                           NSString *profilePic = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
                           NSString *phoneNo=@"";
-                          NSString *apns=firstName;
+                          
                           NSString *password=facebookId;
                           
                           if(email==nil){
@@ -211,7 +192,7 @@ CGFloat animatedDistance;
                               email=facebookId;
                           }
                           SnachitSignup *signUp=[[SnachitSignup alloc]init];
-                          NSInteger status=[signUp getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:password Profilepic:profilePic PhoneNo:phoneNo APNSToken:apns SignUpVia:ssousing DOB:@""];
+                          NSInteger status=[signUp getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:password Profilepic:profilePic PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
                           if(status==1){
                               int signinStatus=[self performSignIn:email Password:password SSOUsing:ssousing];
                               if(signinStatus==1){
@@ -241,39 +222,27 @@ CGFloat animatedDistance;
 
 - (IBAction)signInBtn:(id)sender {
    //start spinner
+    isAllreadySignedUp=FALSE;
     [self startProcessing];
     ssousing=@"SnachIt";
-//    if([screenName isEqual:@"signup"]){
-//   [[[self presentingViewController] presentingViewController]dismissModalViewControllerAnimated:YES ];
-//    }
-//    else{
-//         [[[[self presentingViewController] presentingViewController]presentingViewController]dismissModalViewControllerAnimated:YES ];
-//    }
-    //request for user auth
-  
+    if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
     if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
            [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     }
+    else{
+        [global showAllertForInvalidCredentials];
+    }
+    }
+    else{
+        [global showAllertForEnterValidCredentials];
+    }
     [self stopProcessing];
-            //[self.mySpinner stopAnimating];
-            
-            //caching userid for sso
-            //NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            //[defaults setObject:@"SnachIt" forKey:@"SSOUsing"];
-            //perfoming segue to snach feed screen
-          //;
-    
-   
-   
-//[self.mySpinner stopAnimating];
-//    [self dismissViewControllerAnimated:NO completion:nil];
-//    [self.navigationController popToRootViewControllerAnimated:YES];
     
 }
 
 -(int)performSignIn:(NSString*)username Password:(NSString*)password SSOUsing:(NSString*)ssoUsing{
 
-    NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",maschineIP,username,password];
+    NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",ec2maschineIP,username,password];
       NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     NSURLResponse *response = nil;
@@ -296,9 +265,9 @@ CGFloat animatedDistance;
             [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"]];
             NSLog(@"UserProfile:%@",userprofile);
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:ssoUsing forKey:@"SSOUsing"];
-            [defaults setObject:username forKey:@"Username"];
-            [defaults setObject:password forKey:@"Password"];
+            [defaults setObject:ssoUsing forKey:SSOUSING];
+            [defaults setObject:username forKey:USERNAME];
+            [defaults setObject:password forKey:PASSWORD];
             [defaults setInteger:1  forKey:@"signedUp"];
             status=1;
         }
@@ -403,9 +372,8 @@ CGFloat animatedDistance;
     NSString *email = [GPPSignIn sharedInstance].authentication.userEmail;
     NSString *imageUrl = [[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
     NSString *phoneNo=@"";
-    NSString *apns=firstName;
-    NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
-    NSInteger status=[signup getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:ssousing DOB:@"1993-5-7"];
+     NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
+    NSInteger status=[signup getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
     if(status==1)
     {
         state=1;
@@ -442,6 +410,7 @@ CGFloat animatedDistance;
 
 - (IBAction)gPlusBtn:(id)sender {
     [self startProcessing];
+        isAllreadySignedUp=FALSE;
     [self googleSignIn];
   
     
@@ -460,19 +429,35 @@ CGFloat animatedDistance;
     
     signIn.delegate = self;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"GP" forKey:@"SSOUsing"];
+    [defaults setObject:@"GP" forKey:SSOUSING];
     [signIn authenticate];
   }
 
 // ---- its call a web service to login with google+ info
 
 - (IBAction)twBtn:(id)sender {
-   
-    TwitterViewController *startscreen = [[TwitterViewController alloc]
-                                  initWithNibName:@"TwitterView" bundle:nil];
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    [defaults setObject:@"TW" forKey:@"SSOUsing"];
-    [self presentViewController:startscreen animated:YES completion:nil];
+       isAllreadySignedUp=FALSE;
+    CATransition* transition = [CATransition animation];
+    transition.duration = 1;
+    transition.type = kCATransitionMoveIn;
+    transition.subtype = kCATransitionFade;
+    
+    TwitterViewController *vc = [[TwitterViewController alloc]
+                              initWithNibName:@"TwitterView" bundle:nil];;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    [self presentViewController:vc animated:NO completion:nil];
+
+}
+
+- (IBAction)signUpBtn:(id)sender {
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    SnachitSignup *startscreen = [[SnachitSignup alloc]
+                                  initWithNibName:@"SignUpScreen" bundle:nil];
+    [self presentViewController:startscreen animated:NO completion:nil];
 }
 
 -(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate{

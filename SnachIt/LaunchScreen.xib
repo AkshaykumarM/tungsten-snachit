@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
     </dependencies>
     <objects>
@@ -11,71 +10,37 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="snach.it" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="miu-ef-YgB">
-                    <rect key="frame" x="57" y="283" width="175" height="35"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="35"/>
-                    <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="snach_logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="E95-dk-tG5">
-                    <rect key="frame" x="132" y="168" width="80" height="80"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="100" id="5lf-e3-bN2"/>
-                        <constraint firstAttribute="width" constant="100" id="kh4-Bm-Lgh"/>
-                    </constraints>
-                    <variation key="default">
-                        <mask key="constraints">
-                            <exclude reference="5lf-e3-bN2"/>
-                            <exclude reference="kh4-Bm-Lgh"/>
-                        </mask>
-                    </variation>
-                    <variation key="widthClass=compact">
-                        <mask key="constraints">
-                            <include reference="5lf-e3-bN2"/>
-                            <include reference="kh4-Bm-Lgh"/>
-                        </mask>
-                    </variation>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="r7B-B4-oRw">
+                    <rect key="frame" x="110" y="181" width="100" height="100"/>
                 </imageView>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstItem="E95-dk-tG5" firstAttribute="centerX" secondItem="miu-ef-YgB" secondAttribute="centerX" id="6eX-84-ajq"/>
-                <constraint firstAttribute="centerX" secondItem="E95-dk-tG5" secondAttribute="centerX" id="7tZ-8x-GJL"/>
-                <constraint firstItem="E95-dk-tG5" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="188" id="Fnv-1l-4La"/>
-                <constraint firstItem="E95-dk-tG5" firstAttribute="centerX" secondItem="miu-ef-YgB" secondAttribute="centerX" id="IqP-tO-kB1"/>
-                <constraint firstItem="E95-dk-tG5" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="bVX-Go-ZWj"/>
-                <constraint firstItem="miu-ef-YgB" firstAttribute="top" secondItem="E95-dk-tG5" secondAttribute="bottom" constant="10" id="f2E-G3-Jdp"/>
-                <constraint firstAttribute="centerY" secondItem="E95-dk-tG5" secondAttribute="centerY" constant="56" id="hHx-g4-RTE"/>
-                <constraint firstItem="miu-ef-YgB" firstAttribute="top" secondItem="E95-dk-tG5" secondAttribute="bottom" constant="27" id="oAX-i7-sFF">
-                    <variation key="widthClass=compact" constant="16"/>
+                <constraint firstAttribute="centerY" secondItem="r7B-B4-oRw" secondAttribute="centerY" constant="10" id="DHa-WZ-D9d">
+                    <variation key="widthClass=compact" constant="19.5"/>
+                </constraint>
+                <constraint firstAttribute="centerX" secondItem="r7B-B4-oRw" secondAttribute="centerX" id="saA-Lz-4xI">
+                    <variation key="widthClass=compact" constant="9.5"/>
                 </constraint>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">
                 <mask key="constraints">
-                    <exclude reference="Fnv-1l-4La"/>
-                    <exclude reference="IqP-tO-kB1"/>
-                    <exclude reference="bVX-Go-ZWj"/>
-                    <exclude reference="oAX-i7-sFF"/>
+                    <exclude reference="DHa-WZ-D9d"/>
+                    <exclude reference="saA-Lz-4xI"/>
                 </mask>
             </variation>
             <variation key="widthClass=compact">
                 <mask key="constraints">
-                    <exclude reference="6eX-84-ajq"/>
-                    <exclude reference="7tZ-8x-GJL"/>
-                    <include reference="Fnv-1l-4La"/>
-                    <include reference="IqP-tO-kB1"/>
-                    <include reference="bVX-Go-ZWj"/>
-                    <exclude reference="hHx-g4-RTE"/>
-                    <exclude reference="f2E-G3-Jdp"/>
-                    <include reference="oAX-i7-sFF"/>
+                    <include reference="DHa-WZ-D9d"/>
+                    <include reference="saA-Lz-4xI"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="225" y="292"/>
+            <point key="canvasLocation" x="292" y="244"/>
         </view>
     </objects>
     <resources>
-        <image name="snach_logo.png" width="180" height="153"/>
+        <image name="logo.png" width="135" height="154"/>
     </resources>
 </document>

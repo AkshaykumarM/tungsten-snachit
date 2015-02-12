@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
     </dependencies>
     <objects>
@@ -17,10 +16,10 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="login_screen.png" translatesAutoresizingMaskIntoConstraints="NO" id="pzR-t4-Vzx">
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="login_screen.png" translatesAutoresizingMaskIntoConstraints="NO" id="pzR-t4-Vzx">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                 </imageView>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r4l-QV-O9I">
+                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r4l-QV-O9I">
                     <rect key="frame" x="16" y="503" width="288" height="45"/>
                     <color key="backgroundColor" red="0.87799356579999999" green="0.89537957700000004" blue="0.89537957700000004" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                     <constraints>
@@ -44,7 +43,7 @@
                         <action selector="signUpBtn:" destination="-1" eventType="touchUpInside" id="MPN-dc-p7e"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k6r-Os-vbR">
+                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k6r-Os-vbR">
                     <rect key="frame" x="16" y="456" width="288" height="45"/>
                     <color key="backgroundColor" red="0.87799356579999999" green="0.89537957700000004" blue="0.89537957700000004" alpha="0.050000000000000003" colorSpace="calibratedRGB"/>
                     <constraints>
@@ -75,12 +74,16 @@
                 <constraint firstAttribute="bottom" secondItem="r4l-QV-O9I" secondAttribute="bottom" constant="11" id="8Uc-Gt-22p"/>
                 <constraint firstItem="pzR-t4-Vzx" firstAttribute="top" secondItem="cJa-pR-hLT" secondAttribute="top" id="906-eL-Ir6"/>
                 <constraint firstItem="pzR-t4-Vzx" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="DX2-rv-Nqh"/>
+                <constraint firstItem="pzR-t4-Vzx" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="Dal-OF-2h3"/>
+                <constraint firstAttribute="bottom" secondItem="pzR-t4-Vzx" secondAttribute="bottom" id="FdO-h7-Ik1"/>
                 <constraint firstItem="k6r-Os-vbR" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" constant="16" id="IRP-zt-zAd"/>
                 <constraint firstAttribute="trailing" secondItem="pzR-t4-Vzx" secondAttribute="trailing" id="K2M-QA-4NR"/>
                 <constraint firstItem="r4l-QV-O9I" firstAttribute="top" secondItem="k6r-Os-vbR" secondAttribute="bottom" constant="2" id="OXX-Yf-qTF">
                     <variation key="widthClass=compact" constant="7"/>
                 </constraint>
                 <constraint firstItem="r4l-QV-O9I" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" constant="16" id="Uea-lP-uti"/>
+                <constraint firstAttribute="trailing" secondItem="pzR-t4-Vzx" secondAttribute="trailing" id="Wp1-g8-6ut"/>
+                <constraint firstItem="pzR-t4-Vzx" firstAttribute="top" secondItem="cJa-pR-hLT" secondAttribute="top" id="aUp-ed-Dz9"/>
                 <constraint firstAttribute="trailing" secondItem="r4l-QV-O9I" secondAttribute="trailing" constant="16" id="alo-0F-bHb"/>
                 <constraint firstAttribute="trailing" secondItem="k6r-Os-vbR" secondAttribute="trailing" constant="16" id="hph-3a-oRg"/>
                 <constraint firstAttribute="bottom" secondItem="pzR-t4-Vzx" secondAttribute="bottom" id="yPC-bS-3ZS"/>
@@ -127,6 +130,7 @@
                     <include reference="yPC-bS-3ZS"/>
                 </mask>
             </variation>
+            <point key="canvasLocation" x="770" y="1454"/>
         </view>
     </objects>
     <resources>

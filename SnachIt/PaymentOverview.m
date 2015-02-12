@@ -13,6 +13,7 @@
 #import "SnoopedProduct.h"
 #import "SnoopingUserDetails.h"
 #import "DBManager.h"
+#import "global.h"
 NSString *const STPSEAGUE=@"backtoSTP";
 @interface PaymentOverview()
 @property (nonatomic, strong) DBManager *dbManager;
@@ -73,27 +74,61 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 60.0;
+    return 80.0;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
     PaymentOverviewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"paymentCell" forIndexPath:indexPath];
     NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
+    NSInteger indexOfCardNumber=[self.dbManager.arrColumnNames indexOfObject:@"cardNumber"];
     NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
    
     // Set the loaded data to the appropriate cell labels.
-    cell.cardImage.image = [UIImage imageNamed:@"amex.png"];
+    cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[self getCardType:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardNumber]]]];
     cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
     
-    cell.cvvLbl.text = @"Akshay";[NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
+    cell.cvvLbl.text = 
+    [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
     
-    NSLog(@"cvv%@",[NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]]);
+    ;
  
     
     return cell;
 }
-
+-(NSString*)getCardType:(NSString*)number{
+    NSString *type;
+    NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
+    NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
+    NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
+    NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
+    NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
+    
+    if ([visa evaluateWithObject:number])
+    {
+        type=@"visa";
+    }
+    else if ([mastercard evaluateWithObject:number])
+    {
+        type=@"mastercard";
+    }
+    else if ([dinnersclub evaluateWithObject:number])
+    {
+        type=@"dinersclub";
+    }
+    else if ([discover evaluateWithObject:number])
+    {
+        type=@"discover";
+    }
+    else if ([amex evaluateWithObject:number])
+    {
+        type=@"amex";
+    }
+    else{
+        type=@"none";
+    }
+    return type;
+}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%ld",(long)indexPath.row);

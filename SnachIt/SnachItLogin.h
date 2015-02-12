@@ -19,6 +19,7 @@
 
 - (IBAction)twBtn:(id)sender;
 
+- (IBAction)signUpBtn:(id)sender;
 
 
 

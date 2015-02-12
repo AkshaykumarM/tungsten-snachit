@@ -18,4 +18,8 @@
 @property (nonatomic,strong) OAToken* accessToken;
 @property (nonatomic, retain) IBOutlet UIWebView *webview;
 @property (nonatomic, retain) NSString *isLogin;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *twitterLoginViewLoader;
+- (IBAction)closeBtn:(id)sender;
+
+
 @end

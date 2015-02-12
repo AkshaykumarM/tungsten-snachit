@@ -12,26 +12,36 @@
 #import "SnatchFeed.h"
 #import "global.h"
 #import "AFNetworking.h"
+#import <FacebookSDK/FacebookSDK.h>
+#import <GoogleOpenSource/GoogleOpenSource.h>
+#import <GooglePlus/GooglePlus.h>
+#import "AppDelegate.h"
+#import "TwitterViewController.h"
+
+
+@interface SnachitSignup()<GPPSignInDelegate>
+
+@end
+
 @implementation SnachitSignup
 @synthesize emailTextField=_emailTextField;
 @synthesize passwordTextField=_passwordTfield;
 
-@synthesize fbBtn=_fbBtn;
-@synthesize twBtn=_twBtn;
-@synthesize gPlusBtn=_gPlusBtn;
-
+static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
 static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
 static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
+
 NSInteger status=0;
+UIView *backView;
+UIActivityIndicatorView *activitySpinner;
 CGFloat animatedDistance;
 - (void)viewDidLoad
 {
     [self setViewLookAndFeel];
     [super viewDidLoad];
-    
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -44,25 +54,7 @@ CGFloat animatedDistance;
     UIColor *color = [UIColor whiteColor];
     self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
     self.passwordTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password" attributes:@{NSForegroundColorAttributeName: color}];
-    CALayer *emailborder = [CALayer layer];
-    CALayer *passborder  = [CALayer layer];
-    CGFloat borderWidth = 1;
-    
-    //setting bottom border to email filed
-    emailborder.borderColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    emailborder.frame = CGRectMake(0, self.emailTextField.frame.size.height - borderWidth, self.emailTextField.frame.size.width, self.emailTextField.frame.size.height);
-    emailborder.borderWidth = borderWidth;
-    [self.emailTextField.layer addSublayer:emailborder];
-    self.emailTextField.layer.masksToBounds = YES;
-    
-    
-    //setting bottom border to password filed
-    passborder.borderColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    passborder.frame = CGRectMake(0, self.passwordTextField.frame.size.height - borderWidth, self.passwordTextField.frame.size.width, self.passwordTextField.frame.size.height);
-    passborder.borderWidth = borderWidth;
-    [self.passwordTextField.layer addSublayer:passborder];
-    self.passwordTextField.layer.masksToBounds = YES;
-}
+   }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     
     if(textField){
@@ -132,6 +124,7 @@ CGFloat animatedDistance;
 
 
 - (IBAction)signUpBtn:(id)sender {
+        isAllreadySignedUp=FALSE;
     [self.activityIndicator startAnimating];
   //  [self performSegueWithIdentifier: @"signInScreenSegue" sender:self];
     if([self.emailTextField hasText] &&[self.passwordTextField hasText])
@@ -139,30 +132,254 @@ CGFloat animatedDistance;
         [self.errorLbl setHidden:YES];
         NSString *username= self.emailTextField.text;
         NSString *password= self.passwordTextField.text;
-        NSString *APNSToken=@"sdfdfs";
+      
     
         if([self IsEmailValid:username] && [password length]>=6)
         {
             [self.errorLbl setHidden:YES];
-            NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSToken SignUpVia:@"SnachIt" DOB:@""];
+            NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSTOKEN SignUpVia:@"SnachIt" DOB:@""];
             
-            NSLog(@"status%d",status);
-            if(status==1){
+            NSLog(@"status%ld",(long)status);
+            if(status==1 && !isAllreadySignedUp){
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 [defaults setInteger:1 forKey:@"signedUp"];
-                [defaults setObject:username forKey:@"Username"];
-                [defaults setObject:password forKey:@"Password"];
+                [defaults setObject:username forKey:USERNAME];
+                [defaults setObject:password forKey:PASSWORD];
                 SnachItLogin *startscreen = [[SnachItLogin alloc]
                                  initWithNibName:@"LoginScreen" bundle:nil];
                 [self presentViewController:startscreen animated:YES completion:nil];
             }
+            else{
+                [global showAllertForAllreadySignedUp];
+
+            }
         }
         
     }else{
-        self.errorLbl.text=@"Please enter username & password";
-         [self.errorLbl setHidden:NO];
+        [global showAllertForEnterValidCredentials];
     }
      [self.activityIndicator stopAnimating];
+}
+
+- (IBAction)fbBtn:(id)sender {
+        isAllreadySignedUp=FALSE;
+    [self startProcessing];
+    ssousing=@"FB";
+    // If the session state is any of the two "open" states when the button is clicked
+    if (FBSession.activeSession.state == FBSessionStateOpen
+        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+        
+        // Close the session and remove the access token from the cache
+        // The session state handler (in the app delegate) will be called automatically
+        [FBSession.activeSession closeAndClearTokenInformation];
+        
+        // If the session state is not any of the two "open" states when the button is clicked
+        [self stopProcessing];
+    } else {
+        // Open a session showing the user the login UI
+        // You must ALWAYS ask for public_profile permissions when opening a session
+        
+        
+        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile",@"email"]
+                                           allowLoginUI:YES
+                                      completionHandler:
+         ^(FBSession *session, FBSessionState state, NSError *error) {
+             
+             // Retrieve the app delegate
+             AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+             // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+             [appDelegate sessionStateChanged:session state:state error:error];
+             if (!error && state == FBSessionStateOpen){
+                 NSLog(@"Session opened");
+                 if(FBSession.activeSession.isOpen)
+                 {
+                     [FBRequestConnection startForMeWithCompletionHandler:
+                      ^(FBRequestConnection *connection, id user, NSError *error)
+                      {
+                          NSString *firstName = [user valueForKey:@"first_name"] ;
+                          NSString *lastName = [user valueForKey:@"last_name"] ;
+                          NSString *fullName=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
+                          NSString *facebookId = [user valueForKey:@"id"];
+                          NSString *email = [user objectForKey:@"email"];
+                          NSString *profilePic = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+                          NSString *phoneNo=@"";
+                          
+                          NSString *password=facebookId;
+                          
+                          if(email==nil){
+                              password=facebookId;
+                              email=facebookId;
+                          }
+                        
+                          NSInteger status=[self getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:password Profilepic:profilePic PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
+                          if(status==1 ){
+                              SnachItLogin *signin=[[SnachItLogin alloc] init];
+                              int signinStatus=[signin performSignIn:email Password:password SSOUsing:ssousing];
+                              if(signinStatus==1){
+                                  
+                                  NSLog(@"Signed up with facebook Successfully");
+                                  [self stopProcessing];
+                                  [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                              }else{
+                                  NSLog(@"Error occurred while signing in");
+                                  if(isAllreadySignedUp)
+                                      [global showAllertForAllreadySignedUp];
+                                  [self stopProcessing];
+                                  
+                              }
+                          }
+                          else{
+                              [self stopProcessing];
+                              
+                              NSLog(@"Error occurred while sign up");
+                          }
+                      }];
+                 }
+             }
+             else{
+                 [self stopProcessing];
+             }
+             
+         }];
+    }
+
+}
+
+- (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
+                   error: (NSError *) error {
+    ssousing=@"GP";
+    NSLog(@"Received Error %@ and auth object==%@", error, auth);
+    
+    if (error) {
+        // Do some error handling here.
+        [self stopProcessing];
+    } else {
+        [self refreshInterfaceBasedOnSignIn];
+        
+        GTLQueryPlus *query = [GTLQueryPlus queryForPeopleGetWithUserId:@"me"];
+        
+        NSLog(@"email %@ ", [NSString stringWithFormat:@"Email: %@",[GPPSignIn sharedInstance].authentication.userEmail]);
+        NSLog(@"Received error %@ and auth object %@",error, auth);
+        
+        // 1. Create a |GTLServicePlus| instance to send a request to Google+.
+        GTLServicePlus* plusService = [[GTLServicePlus alloc] init] ;
+        plusService.retryEnabled = YES;
+        
+        // 2. Set a valid |GTMOAuth2Authentication| object as the authorizer.
+        [plusService setAuthorizer:[GPPSignIn sharedInstance].authentication];
+        
+        // 3. Use the "v1" version of the Google+ API.*
+        plusService.apiVersion = @"v1";
+        [plusService executeQuery:query
+                completionHandler:^(GTLServiceTicket *ticket,
+                                    GTLPlusPerson *person,
+                                    NSError *error) {
+                    if([self getSignUpWithGooglePlus:person]==1)
+                    {
+                        SnachItLogin *signin=[[SnachItLogin alloc]init];
+                        if([signin performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
+                            NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
+                            [self stopProcessing];
+                            [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                            
+                        }
+                        else
+                            [self stopProcessing];
+                    }
+                    else
+                        [self stopProcessing];
+                    
+                    if (error) {
+                        //Handle Error
+                        [self stopProcessing];
+                    } else {
+                        [self stopProcessing];
+                    }
+                }];
+    }
+    
+}
+
+-(int)getSignUpWithGooglePlus:(GTLPlusPerson*)person
+{   int state=0;
+    SnachitSignup *signup =[[SnachitSignup alloc] init];
+    NSString *firstName = person.name.givenName ;
+    NSString *lastName = person.name.familyName;
+    NSString *fullName=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
+    NSString *googleId = person.identifier;
+    NSString *email = [GPPSignIn sharedInstance].authentication.userEmail;
+    NSString *imageUrl = [[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
+    NSString *phoneNo=@"";
+    NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
+    NSInteger status=[signup getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
+    if(status==1)
+    {
+        state=1;
+    }
+    else
+        state=0;
+    return state;
+}
+-(void)refreshInterfaceBasedOnSignIn {
+    if ([[GPPSignIn sharedInstance] authentication]) {
+        // The user is signed in.
+        NSLog(@"Logged In");
+        // Perform other actions here, such as showing a sign-out button
+    } else {
+        
+        // Perform other actions here
+    }
+}
+- (void)signOut {
+    [[GPPSignIn sharedInstance] signOut];
+}
+- (void)disconnect {
+    [[GPPSignIn sharedInstance] disconnect];
+}
+
+- (void)didDisconnectWithError:(NSError *)error {
+    if (error) {
+        NSLog(@"Received error %@", error);
+    } else {
+        // The user is signed out and disconnected.
+        // Clean up user data as specified by the Google+ terms.
+    }
+}
+
+
+- (IBAction)twBtn:(id)sender {
+        isAllreadySignedUp=FALSE;
+    CATransition* transition = [CATransition animation];
+    transition.duration = 1;
+    transition.type = kCATransitionMoveIn;
+    transition.subtype = kCATransitionFade;
+    
+    TwitterViewController *vc = [[TwitterViewController alloc]
+                                 initWithNibName:@"TwitterView" bundle:nil];;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    [self presentViewController:vc animated:NO completion:nil];
+}
+
+- (IBAction)gplusBtn:(id)sender {
+    [self startProcessing];
+    [self googleSignIn];
+}
+
+-(void)googleSignIn{
+    
+    GPPSignIn *signIn = [GPPSignIn sharedInstance];
+    // You previously set kClientID in the "Initialize the Google+ client" step
+    signIn.clientID = kClientId;
+    signIn.scopes = [NSArray arrayWithObjects:
+                     kGTLAuthScopePlusLogin,kGTLAuthScopePlusMe,kGTLAuthScopePlusLogin,kGTLAuthScopePlusLogin,
+                     nil]; //// defined in GTLPlusConstants.h
+    signIn.shouldFetchGooglePlusUser = YES;
+    signIn.shouldFetchGoogleUserEmail = YES;
+    
+    signIn.delegate = self;
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:@"GP" forKey:@"SSOUsing"];
+    [signIn authenticate];
 }
 - (IBAction)loginHereBtn:(id)sender {
     SnachItLogin *startscreen = [[SnachItLogin alloc]
@@ -178,7 +395,7 @@ CGFloat animatedDistance;
 -(NSInteger)getSignUp:(NSString*)firstName LastName:(NSString*)lastName FullName:fullname EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob{
     NSString *url;
     
-        url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
+        url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",ec2maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
     NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
 
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
@@ -188,10 +405,14 @@ CGFloat animatedDistance;
     //getting the data
     NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     NSLog(@"GetSignUp:%@",request);
-
+    NSLog(@"GetSignUp:%@",jasonData);
+    
     if (jasonData) {
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-        NSLog(@"GetSignUp:%@",[response valueForKey:@"error_code"]);
+        NSLog(@"RESPONSE:%@",response );
+        if([[response valueForKey:@"error_code"] integerValue]==2)
+            isAllreadySignedUp=TRUE;
+            
         if([[response valueForKey:@"success"] isEqual:@"true"]|| [[response valueForKey:@"error_code"] integerValue]==2)
         {
             //caching userid for sso
@@ -212,8 +433,8 @@ CGFloat animatedDistance;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 
     [defaults setNilValueForKey:@"signedUp"];
-    [defaults setNilValueForKey:@"Username"];
-    [defaults setNilValueForKey:@"Password"];
+    [defaults setNilValueForKey:USERNAME];
+    [defaults setNilValueForKey:PASSWORD];
 }
 
 -(BOOL)IsEmailValid:(NSString *)checkString
@@ -228,5 +449,34 @@ CGFloat animatedDistance;
     
 }
 
+
+- (IBAction)loginBtn:(id)sender {
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    SnachItLogin *startscreen = [[SnachItLogin alloc]
+                                 initWithNibName:@"LoginScreen" bundle:nil];
+    [self presentViewController:startscreen animated:NO completion:nil];
+}
+
+-(void)startProcessing{
+    
+    backView = [[UIView alloc] initWithFrame:self.view.frame];
+    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
+    [self.view addSubview:backView];
+    activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [backView addSubview:activitySpinner];
+    activitySpinner.center = CGPointMake(160, 240);
+    activitySpinner.hidesWhenStopped = YES;
+    [activitySpinner startAnimating];
+    
+}
+-(void)stopProcessing{
+    
+    [activitySpinner stopAnimating];
+    [backView removeFromSuperview];
+}
 
 @end

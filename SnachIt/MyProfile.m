@@ -14,6 +14,9 @@
 #import "SnachProductDetails.h"
 #import "SnatchFeed.h"
 #import "UserProfile.h"
+#import "SnoopedProduct.h"
+#import "global.h"
+
 @interface MyProfile ()
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -33,21 +36,52 @@
 
 @interface customTapGestureRecognizer : UITapGestureRecognizer
 
-@property (nonatomic, strong) NSString * productImage;
+@property (nonatomic, strong) NSString * productId;
+@property (nonatomic, strong) NSString * brandId;
+@property (nonatomic, strong) NSString * snachId;
 @property (nonatomic, strong) NSString * productName;
-@property (nonatomic, strong) NSString * productPrice;
+@property (nonatomic, strong) NSString * brandName;
+@property (nonatomic, strong) NSURL * brandImageURL;
+@property (nonatomic, strong) NSURL * productImageURL;
+@property (nonatomic, strong) NSString * price;
+@property (nonatomic, strong) NSString * productDescription;
 
 @end
+@interface FollowStatusRecognizer1 : UITapGestureRecognizer
 
+@property (nonatomic, strong) NSString * brandId;
+@property (nonatomic, assign) NSInteger followStatus;
+
+@end
 @implementation customTapGestureRecognizer
 
 @end
+@implementation FollowStatusRecognizer1
 
+
+@end
 @implementation MyProfile
 
 {
     NSString *cellId,*subCellId;
     UserProfile *user;
+    float viewHalfWidth;
+    float viewQuarterWidth;
+    float viewHalfHeight;
+    float viewQuarterHeight;
+    float startX;
+    float startY;
+    NSString *snoopedProductId;
+    NSString *snoopedSnachId;
+    NSString *snoopedBrandId;
+    NSURL *snoopedProductImageURL;
+    NSURL *snoopedBrandImageURL;
+    NSString *snoopedProductName;
+    NSString *snoopedProductBrandName;
+    NSString *snoopedProductPrice;
+    NSString *snoopedProductDescription;
+    NSString *snoopedBrandName;
+
 }
 
 @synthesize tabSelect=_tabSelect;
@@ -58,9 +92,9 @@ UIView* backView ;
     [super viewDidLoad];
 
    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
+    self.profilePic.layer.cornerRadius= RADIOUS;
     self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = 5.0f;
+    self.profilePic.layer.borderWidth = BORDERWIDTH;
     self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
     
     cellId=@"friendsCell";
@@ -78,7 +112,12 @@ UIView* backView ;
      [_subTabSelect setHidden:YES];//hiding the sub tab
     [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
-
+    viewHalfWidth=self.view.frame.size.width/2.0f;
+    viewQuarterWidth=viewHalfWidth/2.0f;
+    viewHalfHeight=self.view.frame.size.height/2.0f;
+    viewQuarterHeight=viewHalfHeight/2.0f;
+    startX=viewQuarterWidth/2.0f;
+    startY=viewQuarterHeight;
    }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -96,7 +135,7 @@ UIView* backView ;
 
 -(void)initialLize{
     
-    if(user.profilePicUrl!=nil){
+    if([global isValidUrl:user.profilePicUrl]){
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             self.profilePic.image = [UIImage imageWithData:data];
         }];
@@ -126,23 +165,23 @@ UIView* backView ;
     int count=0;
     if([cellId isEqual:@"friendsCell"]){
         
-        count=[self.friendsnacheslist count];
+        count=(int)[self.friendsnacheslist count];
     }
     else if([cellId isEqual:@"brandsCell"]){
-        count=[self.brandproductslist count];
+        count=(int)[self.brandproductslist count];
     }
     else if ([cellId isEqual:@"snachsCell"]){
         
         if([subCellId isEqual:@"inFlight"]){
-          count=[self.snachhistoryInflightList count];
+          count=(int)[self.snachhistoryInflightList count];
         }
         else if([subCellId isEqual:@"delivered"])
         {
-          count=[self.snachhistoryDeliveredList count];
+          count=(int)[self.snachhistoryDeliveredList count];
         }
         else if([subCellId isEqual:@"all"])
         {
-            count=[self.snachhistoryInflightList count]+[self.snachhistoryDeliveredList count];
+            count=(int)[self.snachhistoryInflightList count]+(int)[self.snachhistoryDeliveredList count];
         }
     }
         
@@ -204,7 +243,7 @@ UIView* backView ;
         
         
         int xOffset = 0;
-        
+        if([snachedProducts count]!=0){
         for(int index=0; index < [snachedProducts count]; index++)
         {
             //[aButton addTarget:self action:@selector(whatever:) forControlEvents:UIControlEventTouchUpInside];
@@ -224,9 +263,16 @@ UIView* backView ;
             
             [customTap setNumberOfTapsRequired:1];
             img.userInteractionEnabled = YES;
-            customTap.productImage=snachedProducts[index];
+            
+            customTap.productImageURL=[NSURL URLWithString:@"http://192.168.0.120/Products/product.png"];
             customTap.productName=[NSString stringWithFormat:@"%@ %@", brandName[index], productName[index]];
-            customTap.productPrice=productPrice[index];
+            customTap.price=productPrice[index];
+            customTap.productId=@"101";
+            customTap.brandId=@"2015114173316";
+            customTap.brandName=@"Breville";
+            customTap.brandImageURL= [NSURL URLWithString:@"http://192.168.0.120/Products/breviele.png"];
+            customTap.snachId=@"1";
+         
             [img addGestureRecognizer:customTap];
             
             [cell.scrollview addSubview:img];
@@ -234,7 +280,13 @@ UIView* backView ;
             
         }
         cell.scrollview.contentSize = CGSizeMake(scrollWidth+xOffset,70);
-        
+        snachedProducts=nil;
+            snachedProducts=nil;
+        }
+        else{
+            [cell.scrollview setHidden:YES];
+            [cell.noSnachsYet setHidden:NO];
+        }
           return cell;
     }
 
@@ -242,8 +294,20 @@ UIView* backView ;
     if([cellId isEqual:@"brandsCell"]){
         MyProfileBrandsCell *cell = (MyProfileBrandsCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
         
+        NSDictionary *brandProducts;
+         NSArray *products;
+        brandProducts=[self.brandproductslist objectAtIndex:indexPath.row];
         
-        cell.brandName.image = [UIImage imageNamed:[brandimg objectAtIndex:indexPath.row]];
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:[brandProducts valueForKey:@"brandImage"]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if(!error)
+            {
+                 cell.brandName.image=[UIImage imageWithData:data];
+                
+                
+            }
+        }];
+       
+        products=[brandProducts valueForKey:@"productImages"];
         cell.productImageConatainer.scrollEnabled = YES;
         int scrollWidth = 100;
         
@@ -251,24 +315,36 @@ UIView* backView ;
         
         
         
-        
         int xOffset = 0;
-        
-        for(int index=0; index < [productimg count]; index++)
+              for(int index=0; index < [products count]; index++)
         {
             //[aButton addTarget:self action:@selector(whatever:) forControlEvents:UIControlEventTouchUpInside];
             
             UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,70, 70)];
             [img setContentMode:UIViewContentModeScaleAspectFit];
-            [img setImage: [UIImage imageNamed:[NSString stringWithFormat:@"%@", productimg[index]]]];
+            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:products[index]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                if(!error)
+                {
+                    img.image=[UIImage imageWithData:data];
+                    
+                    
+                }
+            }];
+            
             customTapGestureRecognizer *customTap = [[customTapGestureRecognizer alloc]
                                                      initWithTarget:self
                                                      action:@selector(myAction:) ];
             [customTap setNumberOfTapsRequired:1];
             img.userInteractionEnabled = YES;
-            customTap.productImage=productimg[index];
+            customTap.productImageURL=[NSURL URLWithString:@"http://192.168.0.120/Products/product.png"];
             customTap.productName=[NSString stringWithFormat:@"%@ %@", brandName[index], productName[index]];
-            customTap.productPrice=productPrice[index];
+            customTap.price=productPrice[index];
+            customTap.productId=@"101";
+            customTap.brandId=@"2015114173316";
+            customTap.brandName=@"Breville";
+            customTap.brandImageURL= [NSURL URLWithString:@"http://192.168.0.120/Products/breviele.png"];
+            customTap.snachId=@"1";
+
             [img addGestureRecognizer:customTap];
             
             
@@ -277,9 +353,10 @@ UIView* backView ;
             
         }
         cell.productImageConatainer.contentSize = CGSizeMake(scrollWidth+xOffset,70);
-        
+        NSLog(@"Content: %f",cell.productImageConatainer.contentSize.width);
         cell.followStatus.image = [UIImage imageNamed:[followimg objectAtIndex:indexPath.row]];
-        
+        products=nil;
+      
         return cell;
     }
     if([cellId isEqual:@"snachsCell"])
@@ -350,18 +427,32 @@ UIView* backView ;
    
     
     customTapGestureRecognizer *tap = (customTapGestureRecognizer *)tapRecognizer;
- 
+    snoopedProductId=tap.productId;
+    snoopedBrandId=tap.brandId;
+    snoopedProductName=tap.productName;
+    snoopedProductImageURL=tap.productImageURL;
+    snoopedBrandImageURL=tap.brandImageURL;
+    snoopedProductName=tap.productName;
+    snoopedProductPrice=tap.price;
+    snoopedProductDescription=tap.productDescription;
+    snoopedBrandName=tap.brandName;
+    snoopedSnachId=tap.snachId;
+
     backView = [[UIView alloc] initWithFrame:self.view.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
     [self.view addSubview:backView];
 
     _freindsPopupView=[[[NSBundle mainBundle] loadNibNamed:@"ProfileFreindsPopup" owner:self options:nil]objectAtIndex:0];
-    _freindsPopupView.frame=CGRectMake(self.view.frame.size.width-285, self.view.frame.size.height/3.0f, 250, 250);
-    _productImg.image=[UIImage imageNamed:tap.productImage];
+    _freindsPopupView.frame=CGRectMake(startX, startY, 250, 250);
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:tap.productImageURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        _productImg.image=[UIImage imageWithData:data];
+    }];
+   
     [_productNameLbl setTitle:tap.productName forState:UIControlStateNormal];
-    [_productPriceLbl setTitle:tap.productPrice forState:UIControlStateNormal];
-    [self setCurrentProductData:tap.productImage productName:tap.productName productPrice:tap.productPrice];
+    [_productPriceLbl setTitle:tap.price forState:UIControlStateNormal];
+  
     [backView addSubview:_freindsPopupView];
+    
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath   *)indexPath
 {
@@ -402,7 +493,6 @@ UIView* backView ;
             [_subTabSelect setHidden:YES];
              [_lastLine setHidden:YES];
             [_tableView reloadData];
-            
             break;
         case 1:
             cellId=@"brandsCell";
@@ -410,7 +500,6 @@ UIView* backView ;
             [_subTabSelect setHidden:YES];
               [_lastLine setHidden:YES];
             [_tableView reloadData];
-
             break;
         case 2:
             cellId=@"snachsCell";
@@ -418,6 +507,7 @@ UIView* backView ;
             [_subTabSelect setHidden:NO];
             [_lastLine setHidden:NO];
             [_tableView reloadData];
+           
             break;
     }
 }
@@ -429,8 +519,7 @@ case 0:
     subCellId=@"all";
     NSLog(@"%@",subCellId);
     [_tableView reloadData];
-    
-    break;
+        break;
 case 1:
     subCellId=@"inFlight";
     NSLog(@"%@",subCellId);
@@ -441,8 +530,7 @@ case 2:
     subCellId=@"delivered";
     NSLog(@"%@",subCellId);
     [_tableView reloadData];
-    
-    break;
+      break;
     }
 
 }
@@ -454,24 +542,57 @@ case 2:
     [backView removeFromSuperview];
 }
 - (IBAction)snoopButton:(id)sender {
+    
+        SnoopedProduct *product=[[SnoopedProduct
+                              sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
+    snooptTracking=1;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
+    
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+        [navController setViewControllers: @[rootViewController] animated: YES];
+    
+        [self.revealViewController pushFrontViewController:navController animated:YES];
+
+        
+}
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
    
-//    SnachProductDetails *tempView = [[SnachProductDetails alloc] init];
-//    tempView.prodImgName=self.tappedProductImage;
-//    tempView.prodName=self.tappedProductName;
-//    tempView.prodPrice=self.tappedProductPrice;
+        
     
 }
 
 - (IBAction)barButtonItem:(id)sender {
     
+    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+    SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
     
-//    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-//    SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
-//
-//    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-//    [navController setViewControllers: @[rootViewController] animated: YES];
-//    
-//    [self.revealViewController pushFrontViewController:navController animated:YES];
+    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+    [navController setViewControllers: @[rootViewController] animated: YES];
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
+    
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    
+    [self.revealViewController pushFrontViewController:navController animated:NO];
+}
+
+-(void)followButtonClicked:(UITapGestureRecognizer*)tapRecongnizer
+ {
+    
+    FollowStatusRecognizer1 *follow = (FollowStatusRecognizer1*)tapRecongnizer;
+    UIButton *button= (UIButton*)tapRecongnizer.view;
+    if(follow.followStatus ==1){
+        [button setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
+        follow.followStatus=0;
+    }
+    else{
+        [button setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
+        follow.followStatus= 1;
+        
+    }
     
 }
 -(void)makeSnachHistoryRequest{
@@ -505,6 +626,7 @@ case 2:
         NSError *e = nil;
         temp = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
         self.brandproductslist=[temp objectForKey:@"data"];
+        NSLog(@"%@",self.brandproductslist);
     }   
 }
 

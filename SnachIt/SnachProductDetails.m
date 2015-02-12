@@ -96,13 +96,12 @@
 //                                              otherButtonTitles:nil];
 //        
 //        [alert show];
-       // [self performSegueWithIdentifier:@"timeup" sender:self];
+        [self performSegueWithIdentifier:@"timeup" sender:self];
     }
 }
 
 - (IBAction)snachit:(id)sender {
-    NSLog(@"ShowView");
-    [self performSegueWithIdentifier:@"snachit" sender:self];
+      [self performSegueWithIdentifier:@"snachit" sender:self];
 //    _snachConfirm=[[[NSBundle mainBundle]loadNibNamed:@"Snatch" owner:self options:nil] objectAtIndex:0];
 //   
 //    _snachConfirm.frame=CGRectMake(0.0f,self.view.frame.size.height/2, _snachConfirm.frame.size.width, _snachConfirm.frame.size.height);
@@ -111,7 +110,7 @@
 //       [_snachConfirm addGestureRecognizer:singleTap];
 //       
 //    [self.view addSubview:_snachConfirm];
-    
+     [timer invalidate];
 }
 
 

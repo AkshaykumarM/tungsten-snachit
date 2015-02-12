@@ -43,9 +43,9 @@
 
 -(void)setViewLookAndFeel{
 
-    self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
+    self.profilePic.layer.cornerRadius= RADIOUS;
     self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = 5.0f;
+    self.profilePic.layer.borderWidth = BORDERWIDTH;
     self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
 
 }
@@ -59,7 +59,7 @@
 }
 -(void)initialLize{
     
-    if(user.profilePicUrl!=nil){
+    if([global isValidUrl:user.profilePicUrl]){
     [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         self.profilePic.image = [UIImage imageWithData:data];
     }];

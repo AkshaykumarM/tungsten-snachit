@@ -7,13 +7,13 @@
 //
 
 #import "ShippingInfoOverview.h"
+#import "ShippingInfoAddCell.h"
 #import "UserProfile.h"
+#import "global.h"
 @implementation ShippingInfoOverview
 {
     UserProfile *user;
 }
-@synthesize firstNameTextField=_firstNameTextField;
-@synthesize lastNameTextField=_lastNameTextField;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
@@ -27,12 +27,12 @@ CGFloat animatedDistance;
     // Set the Label text with the selected recipe
     
     
-    [self setViewLookAndFeel];
+    
     
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    [self initialLize];
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -47,78 +47,40 @@ CGFloat animatedDistance;
     return NO;
 }
 
-
--(void)initialLize{
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 670;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    ShippingInfoAddCell *cell = (ShippingInfoAddCell *)[tableView dequeueReusableCellWithIdentifier:@"shippingInfoAddCell" forIndexPath:indexPath];
+    cell.profilePicImg.layer.cornerRadius=RADIOUS;
+    cell.profilePicImg.clipsToBounds=YES;
+    cell.profilePicImg.layer.borderWidth=BORDERWIDTH;
+    cell.profilePicImg.layer.borderColor=[UIColor whiteColor].CGColor;
+    if(![user.fullName isKindOfClass:[NSNull class]])
+        cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
-    if(user.profilePicUrl!=nil){
+    cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    
+    
+    if([global isValidUrl:user.profilePicUrl]){
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            self.profilePic.image = [UIImage imageWithData:data];
+            cell.profilePicImg.image = [UIImage imageWithData:data];
         }];
     }
+    [cell.saveBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
+    cell.fullnameLbl.minimumScaleFactor=0.5;
+
+    return cell;
 }
--(void)setViewLookAndFeel{
-    UIColor *borderColor=[UIColor colorWithRed:0.792 green:0.792 blue:0.792 alpha:0.4];
-    self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
-    
-    
-    self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = 3.0f;
-    self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
-    
-    _shippingInfoView=[[[NSBundle mainBundle]loadNibNamed:@"ShippingInfoView" owner:self options:nil] objectAtIndex:0];
-    
-    _shippingInfoView.frame=CGRectMake(0.0f,_profilePic.frame.origin.y+_profilePic.frame.size.height, _shippingInfoView.frame.size.width, _shippingInfoView.frame.size.height);
-    
-    
-    [_uiView addSubview:_shippingInfoView];
-    
-    
-    CALayer *border1 = [CALayer layer];
-    CALayer *border2  = [CALayer layer];
-    CALayer *border3 = [CALayer layer];
-    CALayer *border4  = [CALayer layer];
-    CALayer *border5 = [CALayer layer];
-    CALayer *border6  = [CALayer layer];
-        
-    CGFloat borderWidth = 1;
-    border1.borderColor =borderColor.CGColor;
-    border1.frame = CGRectMake(0, self.firstNameTextField.frame.size.height - borderWidth, self.firstNameTextField.frame.size.width, self.firstNameTextField.frame.size.height);
-    border1.borderWidth = borderWidth;
-    [self.firstNameTextField.layer addSublayer:border1];
-    self.firstNameTextField.layer.masksToBounds = YES;
-    
-    
-    border2.borderColor =borderColor.CGColor;
-    border2.frame = CGRectMake(0, self.lastNameTextField.frame.size.height - borderWidth, self.lastNameTextField.frame.size.width, self.lastNameTextField.frame.size.height);
-    border2.borderWidth = borderWidth;
-    [self.lastNameTextField.layer addSublayer:border2];
-    self.lastNameTextField.layer.masksToBounds = YES;
-    
-      border3.borderColor =borderColor.CGColor;
-    border3.frame = CGRectMake(0, self.addressTextField.frame.size.height - borderWidth, self.addressTextField.frame.size.width, self.addressTextField.frame.size.height);
-    border3.borderWidth = borderWidth;
-    [self.addressTextField.layer addSublayer:border3];
-    self.addressTextField.layer.masksToBounds = YES;
-    
-    border4.borderColor =borderColor.CGColor;
-    border4.frame = CGRectMake(0, self.stateTextField.frame.size.height - borderWidth, self.stateTextField.frame.size.width, self.stateTextField.frame.size.height);
-    border4.borderWidth = borderWidth;
-    [self.stateTextField.layer addSublayer:border4];
-    self.stateTextField.layer.masksToBounds = YES;
-    
-    border5.borderColor =borderColor.CGColor;
-    border5.frame = CGRectMake(0, self.cityTextField.frame.size.height - borderWidth, self.cityTextField.frame.size.width, self.cityTextField.frame.size.height);
-    border5.borderWidth = borderWidth;
-    [self.cityTextField.layer addSublayer:border5];
-    self.cityTextField.layer.masksToBounds = YES;
-    
-    border6.borderColor =borderColor.CGColor;
-    border6.frame = CGRectMake(0, self.postalCodeTextField.frame.size.height - borderWidth, self.postalCodeTextField.frame.size.width, self.postalCodeTextField.frame.size.height);
-    border6.borderWidth = borderWidth;
-    [self.postalCodeTextField.layer addSublayer:border6];
-    self.postalCodeTextField.layer.masksToBounds = YES;
-    
-}
+
+
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
     CGRect textFieldRect =
     [self.view.window convertRect:textField.bounds fromView:textField];
@@ -176,8 +138,7 @@ CGFloat animatedDistance;
     
     [UIView commitAnimations];
 }
+-(void)save{
+[self dismissViewControllerAnimated:true completion:nil];}
 
-- (IBAction)doneBtn:(id)sender {
-    [self dismissViewControllerAnimated:true completion:nil];
-}
 @end

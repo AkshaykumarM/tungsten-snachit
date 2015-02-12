@@ -13,5 +13,6 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *followStatus;
 @property (weak, nonatomic) IBOutlet UIScrollView *productImageConatainer;
+@property (weak, nonatomic) IBOutlet UILabel *noSnachYetForbrand;
 
 @end

@@ -9,8 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @interface SnatchTimeUp : UIViewController
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
+
 - (IBAction)viewOtherDeals:(id)sender;
 
+- (IBAction)shareAppBtn:(id)sender;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *profilePicBarButton;
+@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 
 @end

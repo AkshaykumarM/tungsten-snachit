@@ -11,12 +11,12 @@
 /**
     Image name for showing error on textfield.
  */
-#define IconImageName @"error.png"
+#define IconImageName @"error"
 
 /**
     Background color of message popup.
  */
-#define ColorPopUpBg [UIColor colorWithRed:0.702 green:0.000 blue:0.000 alpha:1.000]
+#define ColorPopUpBg [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1]
 
 /**
     Font color of the message.
@@ -26,7 +26,7 @@
 /**
     Font size of the message.
  */
-#define FontSize 15
+#define FontSize 10
 
 /**
     Font style name of the message.

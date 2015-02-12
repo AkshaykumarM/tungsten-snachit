@@ -46,14 +46,24 @@ NSString *const LOGINSEGUE=@"logInSegue";
     
 }
 - (IBAction)logInBtn:(id)sender {
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [self.view.window.layer addAnimation:transition forKey:nil];
    SnachItLogin *startscreen = [[SnachItLogin alloc]
                                        initWithNibName:@"LoginScreen" bundle:nil];
-    [self presentViewController:startscreen animated:YES completion:nil];
+    [self presentViewController:startscreen animated:NO completion:nil];
 
 }
 - (IBAction)signUpBtn:(id)sender {
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
+    [self.view.window.layer addAnimation:transition forKey:nil];
     SnachitSignup *startscreen = [[SnachitSignup alloc]
                                  initWithNibName:@"SignUpScreen" bundle:nil];
-    [self presentViewController:startscreen animated:YES completion:nil];
+    [self presentViewController:startscreen animated:NO completion:nil];
 }
 @end

@@ -10,6 +10,7 @@
 #import "PaymentOverview.h"
 #import "SnoopedProduct.h"
 #import "DBManager.h"
+#import "global.h"
 NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
 @interface AddNewCardForm()
@@ -46,9 +47,45 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     productDesc.text=product.productDescription;
     
 }
+
+-(NSString*)getCardType:(NSString*)number{
+    NSString *type;
+    NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
+    NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
+    NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
+    NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
+    NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
+    
+    if ([visa evaluateWithObject:number])
+    {
+        type=@"Visa";
+    }
+    else if ([mastercard evaluateWithObject:number])
+    {
+        type=@"Mastercard";
+    }
+    else if ([dinnersclub evaluateWithObject:number])
+    {
+        type=@"Diners Club";
+    }
+    else if ([discover evaluateWithObject:number])
+    {
+        type=@"Discover";
+    }
+    else if ([amex evaluateWithObject:number])
+    {
+        type=@"American Express";
+    }
+    else{
+        type=@"none";
+    }
+    return type;
+}
+
+
 - (IBAction)doneBtn:(id)sender {
     if([self.cardNumber hasText]&&[self.expDateTxtField hasText]&&[self.cvvTextField hasText]&&[self.fullNameTextField hasText] &&[self.streetTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
-        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",@"American Express",self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[self getCardType:self.cardNumber.text],self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
         
         // Execute the query.
         

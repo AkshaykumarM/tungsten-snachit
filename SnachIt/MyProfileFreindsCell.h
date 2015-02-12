@@ -14,6 +14,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *friendName;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollview;
+@property (weak, nonatomic) IBOutlet UILabel *noSnachsYet;
 
 
 

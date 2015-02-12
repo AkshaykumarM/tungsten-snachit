@@ -8,10 +8,11 @@
 
 #import "AppDelegate.h"
 #import "SnachItLogin.h"
+#import "global.h"
 #import <FacebookSDK/FacebookSDK.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
-
-@interface AppDelegate ()
+static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
+@interface AppDelegate ()<GPPSignInDelegate>
 
 @end
 
@@ -21,6 +22,30 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     // color selected text ---> Pink
+    UIUserNotificationSettings *settings =
+    [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
+     UIUserNotificationTypeBadge |
+     UIUserNotificationTypeSound
+                                      categories:nil];
+    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+    [[UIApplication sharedApplication] registerForRemoteNotifications];
+
+        UIImage *navBackgroundImage = [UIImage imageNamed:@"nav_bg.png"];
+    
+    [[UINavigationBar appearance] setBackgroundImage:navBackgroundImage forBarMetrics:UIBarMetricsDefault];
+    UIView *view=[[UIView alloc] initWithFrame:CGRectMake(0, 0,self.window.frame.size.width, 20)];
+    view.backgroundColor=[UIColor whiteColor];
+    [self.window.rootViewController.view addSubview:view];
+    [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
+                                                           [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] , UITextAttributeTextColor,
+                                                           [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] ,UITextAttributeTextShadowColor,
+                                                           [NSValue valueWithUIOffset:UIOffsetMake(0, 0)],
+                                                           UITextAttributeTextShadowOffset,
+                                                           [UIFont fontWithName:@"Helvetica-Light" size:18.0], UITextAttributeFont, nil]];
+    [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
+    [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1]];
+
+    
     [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.647 green:0.208 blue:0.522 alpha:1] } forState:UIControlStateSelected];
     
     // color disabled text ---> grey
@@ -31,6 +56,9 @@
     
     
     [self openFbSession];
+    [GPPSignIn sharedInstance].clientID = kClientId;
+    [GPPDeepLink setDelegate:self];
+    [GPPDeepLink readDeepLinkAfterInstall];
     
     return YES;
 }
@@ -208,47 +236,24 @@
  
      [FBAppCall handleDidBecomeActive];
 
-    GTLQueryPlus *query = [GTLQueryPlus queryForPeopleGetWithUserId:@"me"];
-    NSLog(@"email %@ ", [NSString stringWithFormat:@"Email: %@",[GPPSignIn sharedInstance].authentication.userEmail]);
-     
-    // 1. Create a |GTLServicePlus| instance to send a request to Google+.
-    GTLServicePlus* plusService = [[GTLServicePlus alloc] init] ;
-    plusService.retryEnabled = YES;
     
-    // 2. Set a valid |GTMOAuth2Authentication| object as the authorizer.
-    [plusService setAuthorizer:[GPPSignIn sharedInstance].authentication];
-    
-    // 3. Use the "v1" version of the Google+ API.*
-    plusService.apiVersion = @"v1";
-    [plusService executeQuery:query
-            completionHandler:^(GTLServiceTicket *ticket,
-                                GTLPlusPerson *person,
-                                NSError *error) {
-                if (error) {
-                    //Handle Error
-                } else {
-                    NSLog(@"Email= %@", [GPPSignIn sharedInstance].authentication.userEmail);
-                    NSLog(@"GoogleID=%@", person.identifier);
-                    NSLog(@"User Name=%@", [person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName]);
-                    NSLog(@"Gender=%@-----------%@", person.gender,[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"]);
-                   NSString *userName= [[person.name.givenName stringByAppendingFormat:@" %@", person.name.familyName] uppercaseString];
-                   NSString *userProfilePic=[[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
-                    
-                  //[self getSignUp:person.name.givenName LastName:person.name.familyName EmailId:[GPPSignIn sharedInstance].authentication.userEmail Username:[NSString stringWithFormat:@"%@%@", firstName,lastName] Password:firstName Profilepic:imageUrl PhoneNo:phoneNo APNSToken:apns SignUpVia:@"GPlus" DOB:@"1993-5-7"];
-
-                }
-            }];
 
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
--(void)getSignUp:(NSString*)firstName LastName:(NSString*)lastName EmailId:(NSString*)emailid Username:(NSString*)username Password:(NSString*)password Profilepic:(NSString*)profile_pic PhoneNo:(NSString*)phoneNo APNSToken:(NSString*)apnsToken SignUpVia:(NSString*)signUpVia DOB:(NSString*)dob{
-    
-    NSLog(@"%@ %@ %@ %@ %@ %@ %@ %@ %@ %@",firstName,lastName,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia,dob);
-    
-    
+
+- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
+{
+    APNSTOKEN=[[[[NSString stringWithFormat:@"%@",deviceToken] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@">" withString:@""] stringByReplacingOccurrencesOfString:@"<" withString:@""];
+    NSLog(@"APNS Token:%@",APNSTOKEN);
+}
+
+- (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
+{
+    APNSTOKEN=@"";
+    NSLog(@"Failed to get token, error: %@", error);
 }
 
 @end

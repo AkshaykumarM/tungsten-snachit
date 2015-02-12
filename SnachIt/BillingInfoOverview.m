@@ -8,16 +8,11 @@
 
 #import "BillingInfoOverview.h"
 #import "UserProfile.h"
+#import "BillingInfoScanCell.h"
+#import "global.h"
 @implementation BillingInfoOverview{
     UserProfile *user;
 }
-@synthesize cardholderNameTextField=_cardholderNameTextField;
-@synthesize cardnoTextField=_cardnoTextField;
-@synthesize expdateTextField=_expdateTextField;
-@synthesize securityCodetextField=_securityCodetextField;
-@synthesize addressTextField=_addressTextField;
-@synthesize stateTextField=_stateTextField;
-@synthesize postalCodeTextField=_postalCodeTextField;
 
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
@@ -28,9 +23,6 @@ CGFloat animatedDistance;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [_scrollView setScrollEnabled:YES];
-    [_scrollView setContentSize:CGSizeMake(320, 568)];
-    [self setViewLookAndFeel];
     
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -39,99 +31,86 @@ CGFloat animatedDistance;
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    [self initialLize];
-}
--(void)initialLize{
     
-    if(user.profilePicUrl!=nil){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            self.profilePic.image = [UIImage imageWithData:data];
-        }];
-    }
 }
+
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     
     if(textField){
         [textField resignFirstResponder];
+        
     }
     return NO;
 }
--(void)setViewLookAndFeel{
-    UIColor *borderColor=[UIColor colorWithRed:0.792 green:0.792 blue:0.792 alpha:0.4];
-    self.profilePic.layer.cornerRadius= self.profilePic.frame.size.width/1.96;
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    return 1;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 670;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BillingInfoScanCell *cell = (BillingInfoScanCell *)[tableView dequeueReusableCellWithIdentifier:@"billingInfoScanCell" forIndexPath:indexPath];
+    cell.profilePicImg.layer.cornerRadius=RADIOUS;
+    cell.profilePicImg.clipsToBounds=YES;
+    cell.profilePicImg.layer.borderWidth=BORDERWIDTH;
+    cell.profilePicImg.layer.borderColor=[UIColor whiteColor].CGColor;
+    if(![user.fullName isKindOfClass:[NSNull class]])
+        cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
+    
+    cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = 3.0f;
-    self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
-    
-        _billingInfoView=[[[NSBundle mainBundle]loadNibNamed:@"BillingInfoView" owner:self options:nil] objectAtIndex:0];
-    
-        _billingInfoView.frame=CGRectMake(0.0f,_staticTableContainer.frame.origin.y+_staticTableContainer.frame.size.height, _billingInfoView.frame.size.width, _billingInfoView.frame.size.height);
+    if([global isValidUrl:user.profilePicUrl]){
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            cell.profilePicImg.image = [UIImage imageWithData:data];
+        }];
+    }
+      [cell.saveBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingChanged];
+    cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
+    cell.fullnameLbl.minimumScaleFactor=0.5;
   
-    
-        [_uiView addSubview:_billingInfoView];
-    CALayer *border1 = [CALayer layer];
-    CALayer *border2  = [CALayer layer];
-    CALayer *border3 = [CALayer layer];
-    CALayer *border4  = [CALayer layer];
-    CALayer *border5 = [CALayer layer];
-    CALayer *border6  = [CALayer layer];
-    CALayer *border7 = [CALayer layer];
-    CALayer *border8  = [CALayer layer];
-    
-    CGFloat borderWidth = 1;
-    border1.borderColor =borderColor.CGColor;
-    border1.frame = CGRectMake(0, self.cardholderNameTextField.frame.size.height - borderWidth, self.cardholderNameTextField.frame.size.width, self.cardholderNameTextField.frame.size.height);
-    border1.borderWidth = borderWidth;
-    [self.cardholderNameTextField.layer addSublayer:border1];
-    self.cardholderNameTextField.layer.masksToBounds = YES;
-    
-    
-    border2.borderColor =borderColor.CGColor;
-    border2.frame = CGRectMake(0, self.cardnoTextField.frame.size.height - borderWidth, self.cardnoTextField.frame.size.width, self.cardnoTextField.frame.size.height);
-    border2.borderWidth = borderWidth;
-    [self.cardnoTextField.layer addSublayer:border2];
-    self.cardnoTextField.layer.masksToBounds = YES;
-    
-    border3.borderColor =borderColor.CGColor;
-    border3.frame = CGRectMake(0, self.expdateTextField.frame.size.height - borderWidth, self.expdateTextField.frame.size.width, self.expdateTextField.frame.size.height);
-    border3.borderWidth = borderWidth;
-    [self.expdateTextField.layer addSublayer:border3];
-    self.expdateTextField.layer.masksToBounds = YES;
-    
-    border4.borderColor =borderColor.CGColor;
-    border4.frame = CGRectMake(0, self.securityCodetextField.frame.size.height - borderWidth, self.securityCodetextField.frame.size.width, self.securityCodetextField.frame.size.height);
-    border4.borderWidth = borderWidth;
-    [self.securityCodetextField.layer addSublayer:border4];
-    self.securityCodetextField.layer.masksToBounds = YES;
-    
-    border5.borderColor =borderColor.CGColor;
-    border5.frame = CGRectMake(0, self.addressTextField.frame.size.height - borderWidth, self.addressTextField.frame.size.width, self.addressTextField.frame.size.height);
-    border5.borderWidth = borderWidth;
-    [self.addressTextField.layer addSublayer:border5];
-    self.addressTextField.layer.masksToBounds = YES;
-    
-    border6.borderColor =borderColor.CGColor;
-    border6.frame = CGRectMake(0, self.stateTextField.frame.size.height - borderWidth, self.stateTextField.frame.size.width, self.stateTextField.frame.size.height);
-    border6.borderWidth = borderWidth;
-    [self.stateTextField.layer addSublayer:border6];
-    self.stateTextField.layer.masksToBounds = YES;
-
-    border7.borderColor =borderColor.CGColor;
-    border7.frame = CGRectMake(0, self.cityTextField.frame.size.height - borderWidth, self.cityTextField.frame.size.width, self.cityTextField.frame.size.height);
-    border7.borderWidth = borderWidth;
-    [self.cityTextField.layer addSublayer:border7];
-    self.cityTextField.layer.masksToBounds = YES;
-    
-    border8.borderColor =borderColor.CGColor;
-    border8.frame = CGRectMake(0, self.postalCodeTextField.frame.size.height - borderWidth, self.postalCodeTextField.frame.size.width, self.postalCodeTextField.frame.size.height);
-    border8.borderWidth = borderWidth;
-    [self.postalCodeTextField.layer addSublayer:border8];
-    self.postalCodeTextField.layer.masksToBounds = YES;
-
+    return cell;
 }
 
+-(void)detectCardType{
+    BillingInfoScanCell *tableCell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+
+    NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
+     NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
+     NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
+     NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
+     NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
+    
+    if ([visa evaluateWithObject:tableCell.cardNumberTextField.text])
+    {
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@"visa.png"];
+    }
+    else if ([mastercard evaluateWithObject:tableCell.cardNumberTextField.text])
+    {
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@"mastercard.png"];
+    }
+    else if ([dinnersclub evaluateWithObject:tableCell.cardNumberTextField.text])
+    {
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@"dinersclub.png"];
+    }
+    else if ([discover evaluateWithObject:tableCell.cardNumberTextField.text])
+    {
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@"discover.png"];
+    }
+    else if ([amex evaluateWithObject:tableCell.cardNumberTextField.text])
+    {
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@"amex.png"];
+    }
+    else{
+        tableCell.cardTypeImg.image=[UIImage imageNamed:@""];
+    }
+}
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
     CGRect textFieldRect =
@@ -191,7 +170,7 @@ CGFloat animatedDistance;
     [UIView commitAnimations];
 }
 
-- (IBAction)saveBtn:(id)sender {
+- (void)save {
     [self dismissViewControllerAnimated:true completion:nil];
 
 }

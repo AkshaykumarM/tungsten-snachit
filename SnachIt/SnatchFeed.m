@@ -74,6 +74,7 @@
     NSData *friendCountJson;
     NSData *responseData ;
     NSDictionary *dictionaryForFriendsCountResponse;
+    float viewSize;
 }
 
 
@@ -82,50 +83,30 @@
      
     [super viewDidLoad];
      
-    
-       [self setViewLookAndFeel];
+           [self setViewLookAndFeel];
+     SWRevealViewController *sw=self.revealViewController;
+     sw.rearViewRevealWidth=self.view.frame.size.width-50.0f;
      
-    
-  
   }
 -(void)viewDidAppear:(BOOL)animated{
   
+    //checking from where the user tapped the snoop button
+    if(snooptTracking==1)
+    {
+        [self performSegueWithIdentifier:@"productDetails" sender:self];
+        
+    }
 
-    // we will finally store the emails in an array so we create it here
-
-    
-    
-     //    if(i==0){
-//    SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]
-//                                  initWithNibName:@"StartScreen" bundle:nil];
-//    [self presentViewController:startscreen animated:YES completion:nil];
-//    }
-//    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:userProfilePic]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-//        image3 = [UIImage imageWithData:data];
-//    }];
-//    i++;
+     //initializing user data
      user=[UserProfile sharedInstance];
-    if(user.profilePicUrl!=nil){
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        CGRect frameimg = CGRectMake(0, 0, 40, 40);
-        
-        topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
-        [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
-        topProfileBtn.clipsToBounds=YES;
-        [topProfileBtn setShowsTouchWhenHighlighted:YES];
-        topProfileBtn.layer.cornerRadius = 20.0f;
-        topProfileBtn.layer.borderWidth = 2.0f;
-        topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
-        
-        [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
-        UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:topProfileBtn];
-        
-        self.navigationItem.leftBarButtonItem=mailbutton;
-        
-        
-        
-    }];}
-
+   
+    //setting up upper left profile pic here
+    [self setupProfilePic];
+    
+    viewSize = self.view.frame.size.width-80.0f;//for setting product scrollview size
+    
+  
+  
     }
 -(void)viewWillAppear:(BOOL)animated{
     [self trySilentLogin];
@@ -158,11 +139,11 @@
 
 -(void)trySilentLogin{
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSString *SSOUsing = [defaults stringForKey:@"SSOUsing"];
-    NSString *username = [defaults stringForKey:@"Username"];
-    NSString *password = [defaults stringForKey:@"Password"];
+    NSString *SSOUsing = [defaults stringForKey:SSOUSING];
+    NSString *username = [defaults stringForKey:USERNAME];
+    NSString *password = [defaults stringForKey:PASSWORD];
     int signedUp = (int)[defaults integerForKey:@"signedUp"];
-    NSLog(@"%@ %@ %@ %d",SSOUsing,username,password,signedUp);
+    NSLog(@"SSOUSING %@ Username %@ %@ %d",SSOUsing,username,password,signedUp);
     
     SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]initWithNibName:@"StartScreen" bundle:nil];
     if(SSOUsing!=nil&& signedUp!=0&& username!=nil && password!=nil){
@@ -197,7 +178,7 @@
     NSString *snachId =[product objectForKey:@"snachId"];
     NSString *productDescription =[product objectForKey:@"productDescription"];
     NSInteger followStatus =[[product objectForKey:@"followStatus"] integerValue] ;
-    __block NSInteger friendCount ;
+    __block NSInteger friendCount = 0 ;
     
     //setting up product image carousel
     cell.productImagesContainer.scrollEnabled = YES;
@@ -205,16 +186,17 @@
     cell.productImagesContainer.backgroundColor=[UIColor whiteColor];
     int xOffset = 0;
     NSError *error;
+    if(dictionaryForEmails!=nil){
     [dictionaryForEmails setObject:productId forKey:@"productId"];
     friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&error];
     NSString *jsonString = [[NSString alloc] initWithData:friendCountJson encoding:NSUTF8StringEncoding];
     NSLog(@"jsonData as string:\n%@", jsonString);
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
     [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@getFriendsCount/",maschineIP]]];
+    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@getFriendsCount/",ec2maschineIP]]];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%d", [friendCountJson length]] forHTTPHeaderField:@"Content-Length"];
+    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[friendCountJson length]] forHTTPHeaderField:@"Content-Length"];
     [request setHTTPBody:friendCountJson];
     
   
@@ -223,40 +205,53 @@
         if(!error)
         {
             dictionaryForFriendsCountResponse =  [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error: &error];
+
             if([[dictionaryForFriendsCountResponse valueForKey:@"success"] isEqual:@"true"])
             {
                 friendCount=[[dictionaryForFriendsCountResponse valueForKey:@"count"] integerValue];
+                
                 NSLog(@"Friend Count : %@",[dictionaryForFriendsCountResponse valueForKey:@"success"] );
+            }
+            else{
+                
+                friendCount=0;
             }
         }
         else{
+            friendCount=0;
             NSLog(@"Response:%@",data);
         }
     }];
+    }
+    NSLog(@"View Size:%f",self.view.frame.size.width);
+ 
 
-    
-    
-       for(int index=0; index < [productImages count]; index++)
+    for(int index=0; index < [productImages count]; index++)
     {
-       
-        UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,cell.productImagesContainer.frame.size.width, cell.productImagesContainer.frame.size.height)];
+        UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize, cell.productImagesContainer.frame.size.height)];
+  
         [img setContentMode:UIViewContentModeScaleAspectFit];
         //[img setImage: [UIImage imageNamed:[NSString stringWithFormat:@"%@", productImages[index]]]];
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:productImages[index]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             [img setImage: [UIImage imageWithData:data]];
+          
         }];
         
         img.userInteractionEnabled = YES;
         
         [cell.productImagesContainer addSubview:img];
-        xOffset+=cell.productImagesContainer.frame.size.width;
+      
+
+        xOffset+=viewSize;
         
     }
     cell.productImagesContainer.contentSize = CGSizeMake(scrollWidth+xOffset,cell.productImagesContainer.frame.size.width);
     
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", brandname, productname] forState:UIControlStateNormal];
-    
+    cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
+    cell.productName.titleLabel.minimumScaleFactor=0.5;
+   // cell.productName.titleLabel.minimumFontSize=8.0F;
     [cell.productPrice setTitle: [NSString stringWithFormat:@"$%@",price] forState:UIControlStateNormal];
    
     //Snoop button view setup
@@ -307,27 +302,16 @@
     
     
     //setting freind count
-
+    friendCount=indexPath.row;
     if(friendCount>0){
-        NSLog(@"sdfsdfdfsdfd%ld",(long)friendCount);
+    [cell.friendCount setHidden:NO];
     cell.friendCount.layer.cornerRadius = 11.0f;
     cell.friendCount.layer.borderWidth = 1.0;
     cell.friendCount.layer.borderColor = [[UIColor whiteColor] CGColor];
         [cell.friendCount setTitle:[NSString stringWithFormat:@"%d",friendCount] forState:UIControlStateNormal];
-    [cell.friendCount setHidden:NO];
-//        }
-//    else if(friendCount>20){
-//            cell.friendCount.layer.cornerRadius = 11.0f;
-//            cell.friendCount.layer.borderWidth = 1.0;
-//            cell.friendCount.layer.borderColor = [[UIColor whiteColor] CGColor];
-//        [cell.friendCount setTitle:@"20+" forState:UIControlStateNormal];
-//            [cell.friendCount setHidden:NO];
-//        
-//        }
+    
     }
-    if(friendCount<1){
-         [cell.friendCount setHidden:YES];
-    }
+   
 
     return cell;
 }
@@ -373,9 +357,14 @@
         SnoopedProduct *product=[[SnoopedProduct
                                sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
     }
+   else if ([segue.identifier isEqualToString:@"productDetails"]) {
+        
+       snooptTracking=0;
+    }
+
 }
 -(void)makeProductRequest{
-    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://192.168.0.120/product.json"]];
+    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@product.json",tempmaschineIP]]];
       if (jasonData) {
         NSError *e = nil;
         self.productslist = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
@@ -480,7 +469,7 @@ This function will return all the email id's from the phoonebook in an Array.
 -(void)setViewLookAndFeel{
   
     
-        self.navigationItem.leftBarButtonItem.target=self.revealViewController;
+    self.navigationItem.leftBarButtonItem.target=self.revealViewController;
     self.navigationItem.leftBarButtonItem.action=@selector(revealToggle:);
 }
 
@@ -488,4 +477,42 @@ This function will return all the email id's from the phoonebook in an Array.
 -(void)getFriendCountForProduct:(NSString*)productId{
    
 }
+
+-(void)setupProfilePic{
+    /*Upper left profile pic work starts here*/
+    
+    //here i am setting the frame of profile pic and assigning it to a button
+    CGRect frameimg = CGRectMake(0, 0, 40, 40);
+    topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
+    
+    //assigning the default background image
+    [topProfileBtn setBackgroundImage:[UIImage imageNamed:@"userIcon.png"] forState:UIControlStateNormal];
+    topProfileBtn.clipsToBounds=YES;
+    [topProfileBtn setShowsTouchWhenHighlighted:YES];
+    
+    //setting up corner radious, border and border color width to make it circular
+    topProfileBtn.layer.cornerRadius = 20.0f;
+    topProfileBtn.layer.borderWidth = 2.0f;
+    topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
+    
+    // setting action to the button
+    [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+    
+    //assigning button to top bar iterm
+    UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:topProfileBtn];
+    
+    //adding bar item to left bar button item
+    self.navigationItem.leftBarButtonItem=mailbutton;
+    
+    //checking if profile pic url is nil else download the image and assign it to imageview
+    
+
+    if([global isValidUrl:user.profilePicUrl]){
+        
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
+        }];}
+
+}
+
 @end

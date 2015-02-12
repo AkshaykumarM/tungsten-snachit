@@ -7,6 +7,9 @@
 //
 
 #import "TwitterViewController.h"
+#import "TwitterEmailIdView.h"
+#import "UserProfile.h"
+
 NSString *client_id = @"GEgPnkP8nWL4IKvZVuow6J4pM";
 NSString *secret = @"GHJBrsN0cGQGnGttzovNzpJgHzxBVXSI0HrJEnz2LX0z2e283u";
 NSString *callback = @"http://codegerms.com/callback";
@@ -30,6 +33,7 @@ NSString *callback = @"http://codegerms.com/callback";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [self.twitterLoginViewLoader startAnimating];
     consumer = [[OAConsumer alloc] initWithKey:client_id secret:secret realm:nil];
     NSURL* requestTokenUrl = [NSURL URLWithString:@"https://api.twitter.com/oauth/request_token"];
     OAMutableURLRequest* requestTokenRequest = [[OAMutableURLRequest alloc] initWithURL:requestTokenUrl
@@ -104,15 +108,25 @@ NSString *callback = @"http://codegerms.com/callback";
 
 
 - (void)didReceiveuserdata:(OAServiceTicket*)ticket data:(NSData*)data {
+    
     NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
- 
+
     NSError *error;
     NSDictionary *userData = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
-    NSLog(@"%@",[userData objectForKey:@"id"]);
-    NSLog(@"%@",[userData objectForKey:@"name"]);
-    NSLog(@"%@",[userData objectForKey:@"profile_image_url"]);
- [self.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    NSLog(@"%@",userData);
+    NSLog(@"%@", [userData objectForKey:@"id"]);
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    twUserId=[userData objectForKey:@"id"];
+    twFullname=[userData objectForKey:@"name"];
+    twProfilePic=[[userData objectForKey:@"profile_image_url"] stringByReplacingOccurrencesOfString:@"_normal" withString:@"_bigger"];
    
+    TwitterEmailIdView *vc = [[TwitterEmailIdView alloc]
+                              initWithNibName:@"TwitterEmailId" bundle:nil];
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    [self presentViewController:vc animated:NO completion:nil];
 
 }
 
@@ -175,9 +189,14 @@ NSString *callback = @"http://codegerms.com/callback";
 
 - (void)webView:(UIWebView*)webView didFailLoadWithError:(NSError*)error {
     // ERROR!
+    
 }
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     // [indicator stopAnimating];
+    [self.twitterLoginViewLoader stopAnimating];
 }
 
+- (IBAction)closeBtn:(id)sender {
+    [self dismissViewControllerAnimated:NO completion:nil];
+}
 @end

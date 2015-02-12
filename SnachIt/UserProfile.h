@@ -19,6 +19,9 @@
 @property (nonatomic,strong) NSString *fullName;
 @property (nonatomic,strong) NSString *dateOfBirth;
 @property (nonatomic,strong) NSString *joiningDate;
+extern NSString * twUserId;
+extern NSString * twFullname;
+extern NSString * twProfilePic;
 /*
 This instance will be used to access currently logged in user info*/
 + (UserProfile *)sharedInstance;

@@ -9,7 +9,9 @@
 #import "UserProfile.h"
 
 @implementation UserProfile
-
+NSString * twUserId;
+NSString * twFullname;
+NSString * twProfilePic;
 
 + (UserProfile *)sharedInstance
 {

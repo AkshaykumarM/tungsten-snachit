@@ -46,8 +46,14 @@
     
     UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
     [navController setViewControllers: @[rootViewController] animated: YES];
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromLeft;
     
-    [self.revealViewController pushFrontViewController:navController animated:YES];
+    [self.view.window.layer addAnimation:transition forKey:nil];
+    
+    [self.revealViewController pushFrontViewController:navController animated:NO];
 }
 
 
