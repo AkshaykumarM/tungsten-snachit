@@ -19,5 +19,5 @@
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 - (IBAction)addNewCardBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UITableView *paymentTableView;
-
+@property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @end

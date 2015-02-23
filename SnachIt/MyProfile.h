@@ -26,7 +26,13 @@
 @property (weak, nonatomic) IBOutlet UIButton *productPriceLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productNameLbl;
 - (IBAction)snoopButton:(id)sender;
-- (IBAction)barButtonItem:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
+@property (weak, nonatomic) IBOutlet UIButton *friendCount;
+- (IBAction)followBrand:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UIButton *followStatus;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
+-(void)unfollowBrand:(id)sender;
 @end

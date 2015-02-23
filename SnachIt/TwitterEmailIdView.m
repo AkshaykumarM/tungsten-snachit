@@ -34,6 +34,7 @@ CGFloat animatedDistance;
    }
 
 - (IBAction)logInButton:(id)sender {
+    NSLog(@"APNS TOKEN WHILE TWITTER LOGIN: %@",APNSTOKEN);
    NSPredicate* email = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", EMAIL_REGEX];
     if([self.emailIdTextField hasText]&& [email evaluateWithObject:self.emailIdTextField.text]){
         SnachitSignup *signUp=[[SnachitSignup alloc]init];

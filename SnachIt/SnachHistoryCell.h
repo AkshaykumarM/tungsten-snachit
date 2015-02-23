@@ -14,5 +14,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *dateOrdered;
 @property (weak, nonatomic) IBOutlet UILabel *dateDelivered;
 @property (weak, nonatomic) IBOutlet UIImageView *statusFlag;
+@property (weak, nonatomic) IBOutlet UILabel *deliveryDateLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *productImage;
 @end

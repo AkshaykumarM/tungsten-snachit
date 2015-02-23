@@ -124,23 +124,20 @@ CGFloat animatedDistance;
 
 
 - (IBAction)signUpBtn:(id)sender {
-        isAllreadySignedUp=FALSE;
-    [self.activityIndicator startAnimating];
+ 
+   
   //  [self performSegueWithIdentifier: @"signInScreenSegue" sender:self];
     if([self.emailTextField hasText] &&[self.passwordTextField hasText])
     {
-        [self.errorLbl setHidden:YES];
         NSString *username= self.emailTextField.text;
         NSString *password= self.passwordTextField.text;
       
-    
+        NSLog(@"APNS TOKEN WHILE SNACH.IT SIGNUP: %@",APNSTOKEN);
         if([self IsEmailValid:username] && [password length]>=6)
         {
-            [self.errorLbl setHidden:YES];
             NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSTOKEN SignUpVia:@"SnachIt" DOB:@""];
-            
-            NSLog(@"status%ld",(long)status);
-            if(status==1 && !isAllreadySignedUp){
+         
+            if(status==1 ){
                 NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
                 [defaults setInteger:1 forKey:@"signedUp"];
                 [defaults setObject:username forKey:USERNAME];
@@ -154,16 +151,18 @@ CGFloat animatedDistance;
 
             }
         }
+        else{
+            [global showAllertMsg:@"Enter valid Email id and Password must be gretter than 6 digits."];
+        }
         
     }else{
         [global showAllertForEnterValidCredentials];
     }
-     [self.activityIndicator stopAnimating];
+    
 }
 
 - (IBAction)fbBtn:(id)sender {
-        isAllreadySignedUp=FALSE;
-    [self startProcessing];
+            [self startProcessing];
     ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
@@ -219,18 +218,16 @@ CGFloat animatedDistance;
                                   
                                   NSLog(@"Signed up with facebook Successfully");
                                   [self stopProcessing];
-                                  [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                                  [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                               }else{
                                   NSLog(@"Error occurred while signing in");
-                                  if(isAllreadySignedUp)
-                                      [global showAllertForAllreadySignedUp];
-                                  [self stopProcessing];
+                                    [self stopProcessing];
                                   
                               }
                           }
                           else{
                               [self stopProcessing];
-                              
+                              [global showAllertForAllreadySignedUp];
                               NSLog(@"Error occurred while sign up");
                           }
                       }];
@@ -280,15 +277,19 @@ CGFloat animatedDistance;
                         if([signin performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
                             NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
                             [self stopProcessing];
-                            [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                            [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                             
                         }
-                        else
+                        else{
                             [self stopProcessing];
+                            [global showAllertMsg:@"Problem occured while signup, this can occur "];
+                        }
                     }
                     else
+                    {
+                        
                         [self stopProcessing];
-                    
+                    }
                     if (error) {
                         //Handle Error
                         [self stopProcessing];
@@ -310,7 +311,7 @@ CGFloat animatedDistance;
     NSString *email = [GPPSignIn sharedInstance].authentication.userEmail;
     NSString *imageUrl = [[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
     NSString *phoneNo=@"";
-    NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
+    NSLog(@"While signup UserName:%@ Password: %@  APNS TOKEN: %@",email,googleId,APNSTOKEN);
     NSInteger status=[signup getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
     if(status==1)
     {
@@ -348,7 +349,6 @@ CGFloat animatedDistance;
 
 
 - (IBAction)twBtn:(id)sender {
-        isAllreadySignedUp=FALSE;
     CATransition* transition = [CATransition animation];
     transition.duration = 1;
     transition.type = kCATransitionMoveIn;
@@ -397,32 +397,31 @@ CGFloat animatedDistance;
     
         url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",ec2maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
     NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-
+    NSLog(@"Request URL: %@",url);
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     
     NSURLResponse *response = nil;
     NSError *error = nil;
     //getting the data
     NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    NSLog(@"GetSignUp:%@",request);
-    NSLog(@"GetSignUp:%@",jasonData);
     
     if (jasonData) {
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
         NSLog(@"RESPONSE:%@",response );
-        if([[response valueForKey:@"error_code"] integerValue]==2)
-            isAllreadySignedUp=TRUE;
-            
+                   
         if([[response valueForKey:@"success"] isEqual:@"true"]|| [[response valueForKey:@"error_code"] integerValue]==2)
         {
-            //caching userid for sso
+             [global showAllertMsg:@"Signed up successfully"];
             status=1;
         }
         else{
+             [global showAllertMsg:@"Opps! something went wrong, while sign you in"];
             status=0;
         }
     }
     else{
+        
+        [global showAllertMsg:@"Server not responding"];
         status=0;
     }
     return status;
@@ -468,7 +467,7 @@ CGFloat animatedDistance;
     [self.view addSubview:backView];
     activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [backView addSubview:activitySpinner];
-    activitySpinner.center = CGPointMake(160, 240);
+    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
     activitySpinner.hidesWhenStopped = YES;
     [activitySpinner startAnimating];
     

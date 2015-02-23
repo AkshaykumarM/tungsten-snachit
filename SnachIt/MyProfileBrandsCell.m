@@ -10,4 +10,8 @@
 
 @implementation MyProfileBrandsCell
 
+- (IBAction)followStatus:(id)sender {
+}
+- (IBAction)unfollowBrand:(id)sender {
+}
 @end

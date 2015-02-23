@@ -37,7 +37,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     view.backgroundColor=[UIColor whiteColor];
     [self.window.rootViewController.view addSubview:view];
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                           [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] , UITextAttributeTextColor,
+                                                           [UIColor purpleColor] , UITextAttributeTextColor,
                                                            [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] ,UITextAttributeTextShadowColor,
                                                            [NSValue valueWithUIOffset:UIOffsetMake(0, 0)],
                                                            UITextAttributeTextShadowOffset,
@@ -46,7 +46,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1]];
 
     
-    [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.647 green:0.208 blue:0.522 alpha:1] } forState:UIControlStateSelected];
+    [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor purpleColor] } forState:UIControlStateSelected];
     
     // color disabled text ---> grey
     [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.557 green:0.557 blue:0.557 alpha:1] } forState:UIControlStateNormal];
@@ -59,7 +59,13 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     [GPPSignIn sharedInstance].clientID = kClientId;
     [GPPDeepLink setDelegate:self];
     [GPPDeepLink readDeepLinkAfterInstall];
+    UILocalNotification *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     
+    if (notification)
+    {
+        NSLog(@"Notification");
+    }
+
     return YES;
 }
 
@@ -122,14 +128,14 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
         NSString *alertTitle;
         // If the error requires people using an app to make an action outside of the app in order to recover
         if ([FBErrorUtility shouldNotifyUserForError:error] == YES){
-            alertTitle = @"Something went wrong";
+           
             alertText = [FBErrorUtility userMessageForError:error];
             [self showMessage:alertText withTitle:alertTitle];
         } else {
             
             // If the user cancelled login, do nothing
             if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryUserCancelled) {
-                NSLog(@"User cancelled login");
+               
                 
                 // Handle session closures that happen outside of the app
             } else if ([FBErrorUtility errorCategoryForError:error] == FBErrorCategoryAuthenticationReopenSession){
@@ -144,7 +150,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
                 NSDictionary *errorInformation = [[[error.userInfo objectForKey:@"com.facebook.sdk:ParsedJSONResponseKey"] objectForKey:@"body"] objectForKey:@"error"];
                 
                 // Show the user an error message
-                alertTitle = @"Something went wrong";
+                
                 alertText = [NSString stringWithFormat:@"Please retry. \n\n If the problem persists contact us and mention this error code: %@", [errorInformation objectForKey:@"message"]];
                 [self showMessage:alertText withTitle:alertTitle];
             }
@@ -164,7 +170,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     //    [loginButton setTitle:@"Log in with Facebook" forState:UIControlStateNormal];
     //
     // Confirm logout message
-    [self showMessage:@"You're now logged out" withTitle:@""];
+   
 }
 
 // Show the user the logged-in UI
@@ -247,13 +253,19 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     APNSTOKEN=[[[[NSString stringWithFormat:@"%@",deviceToken] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@">" withString:@""] stringByReplacingOccurrencesOfString:@"<" withString:@""];
-    NSLog(@"APNS Token:%@",APNSTOKEN);
+   
+    
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
     APNSTOKEN=@"";
     NSLog(@"Failed to get token, error: %@", error);
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+           isApplicationLaunchedFromNotification=TRUE;
 }
 
 @end

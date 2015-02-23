@@ -28,6 +28,8 @@ double orderTotal;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
+UIView *backView;
+UIActivityIndicatorView *activitySpinner;
 @implementation SnachCheckDetails
 {
     NSInteger tempQuntity;
@@ -69,13 +71,15 @@ double orderTotal;
 }
 -(void)initializeView{
 
-  
+    self.navigationController.navigationBar.topItem.title = @"snach details";
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
     productDescription.text=product.productDescription;
     
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -83,6 +87,7 @@ double orderTotal;
     return 4;
     
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     NSString *simpleTableIdentifier = [self.cellId objectAtIndex:indexPath.row];
@@ -102,10 +107,21 @@ double orderTotal;
       [cell.expandPayment addTarget:self action:@selector(exapndPaymentOverview) forControlEvents:UIControlEventTouchUpInside];
    
     [cell.expandOrderTotal addTarget:self action:@selector(exapndOrderTotalOverview) forControlEvents:UIControlEventTouchUpInside];
+    
+
     return cell;
     
    }
 
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+   //hiding the last cell separator
+    if (cell && indexPath.row == 3 && indexPath.section == 0) {
+        
+        cell.separatorInset = UIEdgeInsetsMake(0.f, cell.bounds.size.width, 0.f, 0.0f);
+    }
+}
 //this function add the product qunatity
 -(void)addQuntity
 {
@@ -167,10 +183,18 @@ double orderTotal;
 }
 
 - (IBAction)swipeToSnach:(id)sender {
-    NSLog(@"dsfdfdsdsdfdvvvdvdvdbd%d",[self snachProduct]);
-    if([self snachProduct]==1){
+    [self startProcessing];
+       if([self snachProduct]==1){
+           [self stopProcessing];
     [self performSegueWithIdentifier:STP_SEGUE sender:self];
+           
     }
+       else{
+           [self stopProcessing];
+           [global showAllertMsg:@"Opps! not able to snach.it, please fill your details correctly"];
+           
+       }
+    
 }
 
 - (void)viewDidUnload
@@ -224,10 +248,35 @@ double orderTotal;
                 if([[response objectForKey:@"success"] isEqual:@"true"])
                     status=1;
                 else
+                {
+                    @try{
+                    [global showAllertMsg:[response objectForKey:@"error_message"]];
                     status=0;
+                    }
+                    @catch(NSException *e){
+                        NSLog(@"Error %@",e);
+                    }
+                }
             }
 
       return status;
+}
+-(void)startProcessing{
+    
+    backView = [[UIView alloc] initWithFrame:self.view.frame];
+    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
+    [self.view addSubview:backView];
+    activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+    [backView addSubview:activitySpinner];
+    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
+    activitySpinner.hidesWhenStopped = YES;
+    [activitySpinner startAnimating];
+    
+}
+-(void)stopProcessing{
+    
+    [activitySpinner stopAnimating];
+    [backView removeFromSuperview];
 }
 
 

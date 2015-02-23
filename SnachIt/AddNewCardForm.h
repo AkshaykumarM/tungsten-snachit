@@ -27,6 +27,8 @@
 @property (weak, nonatomic) IBOutlet UITextField *stateTextField;
 @property (weak, nonatomic) IBOutlet UITextField *zipTextField;
 @property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
+@property (weak, nonatomic) IBOutlet UIImageView *cameraBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *cardtypeImageView;
 
 
 @end

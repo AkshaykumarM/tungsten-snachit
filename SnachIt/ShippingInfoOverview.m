@@ -10,6 +10,11 @@
 #import "ShippingInfoAddCell.h"
 #import "UserProfile.h"
 #import "global.h"
+#import "DBManager.h"
+
+@interface ShippingInfoOverview()
+@property (nonatomic, strong) DBManager *dbManager;
+@end
 @implementation ShippingInfoOverview
 {
     UserProfile *user;
@@ -25,9 +30,9 @@ CGFloat animatedDistance;
     [super viewDidLoad];
     
     // Set the Label text with the selected recipe
+
     
-    
-    
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -76,7 +81,18 @@ CGFloat animatedDistance;
     [cell.saveBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
-
+    
+    [global setTextFieldInsets:cell.firstNameTextField];
+    [global setTextFieldInsets:cell.lastNameTextField];
+    [global setTextFieldInsets:cell.cityTextField];
+    [global setTextFieldInsets:cell.stateTextField];
+    [global setTextFieldInsets:cell.addressTextField];
+    [global setTextFieldInsets:cell.phoneTextField];
+    [global setTextFieldInsets:cell.postalCodeTextField];
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults valueForKey:DEFAULT_BACK_IMG])
+        cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
     return cell;
 }
 
@@ -139,6 +155,48 @@ CGFloat animatedDistance;
     [UIView commitAnimations];
 }
 -(void)save{
-[self dismissViewControllerAnimated:true completion:nil];}
+     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    
+    if([cell.firstNameTextField hasText] &&[cell.lastNameTextField hasText]&& [cell.stateTextField hasText]&&[cell.cityTextField hasText]&&[cell.addressTextField hasText]&&[cell.postalCodeTextField hasText]&&[cell.phoneTextField hasText]){
+        
+       
+        NSString *query = [NSString stringWithFormat:@"insert into address values(null, '%@', '%@', '%@' ,'%@','%@','%@')", [NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text], cell.addressTextField.text, cell.cityTextField.text,cell.stateTextField.text,cell.postalCodeTextField.text,cell.phoneTextField.text];
+        
+        // Execute the query.
+        
+        [self.dbManager executeQuery:query];
+        
+        // If the query was successfully executed then pop the view controller.
+        if (self.dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+            
+            // Pop the view controller.
+            
+        }
+        else{
+            NSLog(@"Could not execute the query.");
+        }
+    }
+[self dismissViewControllerAnimated:true completion:nil];
+}
+
+- (IBAction)backBtn:(id)sender {
+    NSLog(@"back");
+    [self dismissViewControllerAnimated:NO completion:nil];
+}
+
+-(void) getPhoto:(id) sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    
+    [self presentModalViewController:picker animated:YES];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    [picker dismissModalViewControllerAnimated:YES];
+    cell.defBackImg.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+}
 
 @end

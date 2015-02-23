@@ -8,21 +8,33 @@
 
 #import "ShippingInformation.h"
 #import "ShippingInfoCell.h"
+#import "ShippingInfoTableCellcell.h"
 #import "SWRevealViewController.h"
 #import "SnatchFeed.h"
 #import "UserProfile.h"
 #import "global.h"
+#import "DBManager.h"
 @interface ShippingInformation()
+@property (nonatomic, strong) DBManager *dbManager;
 
+@property (nonatomic, strong) NSArray *arrAddressInfo;
 @end
 @implementation ShippingInformation
 {
     UserProfile *user;
 }
+@synthesize checkedIndexPath;
 - (void)viewDidLoad {
     [super viewDidLoad];
-   
+        self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+    // Set the Label text with the selected recipe
     
+    [self loadData];
+   
+    [self.backButton setTarget:self.revealViewController];
+    [self.backButton setAction:@selector(revealToggle:)];
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -40,15 +52,41 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    if(tableView==self.tableView1)
+    {
     return 1;
+    }
+    else{
+        return self.arrAddressInfo.count;
+    }
 }
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create a "invisible" footer
+    return 0.01f;
+}
+
+
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 600;
+    if(tableView==self.tableView1)
+    {
+        return 600;
+    }
+    else{
+   
+        return 80;
+    }
+
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    if(tableView==self.tableView1)
+    {
+
     ShippingInfoCell *cell = (ShippingInfoCell *)[tableView dequeueReusableCellWithIdentifier:@"ShippingInfoCell" forIndexPath:indexPath];
+        if (self.arrAddressInfo==nil) {
+            tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
+        }
     cell.profilePicImg.layer.cornerRadius=RADIOUS;
     cell.profilePicImg.clipsToBounds=YES;
     cell.profilePicImg.layer.borderWidth=BORDERWIDTH;
@@ -66,27 +104,87 @@
     }
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
+    //setting background img
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults valueForKey:DEFAULT_BACK_IMG])
+        cell.backImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
 
     
     return cell;
+    }
+    else{
+        ShippingInfoTableCellcell *cell = (ShippingInfoTableCellcell *)[tableView dequeueReusableCellWithIdentifier:@"ShippingInfoTableCellcell" forIndexPath:indexPath];
+        NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
+        NSInteger indexOfStreetAddress = [self.dbManager.arrColumnNames indexOfObject:@"streetAddress"];
+        NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
+        NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
+        NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
+        
+        // Set the loaded data to the appropriate cell labels.
+        
+        cell.nameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
+        
+        cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
+        
+        cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
+        cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+   
+    if(tableView!=self.tableView1)
+    if(self.checkedIndexPath)
+    {
+        UITableViewCell* uncheckCell = [tableView
+                                        cellForRowAtIndexPath:self.checkedIndexPath];
+        uncheckCell.accessoryView=NO;
+    }
+    if([self.checkedIndexPath isEqual:indexPath])
+    {
+        self.checkedIndexPath = nil;
+    }
+    else
+    {
+        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        self.checkedIndexPath = indexPath;
+    }
+    
+
+    
+    
+}
+
+-(void)loadData{
+    // Form the query.
+    NSString *query = @"select * from address";
+    
+    // Get the results.
+    if (self.arrAddressInfo != nil) {
+        self.arrAddressInfo = nil;
+    }
+    self.arrAddressInfo = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+    
+    // Reload the table view.
+    [self.tableView1 reloadData];
 }
 
 
 
-- (IBAction)backBtn:(id)sender {
-    UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
-    SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
+-(void) getPhoto:(id) sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
     
-    UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
-    [navController setViewControllers: @[rootViewController] animated: YES];
-    CATransition* transition = [CATransition animation];
-    transition.duration = 0.35;
-    transition.type = kCATransitionPush;
-    transition.subtype = kCATransitionFromLeft;
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
-    [self.view.window.layer addAnimation:transition forKey:nil];
- 
-    [self.revealViewController pushFrontViewController:navController animated:NO];
-    
+    [self presentModalViewController:picker animated:YES];
 }
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+     ShippingInfoCell *cell = (ShippingInfoCell*)[self.tableView1 cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    [picker dismissModalViewControllerAnimated:YES];
+    cell.backImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+}
+
 @end

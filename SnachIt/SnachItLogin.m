@@ -144,8 +144,7 @@ CGFloat animatedDistance;
 }
 - (IBAction)fbBtn:(id)sender {
     [self startProcessing];
-        isAllreadySignedUp=FALSE;
-      ssousing=@"FB";
+            ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
         || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
@@ -199,14 +198,14 @@ CGFloat animatedDistance;
                                   
                                   NSLog(@"Signed up with facebook Successfully");
                                   [self stopProcessing];
-                                  [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                                  [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                               }else{
-                                   NSLog(@"Error occurred while signing in");
+                                  [global showAllertForAllreadySignedUp];
                                   [self stopProcessing];
                               }
                           }
                           else{
-                              [self stopProcessing];
+                              [global showAllertForAllreadySignedUp];
                               NSLog(@"Error occurred while sign up");
                           }
                       }];
@@ -222,16 +221,20 @@ CGFloat animatedDistance;
 
 - (IBAction)signInBtn:(id)sender {
    //start spinner
-    isAllreadySignedUp=FALSE;
+    
     [self startProcessing];
     ssousing=@"SnachIt";
     if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
-    if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
-           [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
-    }
-    else{
-        [global showAllertForInvalidCredentials];
-    }
+            if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
+       
+            
+                [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+                
+                
+            }
+            else{
+            [global showAllertForInvalidCredentials];
+            }
     }
     else{
         [global showAllertForEnterValidCredentials];
@@ -250,17 +253,17 @@ CGFloat animatedDistance;
     //getting the data
     NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     //json parse
-  
+    NSLog(@"\nRequest URL: %@",url);
   int status=0;
     
     if (jasonData) {
        
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-         NSLog(@"Json Data:%@  %@",response,password);
-        NSLog(@"%@",[response objectForKey:@"success"]);
+        NSLog(@"\nResponse:%@ ",response);
+       
         if([[response objectForKey:@"success"] isEqual:@"true"])
         {
-            
+            [global showAllertMsg:@"Sign in success"];
             NSDictionary *userprofile=[response objectForKey:@"userProfile"];
             [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"]];
             NSLog(@"UserProfile:%@",userprofile);
@@ -268,13 +271,18 @@ CGFloat animatedDistance;
             [defaults setObject:ssoUsing forKey:SSOUSING];
             [defaults setObject:username forKey:USERNAME];
             [defaults setObject:password forKey:PASSWORD];
-            [defaults setInteger:1  forKey:@"signedUp"];
+       
+            [defaults synchronize];
             status=1;
         }
         else{
             status=0;
+            [global showAllertForInvalidCredentials];
         }
         
+    }
+    else{
+        [global showAllertMsg:@"Server not responding"];
     }
     return status;
 }
@@ -285,7 +293,7 @@ CGFloat animatedDistance;
     [self.view addSubview:backView];
     activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [backView addSubview:activitySpinner];
-    activitySpinner.center = CGPointMake(160, 240);
+    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
     activitySpinner.hidesWhenStopped = YES;
     [activitySpinner startAnimating];
 
@@ -342,7 +350,7 @@ CGFloat animatedDistance;
                                         if([self performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
                                             NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
                                              [self stopProcessing];
-                                            [self.presentingViewController.presentingViewController.presentedViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+                                            [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                                            
                                         }
                                         else
@@ -410,7 +418,6 @@ CGFloat animatedDistance;
 
 - (IBAction)gPlusBtn:(id)sender {
     [self startProcessing];
-        isAllreadySignedUp=FALSE;
     [self googleSignIn];
   
     
@@ -436,7 +443,6 @@ CGFloat animatedDistance;
 // ---- its call a web service to login with google+ info
 
 - (IBAction)twBtn:(id)sender {
-       isAllreadySignedUp=FALSE;
     CATransition* transition = [CATransition animation];
     transition.duration = 1;
     transition.type = kCATransitionMoveIn;

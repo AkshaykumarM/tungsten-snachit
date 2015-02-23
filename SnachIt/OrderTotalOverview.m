@@ -42,7 +42,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 }
 
 -(void)initializeView{
-    
+     self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
@@ -52,7 +52,8 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     totalLabel.text=[NSString stringWithFormat:@"$%@",order.orderTotal];
     
-  
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     
     
 }
@@ -60,6 +61,10 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     return 4;
     
+}
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create a "invisible" footer
+    return 0.01f;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
@@ -70,8 +75,21 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     cell.subtotalLabel.text = [NSString stringWithFormat:@"$%@",order.subTotal];
     cell.shippingAndhandlingLabel.text=order.shippingAndHandling;
     cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%@",order.salesTax];
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shippingAndHandling)];
+    singleTap.numberOfTapsRequired = 1;
+    [cell.shippingandHandling setUserInteractionEnabled:YES];
+    [cell.shippingandHandling  addGestureRecognizer:singleTap];
     return cell;
     
+}
+
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //hiding the last cell separator
+    if (cell && indexPath.row == 3 && indexPath.section == 0) {
+        
+        cell.separatorInset = UIEdgeInsetsMake(0.f, cell.bounds.size.width, 0.f, 0.0f);
+    }
 }
 
 
@@ -79,7 +97,9 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     [self performSegueWithIdentifier:BACKSTPSEAGUE sender:self];
 }
 
-
+-(void)shippingAndHandling{
+    [self performSegueWithIdentifier:SHIPPINGANDHANDLING sender:self];
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];

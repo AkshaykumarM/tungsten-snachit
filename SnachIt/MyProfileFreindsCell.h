@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @interface MyProfileFreindsCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UIImageView *friendPic;
+@property (strong, nonatomic) IBOutlet UIImageView *friendPic;
 
 @property (weak, nonatomic) IBOutlet UILabel *friendName;
 
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollview;
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollview;
 @property (weak, nonatomic) IBOutlet UILabel *noSnachsYet;
 
 

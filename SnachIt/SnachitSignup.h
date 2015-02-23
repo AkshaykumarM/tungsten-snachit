@@ -20,11 +20,10 @@
 
 - (IBAction)gplusBtn:(id)sender;
 
-@property (weak, nonatomic) IBOutlet UILabel *errorLbl;
 - (IBAction)loginBtn:(id)sender;
 
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+
 
 - (IBAction)loginHereBtn:(id)sender;
 

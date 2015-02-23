@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *subtotalLabel;
 @property (weak, nonatomic) IBOutlet UILabel *shippingAndhandlingLabel;
 @property (weak, nonatomic) IBOutlet UILabel *salesTaxLabel;
+@property (weak, nonatomic) IBOutlet UIButton *shippingandHandling;
 
 @end

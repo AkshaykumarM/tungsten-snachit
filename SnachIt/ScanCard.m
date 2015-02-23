@@ -8,6 +8,7 @@
 
 #import "ScanCard.h"
 #import "CardIO.h"
+#import "global.h"
 int cloaseStatus;
 @interface ScanCard () <CardIOPaymentViewControllerDelegate>
 
@@ -18,6 +19,9 @@ int cloaseStatus;
 -(void)viewDidLoad{
     [super viewDidLoad];
     cloaseStatus=0;
+    cardNumber=@"";
+    cardExp=@"";
+    cardCVV=@"";
     }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -40,18 +44,31 @@ int cloaseStatus;
     // Do whatever needs to be done to deliver the purchased items.
     [self dismissViewControllerAnimated:YES completion:nil];
      cloaseStatus=1;
-    NSLog(@"%@",[NSString stringWithFormat:@"Received card info. Number: %@, expiry: %02lu/%lu, cvv: %@.", info.redactedCardNumber, (unsigned long)info.expiryMonth, (unsigned long)info.expiryYear, info.cvv]);
+    NSLog(@"%@",[NSString stringWithFormat:@"Received card info. Number: %@, expiry: %02lu/%lu, cvv: %@.", info.cardNumber, (unsigned long)info.expiryMonth, (unsigned long)info.expiryYear, info.cvv]);
+    
+    cardNumber=[NSString stringWithFormat:@"%@",info.cardNumber];
+    cardExp=[NSString stringWithFormat:@"%02lu/%lu",(unsigned long)info.expiryMonth,(unsigned long)info.expiryYear];
+    cardCVV=[NSString stringWithFormat:@"%@",info.cvv];
+    
+    
 }
 
 - (void)userDidCancelPaymentViewController:(CardIOPaymentViewController *)paymentViewController {
     NSLog(@"User cancelled scan");
+    cardNumber=@"";
+    cardExp=@"";
+    cardCVV=@"";
+
     cloaseStatus=1;
 
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)closeBtn:(id)sender {
-       [self dismissViewControllerAnimated:true completion:nil];
+    cardNumber=@"";
+    cardExp=@"";
+    cardCVV=@"";
+    [self dismissViewControllerAnimated:true completion:nil];
 }
 
 @end

@@ -10,8 +10,14 @@
 #import "UserProfile.h"
 #import "BillingInfoScanCell.h"
 #import "global.h"
+#import "DBManager.h"
+@interface BillingInfoOverview()
+
+@property (nonatomic,strong) DBManager *dbManager;
+@end
 @implementation BillingInfoOverview{
     UserProfile *user;
+    
 }
 
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -23,7 +29,10 @@ CGFloat animatedDistance;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+    cardNumber=@"";
+    cardExp=@"";
+    cardCVV=@"";
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -31,7 +40,7 @@ CGFloat animatedDistance;
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    
+    [self.tableView reloadData];
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -50,7 +59,7 @@ CGFloat animatedDistance;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 670;
+    return 710;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -74,7 +83,28 @@ CGFloat animatedDistance;
     [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingChanged];
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
+    
+    
+    [global setTextFieldInsets:cell.cardNumberTextField];
+    [global setTextFieldInsets:cell.cardHolderNameTextField];
+    [global setTextFieldInsets:cell.securityCodeText];
+    [global setTextFieldInsets:cell.stateTextField];
+    [global setTextFieldInsets:cell.cityTextField];
+    [global setTextFieldInsets:cell.addressTextField];
+    [global setTextFieldInsets:cell.expDateTextField];
+    [global setTextFieldInsets:cell.phoneTextField];
+    [global setTextFieldInsets:cell.postalCodeTextField];
+    
+    
+    [cell.cardNumberTextField setText:cardNumber];
+    [cell.expDateTextField setText:cardExp];
+    [cell.securityCodeText setText:cardCVV];
+    
   
+    //setting background img
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults valueForKey:DEFAULT_BACK_IMG])
+        cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
     return cell;
 }
 
@@ -171,7 +201,31 @@ CGFloat animatedDistance;
 }
 
 - (void)save {
+    BillingInfoScanCell *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    if([cell.cardNumberTextField hasText]&&[cell.expDateTextField hasText]&&[cell.securityCodeText hasText]&&[cell.cardHolderNameTextField hasText] &&[cell.addressTextField hasText]&& [cell.stateTextField hasText]&&[cell.cityTextField hasText]&&[cell.stateTextField hasText]&&[cell.postalCodeTextField hasText]&&[cell.phoneTextField hasText]){
+        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[global getCardType:cell.cardNumberTextField.text],cell.cardNumberTextField.text,cell.expDateTextField.text,cell.securityCodeText.text, cell.cardHolderNameTextField.text, cell.addressTextField.text, cell.cityTextField.text,cell.stateTextField.text,cell.postalCodeTextField.text,cell.phoneTextField.text];
+        
+        // Execute the query.
+        
+        [self.dbManager executeQuery:query];
+        
+        // If the query was successfully executed then pop the view controller.
+        if (self.dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+            
+            // Pop the view controller.
+            
+        }
+        else{
+            NSLog(@"Could not execute the query.");
+        }
+    }
+    
+
     [self dismissViewControllerAnimated:true completion:nil];
 
+}
+- (IBAction)backBtn:(id)sender {
+    [self dismissViewControllerAnimated:NO completion:nil];
 }
 @end

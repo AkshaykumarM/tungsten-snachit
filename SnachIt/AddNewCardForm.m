@@ -21,11 +21,18 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     SnoopedProduct *product;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
-
+static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
+static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
+static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
+static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
+static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
+CGFloat animatedDistance;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+    cardNumber=@"";
+    cardExp=@"";
+    cardCVV=@"";
     self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
     
@@ -38,54 +45,43 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     
 }
 -(void)initializeView{
-    
+    self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+    
+    //seting textfield look and feel
+    [global setTextFieldInsets:self.cardNumber];
+    [global setTextFieldInsets:self.expDateTxtField];
+    [global setTextFieldInsets:self.cvvTextField];
+    [global setTextFieldInsets:self.fullNameTextField];
+    [global setTextFieldInsets:self.streetTextField];
+    [global setTextFieldInsets:self.cityTextField];
+    [global setTextFieldInsets:self.stateTextField];
+    [global setTextFieldInsets:self.zipTextField];
+    [global setTextFieldInsets:self.phoneTextField];
+    
+    [self.cardNumber setText:cardNumber];
+    [self.expDateTxtField setText:cardExp];
+    [self.cvvTextField setText:cardCVV];
+    //adding action to camera icon
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(cameraIconAction)];
+    singleTap.numberOfTapsRequired = 1;
+    [self.cameraBtn setUserInteractionEnabled:YES];
+    [self.cameraBtn  addGestureRecognizer:singleTap];
     
 }
 
--(NSString*)getCardType:(NSString*)number{
-    NSString *type;
-    NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
-    NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
-    NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
-    NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
-    NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
-    
-    if ([visa evaluateWithObject:number])
-    {
-        type=@"Visa";
-    }
-    else if ([mastercard evaluateWithObject:number])
-    {
-        type=@"Mastercard";
-    }
-    else if ([dinnersclub evaluateWithObject:number])
-    {
-        type=@"Diners Club";
-    }
-    else if ([discover evaluateWithObject:number])
-    {
-        type=@"Discover";
-    }
-    else if ([amex evaluateWithObject:number])
-    {
-        type=@"American Express";
-    }
-    else{
-        type=@"none";
-    }
-    return type;
-}
 
 
 - (IBAction)doneBtn:(id)sender {
     if([self.cardNumber hasText]&&[self.expDateTxtField hasText]&&[self.cvvTextField hasText]&&[self.fullNameTextField hasText] &&[self.streetTextField hasText]&& [self.stateTextField hasText]&&[self.cityTextField hasText]&&[self.stateTextField hasText]&&[self.zipTextField hasText]&&[self.phoneTextField hasText]){
-        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[self getCardType:self.cardNumber.text],self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[global getCardType:self.cardNumber.text],self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
         
         // Execute the query.
         
@@ -108,7 +104,75 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
 
 
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    if(textField){
+        [textField resignFirstResponder];
+    }
+    return NO;
+}
 
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    CGRect textFieldRect =
+    [self.view.window convertRect:textField.bounds fromView:textField];
+    CGRect viewRect =
+    [self.view.window convertRect:self.view.bounds fromView:self.view];
+    CGFloat midline = textFieldRect.origin.y + 0.5 * textFieldRect.size.height;
+    CGFloat numerator =
+    midline - viewRect.origin.y
+    - MINIMUM_SCROLL_FRACTION * viewRect.size.height;
+    CGFloat denominator =
+    (MAXIMUM_SCROLL_FRACTION - MINIMUM_SCROLL_FRACTION)
+    * viewRect.size.height;
+    CGFloat heightFraction = numerator / denominator;
+    if (heightFraction < 0.0)
+    {
+        heightFraction = 0.0;
+    }
+    else if (heightFraction > 1.0)
+    {
+        heightFraction = 1.0;
+    }
+    UIInterfaceOrientation orientation =
+    [[UIApplication sharedApplication] statusBarOrientation];
+    if (orientation == UIInterfaceOrientationPortrait ||
+        orientation == UIInterfaceOrientationPortraitUpsideDown)
+    {
+        animatedDistance = floor(PORTRAIT_KEYBOARD_HEIGHT * heightFraction);
+    }
+    else
+    {
+        animatedDistance = floor(LANDSCAPE_KEYBOARD_HEIGHT * heightFraction);
+    }
+    CGRect viewFrame = self.view.frame;
+    viewFrame.origin.y -= animatedDistance;
+    
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    
+    [self.view setFrame:viewFrame];
+    
+    [UIView commitAnimations];
+}
 
+- (void)textFieldDidEndEditing:(UITextField *)textfield{
+    
+    CGRect viewFrame = self.view.frame;
+    viewFrame.origin.y += animatedDistance;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    
+    [self.view setFrame:viewFrame];
+    
+    [UIView commitAnimations];
+}
+
+-(void)cameraIconAction{
+    [self performSegueWithIdentifier:@"scanCard" sender:nil];
+}
 
 @end

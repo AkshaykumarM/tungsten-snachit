@@ -10,34 +10,21 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="r7B-B4-oRw">
-                    <rect key="frame" x="110" y="181" width="100" height="100"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="r7B-B4-oRw">
+                    <rect key="frame" x="93" y="154" width="135" height="154"/>
+                    <variation key="widthClass=compact" fixedFrame="YES">
+                        <rect key="frame" x="83" y="188" width="135" height="154"/>
+                    </variation>
                 </imageView>
             </subviews>
             <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstAttribute="centerY" secondItem="r7B-B4-oRw" secondAttribute="centerY" constant="10" id="DHa-WZ-D9d">
-                    <variation key="widthClass=compact" constant="19.5"/>
-                </constraint>
-                <constraint firstAttribute="centerX" secondItem="r7B-B4-oRw" secondAttribute="centerX" id="saA-Lz-4xI">
-                    <variation key="widthClass=compact" constant="9.5"/>
-                </constraint>
+                <constraint firstAttribute="centerY" secondItem="r7B-B4-oRw" secondAttribute="centerY" constant="53" id="6pM-Qx-P7G"/>
+                <constraint firstAttribute="centerX" secondItem="r7B-B4-oRw" secondAttribute="centerX" id="rJF-zd-zsa"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <variation key="default">
-                <mask key="constraints">
-                    <exclude reference="DHa-WZ-D9d"/>
-                    <exclude reference="saA-Lz-4xI"/>
-                </mask>
-            </variation>
-            <variation key="widthClass=compact">
-                <mask key="constraints">
-                    <include reference="DHa-WZ-D9d"/>
-                    <include reference="saA-Lz-4xI"/>
-                </mask>
-            </variation>
-            <point key="canvasLocation" x="292" y="244"/>
+            <point key="canvasLocation" x="112" y="241"/>
         </view>
     </objects>
     <resources>

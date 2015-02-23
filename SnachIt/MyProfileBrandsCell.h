@@ -11,7 +11,12 @@
 @interface MyProfileBrandsCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *brandName;
 
-@property (weak, nonatomic) IBOutlet UIImageView *followStatus;
+
+@property (weak, nonatomic) IBOutlet UIButton *followStatus;
+
+
+
+
 @property (weak, nonatomic) IBOutlet UIScrollView *productImageConatainer;
 @property (weak, nonatomic) IBOutlet UILabel *noSnachYetForbrand;
 

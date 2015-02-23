@@ -15,6 +15,8 @@
 #import "UserProfile.h"
 #import "SnachItLogin.h"
 #import "AccountSettingCell.h"
+#import "SnatchFeed.h"
+#import "SnachitStartScreen.h"
 #define REGEX_USERNAME @"[a-zA-Z\\s]*"
 #define REGEX_USER_NAME_LIMIT @"^.{3,10}$"
 #define REGEX_USER_NAME @"[A-Za-z0-9]{3,10}"
@@ -42,7 +44,7 @@ static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
 static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
 static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
-
+SevenSwitch *signOut;
 CGFloat animatedDistance;
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -59,14 +61,14 @@ CGFloat animatedDistance;
     
 }
 -(void)viewDidAppear:(BOOL)animated{
- self.navigationBar =  [[self navigationController] navigationBar];
+    self.navigationBar =  [[self navigationController] navigationBar];
     
-//    [self.view addSubview:navbar];
+    //    [self.view addSubview:navbar];
     CGRect frame = [self.navigationBar frame];
     frame.size.height = 50.0f;
     [self.navigationBar setFrame:frame];
     [self setupAlerts];
-  
+    
     
 }
 
@@ -85,13 +87,13 @@ CGFloat animatedDistance;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 650;
+    return 690;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
- 
-        AccountSettingCell *cell = (AccountSettingCell *)[tableView dequeueReusableCellWithIdentifier:@"accountSettingCell" forIndexPath:indexPath];
-
+    
+    AccountSettingCell *cell = (AccountSettingCell *)[tableView dequeueReusableCellWithIdentifier:@"accountSettingCell" forIndexPath:indexPath];
+    
     //setting profile pic look
     cell.profilePicImageView.layer.cornerRadius=RADIOUS;
     cell.profilePicImageView.clipsToBounds=YES;
@@ -115,9 +117,15 @@ CGFloat animatedDistance;
         [cell.nameTextField setText:user.fullName];
     if(![user.phoneNumber isKindOfClass:[NSNull class]])
         [cell.phoneTextField setText:user.phoneNumber];
+    
+    //setting background img
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults valueForKey:DEFAULT_BACK_IMG])
+        cell.defaultBackImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
-    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-100,462, 80, 40)];
+    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,468, 50, 25)];
     [appAllertSwitch addTarget:self action:@selector(appAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     appAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     appAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -125,7 +133,7 @@ CGFloat animatedDistance;
     appAllertSwitch.inactiveColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
     appAllertSwitch.isRounded = NO;
     
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+   
     if([[defaults stringForKey:APPALLERTS] isEqual:@"True"]){
         appAllertSwitch.on=NO; appAlerts=@"True";}
     else{
@@ -134,7 +142,7 @@ CGFloat animatedDistance;
     [cell.contentView addSubview:appAllertSwitch];
     
     
-    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-100,508, 80, 40)];
+    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,513, 50, 25)];
     [emailAllertSwitch addTarget:self action:@selector(emailAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     emailAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     emailAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -143,12 +151,13 @@ CGFloat animatedDistance;
     emailAllertSwitch.isRounded = NO;
     
     if([[defaults stringForKey:EMAILALLERTS] isEqual:@"True"]){
-        emailAllertSwitch.on=NO; emailAlerts=@"True";}
+        emailAllertSwitch.on=NO; emailAlerts=@"True";emailAllertSwitch.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
+    }
     else{
-        emailAllertSwitch.on=YES;emailAlerts=@"False";}
-        [cell.contentView addSubview:emailAllertSwitch];
-
-    SevenSwitch *smsAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-100,554, 80, 40)];
+        emailAllertSwitch.on=YES;emailAlerts=@"False"; emailAllertSwitch.borderColor=[UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];}
+    [cell.contentView addSubview:emailAllertSwitch];
+    
+    SevenSwitch *smsAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,558, 50, 25)];
     [smsAllertSwitch addTarget:self action:@selector(smsAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     smsAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     smsAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -163,6 +172,16 @@ CGFloat animatedDistance;
     
     [cell.contentView addSubview:smsAllertSwitch];
     
+    signOut = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,603, 50, 25)];
+    [signOut addTarget:self action:@selector(signOut:) forControlEvents:UIControlEventValueChanged];
+    signOut.offImage = [UIImage imageNamed:@"check.png"];
+    signOut.onImage = [UIImage imageNamed:@"multiply.png"];
+    signOut.onTintColor = [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1] ;
+    signOut.inactiveColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
+    signOut.isRounded = NO;
+    signOut.on=NO;
+    [cell.contentView addSubview:signOut];
+    
     [cell.saveBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
     
     return cell;
@@ -170,10 +189,12 @@ CGFloat animatedDistance;
 -(void)setViewLookAndFeel{
     
     // Set the gesture
+    [self.backButton setTarget:self.revealViewController];
+    [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     
     
- 
+    
     
 }
 
@@ -258,39 +279,41 @@ CGFloat animatedDistance;
     
     AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
-  
-   
+    
+    
     if([tableCell.nameTextField validate] & [tableCell.emailTextField validate]&[tableCell.phoneTextField validate]){
         [self startProcessing];
-    int status=[self updateUserProfile];
-    
-    if(status==1){
-        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-        [defaults setValue:appAlerts forKey:APPALLERTS];
-         [defaults setValue:emailAlerts forKey:EMAILALLERTS];
-         [defaults setValue:smsAlerts forKey:SMSALLERTS];
-        [self.tableView reloadData];
-        NSLog(@"Profile updated successfully");
-        [self stopProcessing];
-    }
-    else{
-        [self stopProcessing];
-        NSLog(@"Error occureed while updating profile");
-    }
+        int status=[self updateUserProfile];
+        
+        if(status==1){
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults setValue:appAlerts forKey:APPALLERTS];
+            [defaults setValue:emailAlerts forKey:EMAILALLERTS];
+            [defaults setValue:smsAlerts forKey:SMSALLERTS];
+            [self.tableView reloadData];
+            [global showAllertMsg:@"Profile updated successfully"];
+           
+            [self stopProcessing];
+        }
+        else{
+            [self stopProcessing];
+             [global showAllertMsg:@"Error occureed while updating profile"];
+            
+        }
     }
     [self stopProcessing];
-
+    
 }
 -(int)updateUserProfile{
     NSError *error;
-    NSLog(@"%@",[self getProfileUpdateValues]);
-        NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getProfileUpdateValues] options:NSJSONWritingPrettyPrinted error:&error];
+    
+    NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getProfileUpdateValues] options:NSJSONWritingPrettyPrinted error:&error];
     int status=0;
     NSData *responseData=[global makePostRequest:orderJson requestURL:@"updateCustomerProfile/" ];
- 
+    
     if (responseData) {
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
-        NSLog(@"UPDATE PROFILE RESPONSEL:%@",response);
+        NSLog(@"UPDATE PROFILE RESPONSE:%@",response);
         if([[response objectForKey:@"success"] isEqual:@"true"]){
             SnachItLogin *login=[[SnachItLogin alloc] init];
             [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"] withDateOfBirth:[response valueForKey:@"DateOfBirth"] withJoiningDate:[response valueForKey:@"JoiningDate"]];
@@ -304,17 +327,60 @@ CGFloat animatedDistance;
 - (void)appAllertSwitchChanged:(SevenSwitch *)sender {
     
     appAlerts=  sender.on ? @"False" : @"True";
-   
+    if([appAlerts isEqual:@"True"])
+    {
+        sender.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
+    }
+    else{
+       sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
+    }
+}
+
+- (void)signOut:(SevenSwitch *)sender {
+    if([(sender.on ? @"False" : @"True" ) isEqual:@"False"]){
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Are you sure, you want to signout?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil]; [alert show];}
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        [self clearAllData];
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
+        
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+        [navController setViewControllers: @[rootViewController] animated: YES];
+        
+        [self.revealViewController pushFrontViewController:navController animated:YES];
+        signOut.on=NO;
+        
+    }
+    else{
+        signOut.on=NO;
+    }
 }
 - (void)emailAllertSwitchChanged:(SevenSwitch *)sender {
-       emailAlerts=  sender.on ? @"False" : @"True";
+    emailAlerts=  sender.on ? @"False" : @"True";
+    if([emailAlerts isEqual:@"True"])
+    {
+        sender.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
+    }
+    else{
+        sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
+    }
 }
 - (void)smsAllertSwitchChanged:(SevenSwitch *)sender {
-       smsAlerts=   sender.on ? @"False" : @"True";
+    smsAlerts=   sender.on ? @"False" : @"True";
+    if([smsAlerts isEqual:@"True"])
+    {
+        sender.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
+    }
+    else{
+        sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
+    }
+
 }
 -(NSDictionary*)getProfileUpdateValues{
     AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-
+    
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setValue:user.userID forKey:@"customerId"];
     [dictionary setValue:tableCell.nameTextField.text forKey:@"fullName"];
@@ -331,7 +397,7 @@ CGFloat animatedDistance;
     AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     backView = [[UIView alloc] initWithFrame:tableCell.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
-
+    
     activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [backView addSubview:activitySpinner];
     activitySpinner.center = CGPointMake(tableCell.center.x, tableCell.center.y);
@@ -342,9 +408,41 @@ CGFloat animatedDistance;
 
 
 -(void)stopProcessing{
-
-
+    
+    
     [activitySpinner stopAnimating];
     [backView removeFromSuperview];
 }
+-(void)clearAllData{
+    NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
+    NSDictionary * dict = [defs dictionaryRepresentation];
+    for (id key in dict) {
+        [defs removeObjectForKey:key];
+    }
+    [defs synchronize];
+    NSLog(@"Cleared User Defaults");
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:@"snachit.sql"];
+    
+    if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+    }
+      NSLog(@"Cleared Databases");
+}
+
+-(void) getPhoto:(id) sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    
+    [self presentModalViewController:picker animated:YES];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+     AccountSettingCell *cell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    [picker dismissModalViewControllerAnimated:YES];
+    cell.defaultBackImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+}
+
 @end

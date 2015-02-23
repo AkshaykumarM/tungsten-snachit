@@ -12,7 +12,7 @@
 #import "global.h"
 #import "AFNetworking.h"
 #import "UserProfile.h"
-@interface MyAccount ()
+@interface MyAccount ()<UIImagePickerControllerDelegate>
 @property(nonatomic,strong) NSArray *options,*icons;
 
 @property (nonatomic, strong) NSArray *menuItems;
@@ -33,12 +33,17 @@
     
     
     selectFlag= 0;
-    options = [NSArray arrayWithObjects:@"My Account", @"Account Setting",@"Billing Information",@"Shipping Information",@"Snach History", nil];
+    options = [NSArray arrayWithObjects:@"My Profile", @"Account Settings",@"Billing Information",@"Shipping Information",@"Snach History", nil];
     icons= [NSArray arrayWithObjects:@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
     menuItems = [NSArray arrayWithObjects: @"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
     
+    // This will remove extra separators from tableview
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    // Load the file content and read the data into arrays
+    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(getPhoto:)];
+    singleTap.numberOfTapsRequired = 2;
+    [self.defaultbackImg setUserInteractionEnabled:YES];
+    [self.defaultbackImg  addGestureRecognizer:singleTap];
     }
 
 -(void)setViewLookAndFeel{
@@ -70,6 +75,12 @@
     self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     self.userNameLbl.adjustsFontSizeToFitWidth=YES;
     self.userNameLbl.minimumScaleFactor=0.5;
+    
+    //setting background img
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if([defaults valueForKey:DEFAULT_BACK_IMG])
+        self.defaultbackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    
 }
 
 
@@ -124,6 +135,23 @@
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return indexPath;
+}
+
+-(void) getPhoto:(id) sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    
+           picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+    
+    [self presentModalViewController:picker animated:YES];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    [picker dismissModalViewControllerAnimated:YES];
+    self.defaultbackImg.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+    NSLog(@"%@",info);
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    [defaults setObject:UIImagePNGRepresentation([info objectForKey:@"UIImagePickerControllerOriginalImage"])            forKey:DEFAULT_BACK_IMG];
+    
 }
 
 @end

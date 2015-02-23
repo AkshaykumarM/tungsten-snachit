@@ -32,7 +32,7 @@
     SnoopingUserDetails *userDetails;
     UserProfile *user;
 }
-@synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
+@synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc,checkedIndexPath;
 
 
 - (void)viewDidLoad
@@ -41,31 +41,35 @@
     
       self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
-  
     [self loadData];
+    
     user =[UserProfile sharedInstance];
    
 }
 -(void)viewDidAppear:(BOOL)animated{
+   
     [super viewDidAppear:YES];
+    
     [self initializeView];
+ 
+}
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+  
 }
 
 -(void)initializeView{
-    
+     self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
-    
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
--(void)viewWillAppear:(BOOL)animated{
-  
-    
-}
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -75,13 +79,17 @@
     return self.arrAddressInfo.count;
 }
 
-
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create a "invisible" footer
+    return 0.01f;
+}
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 60.0;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
+
     ShippingOverviewAddressCell *cell = [tableView dequeueReusableCellWithIdentifier:@"addressCell" forIndexPath:indexPath];
    
     NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
@@ -92,18 +100,36 @@
   
     // Set the loaded data to the appropriate cell labels.
 
-    cell.nameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
+    cell.nameLbl.text =  [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
     
     cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
     
     cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
- 
+    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    
+    
     return cell;
 }
 
+
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%ld",(long)indexPath.row);
-  //  ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
+    if(self.checkedIndexPath)
+    {
+        UITableViewCell* uncheckCell = [tableView
+                                        cellForRowAtIndexPath:self.checkedIndexPath];
+        uncheckCell.accessoryView=NO;
+    }
+    if([self.checkedIndexPath isEqual:indexPath])
+    {
+        self.checkedIndexPath = nil;
+    }
+    else
+    {
+        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        self.checkedIndexPath = indexPath;
+    }
 
     // initializing address details
     userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:1] withShipStreetName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:2] withShipCity:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:3] withShipState:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:4] withShipZipCode:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:5] withShipPhoneNumber:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:6]];
@@ -123,6 +149,7 @@
     [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
 
 }
+
 -(void)loadData{
     // Form the query.
     NSString *query = @"select * from address";
@@ -136,6 +163,7 @@
     // Reload the table view.
     [self.addressTableView reloadData];
 }
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];

@@ -13,5 +13,6 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UILabel *userNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
 
 @end

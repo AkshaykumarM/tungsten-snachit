@@ -23,5 +23,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *postalCodeTextField;
 @property (weak, nonatomic) IBOutlet UIButton *saveBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *cardTypeImg;
+@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
 
 @end

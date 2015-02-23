@@ -24,7 +24,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     SnoopedProduct *product;
     SnoopingUserDetails *userDetails;
 }
-@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl;
+@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath;
 
 - (void)viewDidLoad
 {
@@ -32,26 +32,29 @@ NSString *const STPSEAGUE=@"backtoSTP";
     
     self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
-    
     [self loadData];
+   
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-
-    }
+ 
+    
+}
 
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
 
 }
 -(void)initializeView{
-    
+     self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     
 }
 
@@ -71,7 +74,10 @@ NSString *const STPSEAGUE=@"backtoSTP";
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return self.arrPaymentInfo.count;
 }
-
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create a "invisible" footer
+    return 0.01f;
+}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     return 80.0;
@@ -79,11 +85,12 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
+    NSLog(@"kldksdhkds %@",self.arrPaymentInfo);
     PaymentOverviewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"paymentCell" forIndexPath:indexPath];
     NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
     NSInteger indexOfCardNumber=[self.dbManager.arrColumnNames indexOfObject:@"cardNumber"];
     NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
-   
+  
     // Set the loaded data to the appropriate cell labels.
     cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[self getCardType:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardNumber]]]];
     cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
@@ -91,8 +98,8 @@ NSString *const STPSEAGUE=@"backtoSTP";
     cell.cvvLbl.text = 
     [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
     
-    ;
- 
+    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    
     
     return cell;
 }
@@ -125,7 +132,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
         type=@"amex";
     }
     else{
-        type=@"none";
+        type=@"unknown";
     }
     return type;
 }
@@ -133,11 +140,28 @@ NSString *const STPSEAGUE=@"backtoSTP";
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSLog(@"%ld",(long)indexPath.row);
     //  ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
-    
+    if(self.checkedIndexPath)
+    {
+        UITableViewCell* uncheckCell = [tableView
+                                        cellForRowAtIndexPath:self.checkedIndexPath];
+        uncheckCell.accessoryView=nil;
+   
+    }
+    if([self.checkedIndexPath isEqual:indexPath])
+    {
+        self.checkedIndexPath = nil;
+    }
+    else
+    {
+        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        self.checkedIndexPath = indexPath;
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+    }
+
     // initializing address details
-    userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
     
-    
+
 }
 - (void)viewDidUnload
 {

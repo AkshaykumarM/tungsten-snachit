@@ -35,14 +35,15 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     [self initializeView];
 }
 -(void)initializeView{
-    
+     self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
-    
+    //hiding the backbutton from top bar
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -66,6 +67,14 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     
 }
 
+-(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    //hiding the last cell separator
+    if (cell && indexPath.row == 3 && indexPath.section == 0) {
+        
+        cell.separatorInset = UIEdgeInsetsMake(0.f, cell.bounds.size.width, 0.f, 0.0f);
+    }
+}
 
 - (IBAction)doneBtn:(id)sender {
     [self performSegueWithIdentifier:BACKTOORDEROVERVIEW sender:self];

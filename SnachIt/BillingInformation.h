@@ -15,6 +15,9 @@
 @property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 - (IBAction)saveBtn:(id)sender;
-- (IBAction)backBtn:(id)sender;
 
+- (IBAction)addCard:(id)sender;
+@property (weak, nonatomic) IBOutlet UITableView *tableView1;
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+@property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @end

@@ -20,4 +20,5 @@
 - (IBAction)addNewAddressbtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UITableView *addressTableView;
+@property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @end

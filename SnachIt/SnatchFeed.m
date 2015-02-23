@@ -13,14 +13,18 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "global.h"
 #import <AddressBook/AddressBook.h>
+
 #import "UserProfile.h"
 #import "SnoopedProduct.h"
 #import "SnachItLogin.h"
-@interface SnatchFeed()
+#import "Product.h"
+#import "Common.h"
 
-
+@interface SnatchFeed(){
+    NSMutableArray *Products;
+}
 @property(nonatomic,strong) NSArray *productslist;
-@property(nonatomic,strong) NSMutableArray *emailIds;//for storing mail ids
+
 
 @end
 
@@ -47,7 +51,7 @@
 
 @property (nonatomic, strong) NSString * brandId;
 @property (nonatomic, assign) NSInteger followStatus;
-
+@property (nonatomic, assign) NSInteger index;
 @end
 
 @implementation FollowStatusRecognizer
@@ -70,7 +74,7 @@
     NSString *snoopedBrandName;
     UserProfile *user;
     UIButton *topProfileBtn;
-    NSMutableDictionary *dictionaryForEmails;
+    NSDictionary *dictionaryForEmails;
     NSData *friendCountJson;
     NSData *responseData ;
     NSDictionary *dictionaryForFriendsCountResponse;
@@ -78,50 +82,167 @@
 }
 
 
+- (id)initWithStyle:(UITableViewStyle)style
+{
+    self = [super initWithStyle:style];
+    if (self) {
+        // Custom initialization
+    }
+    return self;
+}
 
- - (void)viewDidLoad {
-     
+- (void)viewDidLoad {
+    
     [super viewDidLoad];
-     
-           [self setViewLookAndFeel];
-     SWRevealViewController *sw=self.revealViewController;
-     sw.rearViewRevealWidth=self.view.frame.size.width-50.0f;
-     
-  }
+    
+    [self setViewLookAndFeel];
+    SWRevealViewController *sw=self.revealViewController;
+    sw.rearViewRevealWidth=self.view.frame.size.width-60.0f;
+    self.refreshControl = [[UIRefreshControl alloc] init];
+    self.refreshControl.backgroundColor = [UIColor purpleColor];
+    self.refreshControl.tintColor = [UIColor whiteColor];
+    [self.refreshControl addTarget:self
+                            action:@selector(getLatestProducts)
+                  forControlEvents:UIControlEventValueChanged];
+    
+    
+}
+- (void)getLatestProducts
+{
+    [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-all-running-snachs/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+               if (!error) {
+            NSArray *latestProducts = [self fetchData:data];
+            Products = [NSMutableArray arrayWithCapacity:10];
+            
+            if (latestProducts) {
+                for (NSDictionary *prodDic in latestProducts) {
+                    Product *product = [[Product alloc] init];
+                    product.productImages=[prodDic objectForKey:PRODUCT_IMAGES];
+                    product.productname=[prodDic objectForKey:PRODUCT_NAME];
+                    product.brandname =[prodDic objectForKey:PRODUCT_BRAND_NAME];
+                    product.price =[prodDic objectForKey:PRODUCT_PRICE];
+                    product.brandimage =[prodDic objectForKey:PRODUCT_BRAND_IMAGE];
+                    product.productImage =[prodDic objectForKey:PRODUCT_IMAGE];
+                    product.brandId =[prodDic objectForKey:PRODUCT_BRAND_ID];
+                    product.productId =[prodDic objectForKey:PRODUCT_ID];
+                    product.snachId =[prodDic objectForKey:PRODUCT_SNACH_ID];
+                    product.productDescription =[prodDic objectForKey:PRODUCT_DESCRIPTION];
+                    product.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
+                    
+                    [Products addObject:product];
+                }
+            }
+            
+            // As this block of code is run in a background thread, we need to ensure the GUI
+            // update is executed in the main thread
+            [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+            
+        }
+        else{
+               NSLog(@"Error: %@", error.description);
+        }
+        
+    }];
+}
+- (NSArray *)fetchData:(NSData *)response
+{
+    NSError *error = nil;
+    NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    NSLog(@"parsed data: %@",parsedData);
+    if (error != nil) {
+        NSLog(@"Error: %@", error.description);
+        return nil;
+    }
+    
+    NSArray* latestProducts = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
+    return latestProducts;
+}
+- (void)reloadData
+{
+    // Reload table data
+    [self.tableView reloadData];
+    
+    // End the refreshing
+    if (self.refreshControl) {
+        
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"MMM d, h:mm a"];
+        NSString *title = [NSString stringWithFormat:@"Last update: %@", [formatter stringFromDate:[NSDate date]]];
+        NSDictionary *attrsDictionary = [NSDictionary dictionaryWithObject:[UIColor whiteColor]
+                                                                    forKey:NSForegroundColorAttributeName];
+        NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
+        self.refreshControl.attributedTitle = attributedTitle;
+        
+        [self.refreshControl endRefreshing];
+    }
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{ self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    
+    // Return the number of sections.
+    if (Products) {
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        return 1;
+        
+    } else {
+        
+        // Display a message when the table is empty
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+        
+        messageLabel.text = @"Please pull down to fill the snachs";
+        messageLabel.textColor = [UIColor blackColor];
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = NSTextAlignmentCenter;
+        messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
+        [messageLabel sizeToFit];
+        
+        self.tableView.backgroundView = messageLabel;
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        
+    }
+    
+    return 0;
+}
+- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    // This will create a "invisible" footer
+    return 0.01f;
+}
 -(void)viewDidAppear:(BOOL)animated{
-  
+    
     //checking from where the user tapped the snoop button
     if(snooptTracking==1)
     {
         [self performSegueWithIdentifier:@"productDetails" sender:self];
         
     }
-
-     //initializing user data
-     user=[UserProfile sharedInstance];
-   
+    
+    //initializing user data
+    user=[UserProfile sharedInstance];
+    
     //setting up upper left profile pic here
     [self setupProfilePic];
     
-    viewSize = self.view.frame.size.width-80.0f;//for setting product scrollview size
+   
+    [self getLatestProducts];
+    [self requestContactBookAccess];
+    viewSize = self.view.frame.size.width-76.0f;//for setting product scrollview size
     
-  
-  
-    }
+}
 -(void)viewWillAppear:(BOOL)animated{
     [self trySilentLogin];
-    [self requestContactBookAccess];
-    [self makeProductRequest];
-    [_tableView reloadData];
-   
+    
+    
     
     
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView
                             user:(id<FBGraphUser>)user {
- 
- }
+    
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -129,12 +250,15 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.productslist count];
+    if (Products) {
+        return [Products count];
+    }
+    return 0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 265;
+    return 280;
 }
 
 -(void)trySilentLogin{
@@ -142,141 +266,148 @@
     NSString *SSOUsing = [defaults stringForKey:SSOUSING];
     NSString *username = [defaults stringForKey:USERNAME];
     NSString *password = [defaults stringForKey:PASSWORD];
-    int signedUp = (int)[defaults integerForKey:@"signedUp"];
-    NSLog(@"SSOUSING %@ Username %@ %@ %d",SSOUsing,username,password,signedUp);
+   
+    
     
     SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]initWithNibName:@"StartScreen" bundle:nil];
-    if(SSOUsing!=nil&& signedUp!=0&& username!=nil && password!=nil){
-        NSLog(@"%@ %@ %@ %d",SSOUsing,username,password,signedUp);
+    if(SSOUsing!=nil&& username!=nil && password!=nil){
+        NSLog(@"%@ %@ %@ ",SSOUsing,username,password);
         SnachItLogin *login =[[SnachItLogin alloc] init];
-    int status=[login performSignIn:username Password:password SSOUsing:SSOUsing];
+        int status=[login performSignIn:username Password:password SSOUsing:SSOUsing];
         NSLog(@"%d",status);
         if(status==0)
             [self presentViewController:startscreen animated:YES completion:nil];
         
     }
     else{
+        NSLog(@"SSOUSING %@ Username %@ %@ ",SSOUsing,username,password);
         [self presentViewController:startscreen animated:YES completion:nil];
         
     }
-
+    
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSString *simpleTableIdentifier =@"snachproduct";
-    SnatchFeedCell *cell = (SnatchFeedCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
-    //single product info
-    NSDictionary *product=[self.productslist objectAtIndex:indexPath.row];
-    NSArray *productImages=[product objectForKey:@"productImages"];
-    NSString *productname=[product objectForKey:@"productName"];
-    NSString *brandname =[product objectForKey:@"brandName"];
-    NSString *price =[product objectForKey:@"productPrice"];
-    NSString *brandimage =[product objectForKey:@"brandImage"];
-    NSString *productImage =[product objectForKey:@"productImage"];
-    NSString *brandId =[product objectForKey:@"brandId"];
-    NSString *productId =[product objectForKey:@"productId"];
-    NSString *snachId =[product objectForKey:@"snachId"];
-    NSString *productDescription =[product objectForKey:@"productDescription"];
-    NSInteger followStatus =[[product objectForKey:@"followStatus"] integerValue] ;
-    __block NSInteger friendCount = 0 ;
+   static NSString *simpleTableIdentifier =@"snachproduct";
+    SnatchFeedCell *cell = (SnatchFeedCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
+
+    if (cell == nil) {
+        NSArray* topLevelObjects = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
+        for (id currentObject in topLevelObjects) {
+            if ([currentObject isKindOfClass:[UITableViewCell class]]) {
+                cell = (SnatchFeedCell *)currentObject;
+                break;
+            }
+        }
+    }
     
+    Product *prod = [Products objectAtIndex:indexPath.row];
+
+      cell.tag = indexPath.row;
     //setting up product image carousel
     cell.productImagesContainer.scrollEnabled = YES;
     int scrollWidth = 0;
     cell.productImagesContainer.backgroundColor=[UIColor whiteColor];
     int xOffset = 0;
     NSError *error;
+    dictionaryForEmails=[Common getDictionaryForFriendCount:prod.productId SnachId:prod.snachId EmailId:user.emailID];
+    NSLog(@"dictionaryForEmails:%@",dictionaryForEmails);
     if(dictionaryForEmails!=nil){
-    [dictionaryForEmails setObject:productId forKey:@"productId"];
-    friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&error];
-    NSString *jsonString = [[NSString alloc] initWithData:friendCountJson encoding:NSUTF8StringEncoding];
-    NSLog(@"jsonData as string:\n%@", jsonString);
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@getFriendsCount/",ec2maschineIP]]];
-    [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[friendCountJson length]] forHTTPHeaderField:@"Content-Length"];
-    [request setHTTPBody:friendCountJson];
+       
+        friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&error];
     
-  
-    error = [[NSError alloc] init];
-    [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if(!error)
-        {
-            dictionaryForFriendsCountResponse =  [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error: &error];
-
-            if([[dictionaryForFriendsCountResponse valueForKey:@"success"] isEqual:@"true"])
+ 
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@getFriendsCount/",ec2maschineIP]]];
+        [request setHTTPMethod:@"POST"];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[friendCountJson length]] forHTTPHeaderField:@"Content-Length"];
+        [request setHTTPBody:friendCountJson];
+        
+        
+        error = [[NSError alloc] init];
+        if(prod.friendCount==nil)
+        [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if(!error)
             {
-                friendCount=[[dictionaryForFriendsCountResponse valueForKey:@"count"] integerValue];
-                
-                NSLog(@"Friend Count : %@",[dictionaryForFriendsCountResponse valueForKey:@"success"] );
+                dictionaryForFriendsCountResponse =  [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error: &error];
+                if([[dictionaryForFriendsCountResponse valueForKey:@"success"] isEqual:@"true"])
+                {
+                    NSLog(@"Friend count RESPONSE :%@",dictionaryForFriendsCountResponse);
+                    prod.friendCount=[dictionaryForFriendsCountResponse valueForKey:@"count"] ;
+                    if([prod.friendCount intValue]>0){
+                        [cell.friendCount setHidden:NO];
+                        cell.friendCount.layer.cornerRadius = 9.0f;
+                        cell.friendCount.layer.borderWidth = 0.5;
+                        cell.friendCount.layer.borderColor = [[UIColor whiteColor] CGColor];
+                        [cell.friendCount setTitle:[NSString stringWithFormat:@"%@",prod.friendCount]forState:UIControlStateNormal];
+                    }
+                   
+                }
+                else{
+                    prod.friendCount=0;
+                }
             }
             else{
-                
-                friendCount=0;
+                prod.friendCount=0;
+                NSLog(@"Response:%@",data);
             }
-        }
-        else{
-            friendCount=0;
-            NSLog(@"Response:%@",data);
-        }
-    }];
+        }];
     }
-    NSLog(@"View Size:%f",self.view.frame.size.width);
- 
-
-    for(int index=0; index < [productImages count]; index++)
+    
+    
+    for(int index=0; index < [prod.productImages count]; index++)
     {
         UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize, cell.productImagesContainer.frame.size.height)];
-  
+        
         [img setContentMode:UIViewContentModeScaleAspectFit];
         //[img setImage: [UIImage imageNamed:[NSString stringWithFormat:@"%@", productImages[index]]]];
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:productImages[index]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.productImages[index]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             [img setImage: [UIImage imageWithData:data]];
-          
+            
         }];
         
         img.userInteractionEnabled = YES;
         
         [cell.productImagesContainer addSubview:img];
-      
-
+        
+        
         xOffset+=viewSize;
         
     }
-    cell.productImagesContainer.contentSize = CGSizeMake(scrollWidth+xOffset,cell.productImagesContainer.frame.size.width);
+    cell.productImagesContainer.contentSize = CGSizeMake(scrollWidth+xOffset,cell.productImagesContainer.frame.size.height);
     
     
-    [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", brandname, productname] forState:UIControlStateNormal];
+    [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];
     cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
     cell.productName.titleLabel.minimumScaleFactor=0.5;
-   // cell.productName.titleLabel.minimumFontSize=8.0F;
-    [cell.productPrice setTitle: [NSString stringWithFormat:@"$%@",price] forState:UIControlStateNormal];
-   
+    // cell.productName.titleLabel.minimumFontSize=8.0F;
+    [cell.productPrice setTitle: [NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
+    
     //Snoop button view setup
     [cell.snoop setTag:indexPath.row];
     
     ImageTapped *snoopTapped = [[ImageTapped alloc]
-                                             initWithTarget:self
+                                initWithTarget:self
                                 action:@selector(snoopButtonClicked:) ];
     [snoopTapped setNumberOfTapsRequired:1];
     cell.snoop.userInteractionEnabled = YES;
-    snoopTapped.productName=productname;
-    snoopTapped.brandName=[NSString stringWithFormat:@"%@", brandname];
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:brandimage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    snoopTapped.productName=prod.productname;
+    snoopTapped.brandName=[NSString stringWithFormat:@"%@", prod.brandname];
+    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.brandimage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         cell.brandImg.image =[UIImage imageWithData:data];
-    
+        
     }];
     
-    snoopTapped.Price=price;
-   
-    snoopTapped.productId=productId;
-    snoopTapped.brandId=brandId;
-    snoopTapped.snachId=snachId;
-    snoopTapped.productDescription=productDescription;
-    snoopTapped.productImageURL=[NSURL URLWithString:productImage];
-    snoopTapped.brandImageURL=[NSURL URLWithString:brandimage];
+    snoopTapped.Price=prod.price;
+    
+    snoopTapped.productId=prod.productId;
+    snoopTapped.brandId=prod.brandId;
+    snoopTapped.snachId=prod.snachId;
+    snoopTapped.productDescription=prod.productDescription;
+    snoopTapped.productImageURL=[NSURL URLWithString:prod.productImage];
+    snoopTapped.brandImageURL=[NSURL URLWithString:prod.brandimage];
     [cell.snoop addGestureRecognizer:snoopTapped];
     
     
@@ -290,31 +421,22 @@
     
     [follow setNumberOfTapsRequired:1];
     cell.followStatus.userInteractionEnabled = YES;
-    follow.brandId=brandId;
-    follow.followStatus=followStatus;
-    
-    if(followStatus ==1)
+    follow.brandId=prod.brandId;
+    follow.followStatus=[prod.followStatus intValue];
+    follow.index=indexPath.row;
+    if([prod.followStatus intValue] ==1)
         [cell.followStatus setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
     else
         [cell.followStatus setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
-
+    
     [cell.followStatus addGestureRecognizer:follow];
     
     
-    //setting freind count
-    friendCount=indexPath.row;
-    if(friendCount>0){
-    [cell.friendCount setHidden:NO];
-    cell.friendCount.layer.cornerRadius = 11.0f;
-    cell.friendCount.layer.borderWidth = 1.0;
-    cell.friendCount.layer.borderColor = [[UIColor whiteColor] CGColor];
-        [cell.friendCount setTitle:[NSString stringWithFormat:@"%d",friendCount] forState:UIControlStateNormal];
     
-    }
-   
-
     return cell;
 }
+
+
 
 //on snoop button clicked
 -(void)snoopButtonClicked:(UITapGestureRecognizer *)tapRecognizer {
@@ -335,19 +457,38 @@
 
 -(void)followButtonClicked:(UITapGestureRecognizer*)tapRecongnizer
 {
+    
     FollowStatusRecognizer *tap = (FollowStatusRecognizer*)tapRecongnizer;
     UIButton *button= (UIButton*)tapRecongnizer.view;
+    Product *prod = [Products objectAtIndex:tap.index];
     if(tap.followStatus ==1){
-    [button setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
         tap.followStatus=0;
+        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%d",tap.followStatus] ForUserId:user.userID]==1)
+        {
+            
+            [button setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
+            prod.followStatus=@"0";
+        }
+        else{tap.followStatus=1;
+        
+        }
     }
     else{
-        [button setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
+        
         tap.followStatus= 1;
+        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%d",tap.followStatus] ForUserId:user.userID]==1)
+        {
+            [button setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
+            prod.followStatus=@"1";
 
+        }
+        else{
+            tap.followStatus=0;
+            }
     }
     
 }
+
 
 
 
@@ -355,17 +496,17 @@
     if ([segue.identifier isEqualToString:@"snoop"]) {
         
         SnoopedProduct *product=[[SnoopedProduct
-                               sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
+                                  sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
     }
-   else if ([segue.identifier isEqualToString:@"productDetails"]) {
+    else if ([segue.identifier isEqualToString:@"productDetails"]) {
         
-       snooptTracking=0;
+        snooptTracking=0;
     }
-
+    
 }
 -(void)makeProductRequest{
     NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@product.json",tempmaschineIP]]];
-      if (jasonData) {
+    if (jasonData) {
         NSError *e = nil;
         self.productslist = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
     }
@@ -381,7 +522,7 @@
 
 /**
  This function will request to access phonebook
-**/
+ **/
 -(void)requestContactBookAccess{
     ABAuthorizationStatus status = ABAddressBookGetAuthorizationStatus();
     
@@ -410,22 +551,22 @@
         
         if (granted) {
             // if they gave you permission, then just carry on
-           self.emailIds= [NSMutableArray array];
-           [self.emailIds addObjectsFromArray:[self getallEmailIdsInAddressBook:addressBook]];
+            emailIds= [NSMutableArray array];
+            if(emailIds)
+            [emailIds addObjectsFromArray:[Common getallEmailIdsInAddressBook:addressBook]];
             
-            NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-        
-            [dictionaryForEmails setObject:self.emailIds forKey:@"emailIds"];
-            NSError *error;
-            NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
-            NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
-            NSLog(@"jsonData as string:\n%@", jsonString);
-            dictionaryForEmails = [[NSMutableDictionary alloc] init];
-            if(user.userID!=nil){
-            [dictionaryForEmails setObject:self.emailIds forKey:@"contactList"];
-            [dictionaryForEmails setObject:user.userID forKey:@"userId"];
-            [dictionaryForEmails setObject:user.emailID forKey:@"userEmail"];
-            }
+            
+//            [dictionaryForEmails setObject:emailIds forKey:@"emailIds"];
+//            NSError *error;
+//            NSData *jsonData2 = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:&error];
+//            NSString *jsonString = [[NSString alloc] initWithData:jsonData2 encoding:NSUTF8StringEncoding];
+//            NSLog(@"jsonData as string:\n%@", jsonString);
+//            dictionaryForEmails = [[NSMutableDictionary alloc] init];
+//            if(user.userID!=nil){
+//                [dictionaryForEmails setObject:emailIds forKey:@"contactList"];
+//             
+//                [dictionaryForEmails setObject:user.emailID forKey:@"userEmail"];
+//            }
         } else {
             // however, if they didn't give you permission, handle it gracefully, for example...
             
@@ -441,41 +582,18 @@
 }
 
 
-/***
-This function will return all the email id's from the phoonebook in an Array.
-**/
-- (NSMutableArray*)getallEmailIdsInAddressBook:(ABAddressBookRef)addressBook
-{
-    NSMutableArray *emails= [NSMutableArray array];
-    NSArray *allPeople = CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
-    NSInteger numberOfPeople = [allPeople count];
-    
-    for (NSInteger i = 0; i < numberOfPeople; i++) {
-        ABRecordRef person = (__bridge ABRecordRef)allPeople[i];
-        ABMultiValueRef emailIds = ABRecordCopyValue(person, kABPersonEmailProperty);
-        CFIndex numberOfEmailIds = ABMultiValueGetCount(emailIds);
-        for (CFIndex i = 0; i < numberOfEmailIds; i++) {
-            NSString *email = CFBridgingRelease(ABMultiValueCopyValueAtIndex(emailIds, i));
-            [emails addObject:email];
-            
-        }
-        CFRelease(emailIds);
-        
-    }
- 
-    return emails;
-}
 
 -(void)setViewLookAndFeel{
-  
+    
     
     self.navigationItem.leftBarButtonItem.target=self.revealViewController;
     self.navigationItem.leftBarButtonItem.action=@selector(revealToggle:);
+    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 
 -(void)getFriendCountForProduct:(NSString*)productId{
-   
+    
 }
 
 -(void)setupProfilePic{
@@ -506,13 +624,13 @@ This function will return all the email id's from the phoonebook in an Array.
     
     //checking if profile pic url is nil else download the image and assign it to imageview
     
-
+    
     if([global isValidUrl:user.profilePicUrl]){
         
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
         }];}
-
+    
 }
 
 @end

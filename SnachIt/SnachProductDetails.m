@@ -74,9 +74,9 @@
         product.productImageData=data;
     }];
 
-    [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
+    [productPrice setTitle:[NSString stringWithFormat:@"$%@",product.productPrice] forState: UIControlStateNormal];
     productDescription.text=product.productDescription;
-
+[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 - (void)subtractTime {
@@ -101,6 +101,7 @@
 }
 
 - (IBAction)snachit:(id)sender {
+      [timer invalidate];
       [self performSegueWithIdentifier:@"snachit" sender:self];
 //    _snachConfirm=[[[NSBundle mainBundle]loadNibNamed:@"Snatch" owner:self options:nil] objectAtIndex:0];
 //   
@@ -110,7 +111,7 @@
 //       [_snachConfirm addGestureRecognizer:singleTap];
 //       
 //    [self.view addSubview:_snachConfirm];
-     [timer invalidate];
+    
 }
 
 

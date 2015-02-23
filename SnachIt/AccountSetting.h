@@ -16,8 +16,11 @@
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 
+@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
 
 -(int)updateUserProfile;
 -(NSDictionary*)getProfileUpdateValues;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+
 @end
