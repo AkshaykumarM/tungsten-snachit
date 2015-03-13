@@ -17,4 +17,5 @@
 @property (nonatomic, strong) NSString *streetAddress;
 @property (nonatomic, strong) NSString *cityStateZip;
 
+
 @end

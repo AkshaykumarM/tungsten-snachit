@@ -33,7 +33,7 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    
+      self.navigationController.navigationBar.topItem.title = @"time's up";
     
   
 }

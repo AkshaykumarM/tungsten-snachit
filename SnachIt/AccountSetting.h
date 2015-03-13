@@ -9,9 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TextFieldValidator.h"
 
-@interface AccountSetting : UIViewController
-
-
+@interface AccountSetting : UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 
 
 @property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
@@ -22,5 +20,6 @@
 -(int)updateUserProfile;
 -(NSDictionary*)getProfileUpdateValues;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+- (IBAction)save:(id)sender;
 
 @end

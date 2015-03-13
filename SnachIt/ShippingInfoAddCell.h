@@ -7,19 +7,19 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "TextFieldValidator.h"
 @interface ShippingInfoAddCell : UITableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
-@property (weak, nonatomic) IBOutlet UITextField *firstNameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *lastNameTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *firstNameTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *lastNameTextField;
 
-@property (weak, nonatomic) IBOutlet UITextField *addressTextField;
-@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
-@property (weak, nonatomic) IBOutlet UITextField *stateTextField;
-@property (weak, nonatomic) IBOutlet UITextField *postalCodeTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *addressTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *cityTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *stateTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *postalCodeTextField;
 @property (weak, nonatomic) IBOutlet UIButton *saveBtn;
-@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *phoneTextField;
 @end

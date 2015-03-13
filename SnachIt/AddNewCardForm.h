@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "TextFieldValidator.h"
 @interface AddNewCardForm : UIViewController
 
 
@@ -18,15 +18,15 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
-@property (weak, nonatomic) IBOutlet UITextField *cardNumber;
-@property (weak, nonatomic) IBOutlet UITextField *expDateTxtField;
-@property (weak, nonatomic) IBOutlet UITextField *cvvTextField;
-@property (weak, nonatomic) IBOutlet UITextField *fullNameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *streetTextField;
-@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
-@property (weak, nonatomic) IBOutlet UITextField *stateTextField;
-@property (weak, nonatomic) IBOutlet UITextField *zipTextField;
-@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *cardNumber;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *expDateTxtField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *cvvTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *fullNameTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *streetTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *cityTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *stateTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *zipTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *phoneTextField;
 @property (weak, nonatomic) IBOutlet UIImageView *cameraBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *cardtypeImageView;
 

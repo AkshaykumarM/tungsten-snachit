@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *productPriceLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productNameLbl;
 - (IBAction)snoopButton:(id)sender;
+@property (weak, nonatomic) IBOutlet UIButton *snoopBtn;
 
 @property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
 @property (weak, nonatomic) IBOutlet UIButton *friendCount;

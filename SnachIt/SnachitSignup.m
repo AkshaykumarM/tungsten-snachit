@@ -152,7 +152,7 @@ CGFloat animatedDistance;
             }
         }
         else{
-            [global showAllertMsg:@"Enter valid Email id and Password must be gretter than 6 digits."];
+            [global showAllertMsg:@"Enter valid Email id and Password must be greater than 6 digits."];
         }
         
     }else{
@@ -411,7 +411,7 @@ CGFloat animatedDistance;
                    
         if([[response valueForKey:@"success"] isEqual:@"true"]|| [[response valueForKey:@"error_code"] integerValue]==2)
         {
-             [global showAllertMsg:@"Signed up successfully"];
+             //[global showAllertMsg:@"Signed up successfully"];
             status=1;
         }
         else{

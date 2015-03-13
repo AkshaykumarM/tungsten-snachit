@@ -14,6 +14,7 @@
 #import "SnoopedProduct.h"
 #import "SnoopingUserDetails.h"
 #import "UserProfile.h"
+#import "global.h"
 @interface ShippingOverview()
 @property (nonatomic, strong) DBManager *dbManager;
 
@@ -31,6 +32,7 @@
     SnoopedProduct *product;
     SnoopingUserDetails *userDetails;
     UserProfile *user;
+    NSUserDefaults *defaults;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc,checkedIndexPath;
 
@@ -44,7 +46,7 @@
     [self loadData];
     
     user =[UserProfile sharedInstance];
-   
+    defaults=[NSUserDefaults standardUserDefaults];
 }
 -(void)viewDidAppear:(BOOL)animated{
    
@@ -105,24 +107,40 @@
     cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
     
     cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
-    cell.selectionStyle=UITableViewCellSelectionStyleNone;
     
+    
+    //for autoselect functionality
+    int rowid=[[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    NSLog(@"Row %d %d",rowid,[[defaults valueForKey:DEFAULT_SHIPPING] intValue]);
+    if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER || rowid==[[defaults valueForKey:DEFAULT_SHIPPING] intValue] ){
+          cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+          userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:1] withShipStreetName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:2] withShipCity:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:3] withShipState:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:4] withShipZipCode:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:5] withShipPhoneNumber:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:6]];
+    }
+    else{
+    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    cell.accessoryView=nil;
+    }
     
     return cell;
 }
 
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"%ld",(long)indexPath.row);
+    
+    UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
+    tmp.accessoryView=nil;
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
-        uncheckCell.accessoryView=NO;
+        uncheckCell.accessoryView=nil;
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
+
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
         self.checkedIndexPath = nil;
+         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
     }
     else
     {

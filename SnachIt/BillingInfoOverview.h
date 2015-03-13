@@ -16,5 +16,6 @@
 
 - (IBAction)backBtn:(id)sender;
 
+- (IBAction)saveBtn:(id)sender;
 
 @end

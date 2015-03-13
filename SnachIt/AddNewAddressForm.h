@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "TextFieldValidator.h"
 
 @interface AddNewAddressForm : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
@@ -19,11 +20,11 @@
 
 
 - (IBAction)doneBtn:(id)sender;
-@property (weak, nonatomic) IBOutlet UITextField *fullNameTextField;
-@property (weak, nonatomic) IBOutlet UITextField *streetAddressTextField;
-@property (weak, nonatomic) IBOutlet UITextField *cityTextField;
-@property (weak, nonatomic) IBOutlet UITextField *stateTextField;
-@property (weak, nonatomic) IBOutlet UITextField *zipTextField;
-@property (weak, nonatomic) IBOutlet UITextField *phoneTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *fullNameTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *streetAddressTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *cityTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *stateTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *zipTextField;
+@property (weak, nonatomic) IBOutlet TextFieldValidator *phoneTextField;
 
 @end

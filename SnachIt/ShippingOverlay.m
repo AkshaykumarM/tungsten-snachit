@@ -39,7 +39,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
-    productImg.image=[UIImage imageWithData:product.productImageData];
+     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
     //hiding the backbutton from top bar
@@ -62,7 +62,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     
     cell.estDeliveryLbl.text =order.deliveryDate;
     cell.speedLbl.text=[NSString stringWithFormat:@"%@ day delivery",order.speed];
-    cell.priceLbl.text=[NSString stringWithFormat:@"$%@",order.shippingCost];
+    cell.priceLbl.text=[NSString stringWithFormat:@"$%.2f",[order.shippingCost floatValue]];
     return cell;
     
 }

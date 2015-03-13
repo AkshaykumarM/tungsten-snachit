@@ -16,6 +16,8 @@
 #import "SnoopingUserDetails.h"
 #import "Order.h"
 #import "global.h"
+#import "DBManager.h"
+#import "UserProfile.h"
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
 NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
@@ -23,8 +25,8 @@ NSString *const STP_SEGUE =@"STPSegue";
 double orderTotal;
 @interface SnachCheckDetails()
 
-   @property (nonatomic, strong) NSArray *cellId;
-
+@property (nonatomic, strong) NSArray *cellId;
+@property (nonatomic,strong) DBManager *dbManager;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
@@ -36,7 +38,7 @@ UIActivityIndicatorView *activitySpinner;
     double price;
     SnoopedProduct *product;
     SnoopingUserDetails *userdetails;
-    
+   
     Order *order;
 }
 @synthesize productImg,brandImg,productDescription,description,productPrice,productName,cellId,prodPrice;
@@ -49,6 +51,7 @@ UIActivityIndicatorView *activitySpinner;
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
 
     // Set the Label text with the selected recipe
+      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snoopTimes.sql"];
     userdetails=[SnoopingUserDetails sharedInstance];
     product=[SnoopedProduct sharedInstance];
     order=[Order sharedInstance];
@@ -61,7 +64,7 @@ UIActivityIndicatorView *activitySpinner;
 
 -(void)viewDidAppear:(BOOL)animated{
     [self setViewLookAndFeel];
-
+    
     
        
 }
@@ -71,7 +74,7 @@ UIActivityIndicatorView *activitySpinner;
 }
 -(void)initializeView{
 
-    self.navigationController.navigationBar.topItem.title = @"snach details";
+    self.navigationController.navigationBar.topItem.title = @"confirm snach";
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
@@ -80,7 +83,52 @@ UIActivityIndicatorView *activitySpinner;
     
     //hiding the backbutton from top bar
     [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+    
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSnach:)];
 }
+
+-(void)cancelSnach:(id)sender{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Are You For Real?" message:@"If you cancel, you won’t see it again. Are you sure you want to cancel this amazing snach?" delegate:self cancelButtonTitle:@"Yes" otherButtonTitles:@"No", nil]; [alert show];
+    
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 0) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        [self logtime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+        [self dismissViewControllerAnimated:NO completion:nil];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+    }
+}
+
+-(void)logtime:(NSString*)userid SnachId:(int)snachid SnachTime:(int)time{
+    NSString *query = [NSString stringWithFormat:@"insert into snachtimes values(null,%d, %@, %d)",snachid,userid,time];
+    
+    // Execute the query.
+    [self.dbManager executeQuery:query];
+    NSLog(@"Query :%@",query);
+    
+    if (self.dbManager.affectedRows != 0) {
+        NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+        
+    }
+    else{
+        query = [NSString stringWithFormat:@"update snachtimes set snachtime=%d where snachid=%d and userid=%@",time,snachid,userid];
+         NSLog(@"Query :%@",query);
+        [self.dbManager executeQuery:query];
+        if (self.dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+            
+        }
+         else{
+             NSLog(@"Database error");
+         }
+        
+    }
+    
+}
+
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     

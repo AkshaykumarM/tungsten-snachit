@@ -12,8 +12,10 @@
 #import "SnoopedProduct.h"
 #import "Order.h"
 #import "UserProfile.h"
+#import "DBManager.h"
 @interface SnachProductDetails()
 
+@property (nonatomic,strong) DBManager *dbManager;
 
 @end
 
@@ -24,6 +26,8 @@
     SnoopedProduct *product;
     Order *order;
     UserProfile *user;
+    NSString *userId;
+    int snachId;
 }
 @synthesize productName,productimage,brandimag,productPrice,productDescription,counter;
 
@@ -40,23 +44,53 @@
 {
     [super viewDidLoad];
     [self initializeView];
+     user=[UserProfile sharedInstance];
     // Set the Label text with the selected recipe
-   
+    userId=user.userID;
+    
+    snachId=[product.snachId integerValue];
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                              target:self
                                            selector:@selector(subtractTime)
                                            userInfo:nil
                                             repeats:YES];
-    NSLog(@"%ld",(long)timer);
-    seconds=5;
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snoopTimes.sql"];
+    
+    seconds=[self getSnachTime:snachId];
    [counter setTitle: [NSString stringWithFormat:@"%i",seconds] forState: UIControlStateNormal];
     
     
 }
 
+-(int)getSnachTime:(int)snachid{
+    // Form the query.
+    NSString *query = [NSString stringWithFormat:@"select snachtime from snachtimes where snachid=%d and userid=%@ ",snachid,userId];
+    NSArray *snachtime;
+    int time=0;
+    // Get the results.
+    if (snachtime != nil) {
+        snachtime = nil;
+    }
+    snachtime = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+    if (snachtime!=nil) {
+        @try{
+        time=(int)[[[snachtime objectAtIndex:0] objectAtIndex:0] integerValue];
+        }
+        @catch(NSException *e){
+        
+           time=30;
+        }
+    }
+    else{
+        time=30;
+    }
+   NSLog(@"Time :%@ %@",snachtime,query);
+    return time;
+}
+
 -(void)viewWillAppear:(BOOL)animated{
 
-    user=[UserProfile sharedInstance];
+   
     [self initializeOrder];
 
 }
@@ -76,7 +110,7 @@
 
     [productPrice setTitle:[NSString stringWithFormat:@"$%@",product.productPrice] forState: UIControlStateNormal];
     productDescription.text=product.productDescription;
-[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+   [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 - (void)subtractTime {
@@ -85,36 +119,44 @@
     [counter setTitle: [NSString stringWithFormat:@"%i",seconds] forState: UIControlStateNormal];
 
     // 2
-    if (seconds == 0) {
+    if (seconds == 0 || seconds<0) {
         [timer invalidate];
-        
-        // new code is here!
-//        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Time is up!"
-//                                                        message:[NSString stringWithFormat:@"You scored %i points", count]
-//                                                       delegate:self
-//                                              cancelButtonTitle:@"Play Again"
-//                                              otherButtonTitles:nil];
-//        
-//        [alert show];
+        [self logtime:userId SnachId:snachId SnachTime:0];
         [self performSegueWithIdentifier:@"timeup" sender:self];
     }
 }
 
 - (IBAction)snachit:(id)sender {
       [timer invalidate];
+      [self logtime:userId SnachId:snachId SnachTime:seconds];
       [self performSegueWithIdentifier:@"snachit" sender:self];
-//    _snachConfirm=[[[NSBundle mainBundle]loadNibNamed:@"Snatch" owner:self options:nil] objectAtIndex:0];
-//   
-//    _snachConfirm.frame=CGRectMake(0.0f,self.view.frame.size.height/2, _snachConfirm.frame.size.width, _snachConfirm.frame.size.height);
-//    
-//    UITapGestureRecognizer *singleTap=[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(singleTapGestureCaptured:)];
-//       [_snachConfirm addGestureRecognizer:singleTap];
-//       
-//    [self.view addSubview:_snachConfirm];
     
 }
 
-
+-(void)logtime:(NSString*)userid SnachId:(int)snachid SnachTime:(int)time{
+    NSString *query = [NSString stringWithFormat:@"insert into snachtimes values(null,%d, %@, %d)",snachid,userid,time];
+    
+    // Execute the query.
+    
+    [self.dbManager executeQuery:query];
+    
+    NSLog(@"Query in snach product details %@",query);
+    if (self.dbManager.affectedRows != 0) {
+        NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+        
+    }
+    else{
+        query = [NSString stringWithFormat:@"update snachtimes set snachtime=%d where snachid=%d and userid=%@",time,snachid,userid];
+         [self.dbManager executeQuery:query];
+         if (self.dbManager.affectedRows != 0) {
+            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+            
+          
+         }
+        
+    }
+    
+}
 
 
 
@@ -152,6 +194,14 @@
 
 
 -(void)initializeOrder{
+    @try{
+        
+        
+        
+    }
+    @catch(NSException *e){
+        
+    }
     order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:[NSString stringWithFormat:@"%d",1] withSubTotal:product.productPrice withOrderTotal:product.productPrice withShippingAndHandling:[NSString stringWithFormat:@"%d",5] withSalesTax:[NSString stringWithFormat:@"%d",2] withSpeed:@"2" withShippingCost:[NSString stringWithFormat:@"%d",8] withOrderDate:@"23/1/2015" withDeliveryDate:@"2015-1-29"];
 }
 @end

@@ -14,6 +14,7 @@
 #import "UserProfile.h"
 #import "global.h"
 #import "DBManager.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 @interface ShippingInformation()
 @property (nonatomic, strong) DBManager *dbManager;
 
@@ -22,6 +23,7 @@
 @implementation ShippingInformation
 {
     UserProfile *user;
+    NSUserDefaults *defaults;
 }
 @synthesize checkedIndexPath;
 - (void)viewDidLoad {
@@ -34,11 +36,14 @@
     [self.backButton setTarget:self.revealViewController];
     [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-
+    defaults=[NSUserDefaults standardUserDefaults];
+    RECENTLY_ADDED_SHIPPING_INFO_TRACKER= [[defaults valueForKey:DEFAULT_SHIPPING] intValue];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
+    [self viewDidLoad];
+    
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
@@ -78,6 +83,7 @@
     }
 
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if(tableView==self.tableView1)
@@ -97,15 +103,12 @@
     cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    if([global isValidUrl:user.profilePicUrl]){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            cell.profilePicImg.image = [UIImage imageWithData:data];
-        }];
-    }
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    
     if([defaults valueForKey:DEFAULT_BACK_IMG])
         cell.backImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
 
@@ -127,19 +130,32 @@
         cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
         
         cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
-        cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        int rowid=[[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+        cell.tag=rowid;
+        
+        if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER){
+            cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        }
+        
+        else{
+            cell.selectionStyle=UITableViewCellSelectionStyleNone;
+            cell.accessoryView=nil;
+        }
         return cell;
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
    
-    if(tableView!=self.tableView1)
+    if(tableView!=self.tableView1){
+    UITableViewCell *tmp = [tableView cellForRowAtIndexPath:checkedIndexPath];
+        tmp.accessoryView=nil;
+    self.checkedIndexPath = nil;
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
-        uncheckCell.accessoryView=NO;
+        uncheckCell.accessoryView=nil;
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
@@ -150,12 +166,19 @@
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
+        
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
     }
-    
-
-    
-    
+    }
 }
+
+-(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(tableView!=self.tableView1)
+    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+}
+
+
 
 -(void)loadData{
     // Form the query.
@@ -179,12 +202,27 @@
     
     picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
-    [self presentModalViewController:picker animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
      ShippingInfoCell *cell = (ShippingInfoCell*)[self.tableView1 cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [picker dismissModalViewControllerAnimated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
     cell.backImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
+
+- (IBAction)doneBtn:(id)sender {
+    
+    if(RECENTLY_ADDED_SHIPPING_INFO_TRACKER>0){
+        
+        [defaults setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+        [defaults synchronize];
+        [global showAllertMsg:@"Saved successfully"];
+    }
+    else{
+        [global showAllertMsg:@"Please select atleast one shipping address."];
+    }
+
+}
+
 
 @end

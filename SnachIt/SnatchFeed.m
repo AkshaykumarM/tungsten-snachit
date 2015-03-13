@@ -13,18 +13,19 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import "global.h"
 #import <AddressBook/AddressBook.h>
-
+#import <SDWebImage/UIImageView+WebCache.h>
 #import "UserProfile.h"
 #import "SnoopedProduct.h"
 #import "SnachItLogin.h"
 #import "Product.h"
 #import "Common.h"
+#import "DBManager.h"
 
 @interface SnatchFeed(){
     NSMutableArray *Products;
 }
 @property(nonatomic,strong) NSArray *productslist;
-
+@property (nonatomic,strong) DBManager *dbManager;
 
 @end
 
@@ -79,6 +80,8 @@
     NSData *responseData ;
     NSDictionary *dictionaryForFriendsCountResponse;
     float viewSize;
+    
+    
 }
 
 
@@ -103,12 +106,14 @@
     self.refreshControl.tintColor = [UIColor whiteColor];
     [self.refreshControl addTarget:self
                             action:@selector(getLatestProducts)
-                  forControlEvents:UIControlEventValueChanged];
-    
+                    forControlEvents:UIControlEventValueChanged];
+    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snoopTimes.sql"];
     
 }
 - (void)getLatestProducts
 {
+    USERID=user.userID;
+    @try{
     [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-all-running-snachs/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                if (!error) {
             NSArray *latestProducts = [self fetchData:data];
@@ -128,8 +133,10 @@
                     product.snachId =[prodDic objectForKey:PRODUCT_SNACH_ID];
                     product.productDescription =[prodDic objectForKey:PRODUCT_DESCRIPTION];
                     product.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
-                    
+                    product.snooptime=[self getSnachTime:[product.snachId intValue]];
+                    if(product.snooptime>0){
                     [Products addObject:product];
+                    }
                 }
             }
             
@@ -143,18 +150,51 @@
         }
         
     }];
+    }
+    @catch(NSException *e){
+        NSLog(@"Exception: %@",e);
+    }
 }
+
+-(int)getSnachTime:(int)snachid{
+    // Form the query.
+    NSString *query = [NSString stringWithFormat:@"select snachtime from snachtimes where snachid=%d and userid=%@",snachid,USERID];
+   
+    NSArray *snachtime;
+    int time=0;
+    // Get the results.
+    if (snachtime != nil) {
+        snachtime = nil;
+    }
+    snachtime = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+    
+    if (snachtime!=nil) {
+        @try{
+            time=[[[snachtime objectAtIndex:0] objectAtIndex:0] integerValue];
+        }
+        @catch(NSException *e){
+            
+            time=30;
+        }
+    }
+    else{
+        time=30;
+    }
+     NSLog(@"Query in snach feed:%@  %@  %d",query,snachtime,time);
+    return time;
+}
+
 - (NSArray *)fetchData:(NSData *)response
 {
     NSError *error = nil;
-    NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
-    NSLog(@"parsed data: %@",parsedData);
+    NSArray* latestProducts = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
     if (error != nil) {
         NSLog(@"Error: %@", error.description);
         return nil;
     }
     
-    NSArray* latestProducts = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+   
     
     return latestProducts;
 }
@@ -206,37 +246,49 @@
     
     return 0;
 }
-- (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+-(float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     // This will create a "invisible" footer
     return 0.01f;
 }
 -(void)viewDidAppear:(BOOL)animated{
     
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    if([[defaults stringForKey:LOGGEDIN] isEqual:@"1"]){
+        if(!isAllreadyTried){
+            
+            [self trySilentLogin];
+        }
+    }
+    else{
+        
+        [self clearAllData];
+        [NSThread sleepForTimeInterval:2];
+        SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]initWithNibName:@"StartScreen" bundle:nil];
+        [self presentViewController:startscreen animated:YES completion:nil];
+        
+        
+    }
+
     //checking from where the user tapped the snoop button
     if(snooptTracking==1)
     {
         [self performSegueWithIdentifier:@"productDetails" sender:self];
         
     }
-    
     //initializing user data
-    user=[UserProfile sharedInstance];
+     user=[UserProfile sharedInstance];
     
     //setting up upper left profile pic here
     [self setupProfilePic];
     
    
-    [self getLatestProducts];
+   // [self getLatestProducts];
     [self requestContactBookAccess];
-    viewSize = self.view.frame.size.width-76.0f;//for setting product scrollview size
-    
+    viewSize = self.view.frame.size.width-93.0f;//for setting product scrollview size
+  
 }
 -(void)viewWillAppear:(BOOL)animated{
-    [self trySilentLogin];
-    
-    
-    
-    
+    [super viewWillAppear:YES];
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView
@@ -245,7 +297,12 @@
 }
 
 - (void)didReceiveMemoryWarning {
+    
     [super didReceiveMemoryWarning];
+    if (self.isViewLoaded && !self.view.window) {
+        self.view = nil;
+    }
+    NSLog(@"Recieved memmory warning in snachfeed");
     // Dispose of any resources that can be recreated.
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -270,28 +327,49 @@
     
     
     SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]initWithNibName:@"StartScreen" bundle:nil];
-    if(SSOUsing!=nil&& username!=nil && password!=nil){
-        NSLog(@"%@ %@ %@ ",SSOUsing,username,password);
-        SnachItLogin *login =[[SnachItLogin alloc] init];
-        int status=[login performSignIn:username Password:password SSOUsing:SSOUsing];
-        NSLog(@"%d",status);
-        if(status==0)
+        if(SSOUsing!=nil&& username!=nil && password!=nil){
+            SnachItLogin *login =[[SnachItLogin alloc] init];
+            int status=[login performSignIn:username Password:password SSOUsing:SSOUsing];
+           
+            if(status==0){
+               
+                [self presentViewController:startscreen animated:YES completion:nil];
+            }
+        }
+        else{
+            NSLog(@"SSOUSING %@ Username %@ %@ ",SSOUsing,username,password);
             [self presentViewController:startscreen animated:YES completion:nil];
         
+        }
     }
-    else{
-        NSLog(@"SSOUSING %@ Username %@ %@ ",SSOUsing,username,password);
-        [self presentViewController:startscreen animated:YES completion:nil];
-        
-    }
+
     
+
+
+-(void)clearAllData{
+    NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
+    NSDictionary * dict = [defs dictionaryRepresentation];
+    for (id key in dict) {
+        [defs removeObjectForKey:key];
+    }
+    [defs synchronize];
+    NSLog(@"Cleared User Defaults");
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:@"snachit.sql"];
+    
+    if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
+        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
+    }
+    NSLog(@"Cleared Database");
 }
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
    static NSString *simpleTableIdentifier =@"snachproduct";
     SnatchFeedCell *cell = (SnatchFeedCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier];
 
-    if (cell == nil) {
+    if (!cell) {
         NSArray* topLevelObjects = [tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
         for (id currentObject in topLevelObjects) {
             if ([currentObject isKindOfClass:[UITableViewCell class]]) {
@@ -302,16 +380,15 @@
     }
     
     Product *prod = [Products objectAtIndex:indexPath.row];
-
+    if(prod.snooptime>0){
       cell.tag = indexPath.row;
     //setting up product image carousel
     cell.productImagesContainer.scrollEnabled = YES;
-    int scrollWidth = 0;
+    
     cell.productImagesContainer.backgroundColor=[UIColor whiteColor];
-    int xOffset = 0;
-    NSError *error;
+      NSError *error;
     dictionaryForEmails=[Common getDictionaryForFriendCount:prod.productId SnachId:prod.snachId EmailId:user.emailID];
-    NSLog(@"dictionaryForEmails:%@",dictionaryForEmails);
+   // NSLog(@"dictionaryForEmails:%@",dictionaryForEmails);
     if(dictionaryForEmails!=nil){
        
         friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&error];
@@ -355,34 +432,35 @@
             }
         }];
     }
+    NSArray* subviews = [[NSArray alloc] initWithArray: cell.productImagesContainer.subviews];
+        for (UIView* view in subviews) {
+            if ([view isKindOfClass:[UIImageView class]]) {
+                [view removeFromSuperview];
+            }
+        }
     
-    
-    for(int index=0; index < [prod.productImages count]; index++)
+   
+    NSInteger productImages=[prod.productImages count];
+    for(int index=0; index < productImages; index++)
     {
+        CGFloat  xOffset = index*viewSize;
         UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize, cell.productImagesContainer.frame.size.height)];
-        
-        [img setContentMode:UIViewContentModeScaleAspectFit];
-        //[img setImage: [UIImage imageNamed:[NSString stringWithFormat:@"%@", productImages[index]]]];
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.productImages[index]]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            [img setImage: [UIImage imageWithData:data]];
-            
-        }];
-        
+       
+        [img setImageWithURL:[NSURL URLWithString:prod.productImages[index]] placeholderImage:nil];
         img.userInteractionEnabled = YES;
-        
+        [img setContentMode:UIViewContentModeScaleAspectFit];
+
         [cell.productImagesContainer addSubview:img];
-        
-        
-        xOffset+=viewSize;
+     
         
     }
-    cell.productImagesContainer.contentSize = CGSizeMake(scrollWidth+xOffset,cell.productImagesContainer.frame.size.height);
-    
+    cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages,cell.productImagesContainer.frame.size.height);
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];
     cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
-    cell.productName.titleLabel.minimumScaleFactor=0.5;
-    // cell.productName.titleLabel.minimumFontSize=8.0F;
+    cell.productName.titleLabel.minimumScaleFactor=0.67;
+    cell.productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
+    cell.productPrice.titleLabel.minimumScaleFactor=0.67;
     [cell.productPrice setTitle: [NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
     
     //Snoop button view setup
@@ -395,11 +473,7 @@
     cell.snoop.userInteractionEnabled = YES;
     snoopTapped.productName=prod.productname;
     snoopTapped.brandName=[NSString stringWithFormat:@"%@", prod.brandname];
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.brandimage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        cell.brandImg.image =[UIImage imageWithData:data];
-        
-    }];
-    
+    [cell.brandImg setImageWithURL:[NSURL URLWithString:prod.brandimage] placeholderImage:nil];
     snoopTapped.Price=prod.price;
     
     snoopTapped.productId=prod.productId;
@@ -431,9 +505,11 @@
     
     [cell.followStatus addGestureRecognizer:follow];
     
-    
-    
-    return cell;
+     return cell;
+    }
+    else{
+    return nil;
+    }
 }
 
 
@@ -463,7 +539,7 @@
     Product *prod = [Products objectAtIndex:tap.index];
     if(tap.followStatus ==1){
         tap.followStatus=0;
-        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%d",tap.followStatus] ForUserId:user.userID]==1)
+        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%ld",(long)tap.followStatus] ForUserId:user.userID]==1)
         {
             
             [button setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
@@ -476,7 +552,7 @@
     else{
         
         tap.followStatus= 1;
-        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%d",tap.followStatus] ForUserId:user.userID]==1)
+        if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%ld",(long)tap.followStatus] ForUserId:user.userID]==1)
         {
             [button setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
             prod.followStatus=@"1";
@@ -504,18 +580,17 @@
     }
     
 }
--(void)makeProductRequest{
-    NSData *jasonData = [NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@product.json",tempmaschineIP]]];
-    if (jasonData) {
-        NSError *e = nil;
-        self.productslist = [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &e];
-    }
-}
+
 -(void)viewDidUnload{
+    
     [super viewDidUnload];
+    [super viewDidUnload];
+    if (self.isViewLoaded && !self.view.window) {
+        self.view = nil;
+    }
+
     self.productslist=nil;
     self.profilePic =nil;
-    
 }
 
 
@@ -624,7 +699,7 @@
     
     //checking if profile pic url is nil else download the image and assign it to imageview
     
-    
+   
     if([global isValidUrl:user.profilePicUrl]){
         
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {

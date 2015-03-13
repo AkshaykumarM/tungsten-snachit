@@ -14,6 +14,7 @@
 #import "SnoopingUserDetails.h"
 #import "DBManager.h"
 #import "global.h"
+#import "RegexValidator.h"
 NSString *const STPSEAGUE=@"backtoSTP";
 @interface PaymentOverview()
 @property (nonatomic, strong) DBManager *dbManager;
@@ -23,6 +24,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 @implementation PaymentOverview{
     SnoopedProduct *product;
     SnoopingUserDetails *userDetails;
+    NSUserDefaults *defaults;
 }
 @synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath;
 
@@ -33,20 +35,27 @@ NSString *const STPSEAGUE=@"backtoSTP";
     self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Set the Label text with the selected recipe
     [self loadData];
+    defaults=[NSUserDefaults standardUserDefaults];
    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
- 
+    [self refreshView];
     
 }
 
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
-
+    
+}
+-(void)refreshView{
+    
+    [self viewDidLoad];
+    [self viewWillAppear:NO]; // If viewWillAppear also contains code
+    
 }
 -(void)initializeView{
-     self.navigationController.navigationBar.topItem.title = @"snach details";
+     self.navigationController.navigationBar.topItem.title = @"payment";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
@@ -85,78 +94,64 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
-    NSLog(@"kldksdhkds %@",self.arrPaymentInfo);
+
     PaymentOverviewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"paymentCell" forIndexPath:indexPath];
+   
     NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
-    NSInteger indexOfCardNumber=[self.dbManager.arrColumnNames indexOfObject:@"cardNumber"];
     NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
   
     // Set the loaded data to the appropriate cell labels.
-    cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[self getCardType:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardNumber]]]];
+    cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]].lowercaseString];
     cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
+    
     
     cell.cvvLbl.text = 
     [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
+   
+    int rowid=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
     
+    //for auto selection
+    if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ||rowid==[[defaults valueForKey:DEFAULT_BILLING] intValue]){
+          cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+       
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+    }else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
-    
+    cell.accessoryView=nil;
+    }
     
     return cell;
 }
--(NSString*)getCardType:(NSString*)number{
-    NSString *type;
-    NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
-    NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
-    NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
-    NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
-    NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
-    
-    if ([visa evaluateWithObject:number])
-    {
-        type=@"visa";
-    }
-    else if ([mastercard evaluateWithObject:number])
-    {
-        type=@"mastercard";
-    }
-    else if ([dinnersclub evaluateWithObject:number])
-    {
-        type=@"dinersclub";
-    }
-    else if ([discover evaluateWithObject:number])
-    {
-        type=@"discover";
-    }
-    else if ([amex evaluateWithObject:number])
-    {
-        type=@"amex";
-    }
-    else{
-        type=@"unknown";
-    }
-    return type;
-}
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"%ld",(long)indexPath.row);
-    //  ShippingOverviewAddressCell *selectedCell=(ShippingOverviewAddressCell*)[tableView cellForRowAtIndexPath:indexPath];
+    
+    UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
+    tmp.accessoryView=nil;
+    self.checkedIndexPath=nil;
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
         uncheckCell.accessoryView=nil;
-   
+        
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
         self.checkedIndexPath = nil;
+        
     }
     else
     {
+       
+       
+
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
+        
         userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+
+        
     }
 
     // initializing address details

@@ -9,20 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 extern NSString const *ec2maschineIP;
-extern NSString const *tempmaschineIP;
+//extern NSString const *tempmaschineIP;
 extern NSString * const APPALLERTS;
 extern NSString * const EMAILALLERTS;
 extern NSString * const SMSALLERTS;
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
 extern int i;
-extern NSString * const VISA ;
-extern NSString * const MASTERCARD;
-extern NSString * const AMEX;
-extern NSString * const DINNERSCLUB;
-extern NSString * const DISCOVER;
-extern NSString * const EMAIL_REGEX;
-
+extern NSString *USERID;
+extern bool isAllreadyTried;
 extern NSString *cardNumber;
 extern NSString *cardExp;
 extern NSString *cardCVV;
@@ -30,15 +25,19 @@ extern NSString *cardCVV;
 extern NSString * const SSOUSING;
 extern NSString * const USERNAME;
 extern NSString * const PASSWORD;
-
+extern NSString * const LOGGEDIN;
+extern NSString * const DEFAULT_BILLING;
+extern NSString * const DEFAULT_SHIPPING;
 
 extern bool isApplicationLaunchedFromNotification;
 extern float  RADIOUS;
 extern float BORDERWIDTH;
 extern int snooptTracking;
 extern NSString *ssousing;
-extern NSString *RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
-extern NSString *RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
+extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
+extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
+
+
 extern NSString *const DEFAULT_BACK_IMG;
 
 extern NSString * const PRODUCT_IMAGES;

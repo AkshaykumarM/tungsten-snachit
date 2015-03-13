@@ -15,4 +15,5 @@ extern NSMutableArray *emailIds;//for storing mail ids
 +(NSDictionary*)getFollowBrandDictionaryForValues:(NSString*)brandId FollowStatus:(NSString*)status ForUserId:(NSString*)userId;
 + (NSMutableArray*)getallEmailIdsInAddressBook:(ABAddressBookRef)addressBook;
 +(NSDictionary*)getDictionaryForFriendCount:(NSString*)productId SnachId:(NSString*)snachId EmailId:(NSString*)emailId;
++(NSDictionary*)getEmailDictionary:(NSString*)emailId;
 @end

@@ -80,4 +80,14 @@ NSMutableArray *emailIds;
     }
     return dic;
 }
+
++(NSDictionary*)getEmailDictionary:(NSString*)emailId{
+    NSMutableDictionary *dic=[[NSMutableDictionary alloc] init];
+    if(emailIds){
+        [dic setObject:emailIds forKey:@"contactList"];
+        [dic setObject:emailId forKey:@"userEmail"];
+    }
+    return dic;
+}
+
 @end

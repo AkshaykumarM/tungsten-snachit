@@ -12,7 +12,8 @@
 #import "global.h"
 #import "AFNetworking.h"
 #import "UserProfile.h"
-@interface MyAccount ()<UIImagePickerControllerDelegate>
+#import <SDWebImage/UIImageView+WebCache.h>
+@interface MyAccount ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property(nonatomic,strong) NSArray *options,*icons;
 
 @property (nonatomic, strong) NSArray *menuItems;
@@ -33,9 +34,9 @@
     
     
     selectFlag= 0;
-    options = [NSArray arrayWithObjects:@"My Profile", @"Account Settings",@"Billing Information",@"Shipping Information",@"Snach History", nil];
-    icons= [NSArray arrayWithObjects:@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
-    menuItems = [NSArray arrayWithObjects: @"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
+    options = [NSArray arrayWithObjects:@"Snach Feed",@"My Profile", @"Account Settings",@"Billing Information",@"Shipping Information",@"Snach History", nil];
+    icons= [NSArray arrayWithObjects:@"snach_logo.png",@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
+    menuItems = [NSArray arrayWithObjects: @"snachfeed",@"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
     
     // This will remove extra separators from tableview
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -64,11 +65,8 @@
 }
 -(void)initialLize{
     
-    if([global isValidUrl:user.profilePicUrl]){
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        self.profilePic.image = [UIImage imageWithData:data];
-    }];
-    }
+    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+   
     if(![user.fullName isKindOfClass:[NSNull class]])
         self.userNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
 
@@ -143,10 +141,10 @@
     
            picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
-    [self presentModalViewController:picker animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    [picker dismissModalViewControllerAnimated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
     self.defaultbackImg.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
     NSLog(@"%@",info);
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];

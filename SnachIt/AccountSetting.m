@@ -17,6 +17,7 @@
 #import "AccountSettingCell.h"
 #import "SnatchFeed.h"
 #import "SnachitStartScreen.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 #define REGEX_USERNAME @"[a-zA-Z\\s]*"
 #define REGEX_USER_NAME_LIMIT @"^.{3,10}$"
 #define REGEX_USER_NAME @"[A-Za-z0-9]{3,10}"
@@ -49,9 +50,7 @@ CGFloat animatedDistance;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    
-    
-    
+
     [self setViewLookAndFeel];
     
     // Load the file content and read the data into arrays
@@ -87,7 +86,7 @@ CGFloat animatedDistance;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 690;
+    return 645;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -99,14 +98,11 @@ CGFloat animatedDistance;
     cell.profilePicImageView.clipsToBounds=YES;
     cell.profilePicImageView.layer.borderWidth=BORDERWIDTH;
     cell.profilePicImageView.layer.borderColor=[UIColor whiteColor].CGColor;
-    
+    [cell.profilePicImageView setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
     
     //initializing the textfields
-    if([global isValidUrl:user.profilePicUrl]){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            cell.profilePicImageView.image = [UIImage imageWithData:data];
-        }];
-    }
+  
+    
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
@@ -118,6 +114,9 @@ CGFloat animatedDistance;
     if(![user.phoneNumber isKindOfClass:[NSNull class]])
         [cell.phoneTextField setText:user.phoneNumber];
     
+    [global setTextFieldInsets:cell.emailTextField];
+    [global setTextFieldInsets:cell.nameTextField];
+    [global setTextFieldInsets:cell.phoneTextField];
     //setting background img
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
@@ -125,7 +124,10 @@ CGFloat animatedDistance;
 
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
-    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,468, 50, 25)];
+    
+    cell.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
+    
+    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,473, 50, 25)];
     [appAllertSwitch addTarget:self action:@selector(appAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     appAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     appAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -142,7 +144,7 @@ CGFloat animatedDistance;
     [cell.contentView addSubview:appAllertSwitch];
     
     
-    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,513, 50, 25)];
+    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,518, 50, 25)];
     [emailAllertSwitch addTarget:self action:@selector(emailAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     emailAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     emailAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -157,7 +159,7 @@ CGFloat animatedDistance;
         emailAllertSwitch.on=YES;emailAlerts=@"False"; emailAllertSwitch.borderColor=[UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];}
     [cell.contentView addSubview:emailAllertSwitch];
     
-    SevenSwitch *smsAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,558, 50, 25)];
+    SevenSwitch *smsAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,563, 50, 25)];
     [smsAllertSwitch addTarget:self action:@selector(smsAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
     smsAllertSwitch.offImage = [UIImage imageNamed:@"check.png"];
     smsAllertSwitch.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -172,7 +174,7 @@ CGFloat animatedDistance;
     
     [cell.contentView addSubview:smsAllertSwitch];
     
-    signOut = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,603, 50, 25)];
+    signOut = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,608, 50, 25)];
     [signOut addTarget:self action:@selector(signOut:) forControlEvents:UIControlEventValueChanged];
     signOut.offImage = [UIImage imageNamed:@"check.png"];
     signOut.onImage = [UIImage imageNamed:@"multiply.png"];
@@ -182,9 +184,13 @@ CGFloat animatedDistance;
     signOut.on=NO;
     [cell.contentView addSubview:signOut];
     
-    [cell.saveBtn addTarget:self action:@selector(save) forControlEvents:UIControlEventTouchUpInside];
+    
     
     return cell;
+}
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+   [[self.tableView superview] endEditing:YES];
 }
 -(void)setViewLookAndFeel{
     
@@ -275,35 +281,7 @@ CGFloat animatedDistance;
     tableCell.phoneTextField.isMandatory=NO;
 }
 
-- (void)save {
-    
-    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    
-    
-    
-    if([tableCell.nameTextField validate] & [tableCell.emailTextField validate]&[tableCell.phoneTextField validate]){
-        [self startProcessing];
-        int status=[self updateUserProfile];
-        
-        if(status==1){
-            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            [defaults setValue:appAlerts forKey:APPALLERTS];
-            [defaults setValue:emailAlerts forKey:EMAILALLERTS];
-            [defaults setValue:smsAlerts forKey:SMSALLERTS];
-            [self.tableView reloadData];
-            [global showAllertMsg:@"Profile updated successfully"];
-           
-            [self stopProcessing];
-        }
-        else{
-            [self stopProcessing];
-             [global showAllertMsg:@"Error occureed while updating profile"];
-            
-        }
-    }
-    [self stopProcessing];
-    
-}
+
 -(int)updateUserProfile{
     NSError *error;
     
@@ -342,7 +320,11 @@ CGFloat animatedDistance;
 }
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-        [self clearAllData];
+        
+        signOut.on=NO;
+        NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+        [defaults setObject:@"0" forKey:LOGGEDIN];
+    
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
         
@@ -350,7 +332,7 @@ CGFloat animatedDistance;
         [navController setViewControllers: @[rootViewController] animated: YES];
         
         [self.revealViewController pushFrontViewController:navController animated:YES];
-        signOut.on=NO;
+        
         
     }
     else{
@@ -413,36 +395,52 @@ CGFloat animatedDistance;
     [activitySpinner stopAnimating];
     [backView removeFromSuperview];
 }
--(void)clearAllData{
-    NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
-    NSDictionary * dict = [defs dictionaryRepresentation];
-    for (id key in dict) {
-        [defs removeObjectForKey:key];
-    }
-    [defs synchronize];
-    NSLog(@"Cleared User Defaults");
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:@"snachit.sql"];
-    
-    if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
-        [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-    }
-      NSLog(@"Cleared Databases");
-}
+
 
 -(void) getPhoto:(id) sender {
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
+    picker.delegate=self;
     
     picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
-    [self presentModalViewController:picker animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
      AccountSettingCell *cell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [picker dismissModalViewControllerAnimated:YES];
+    [[picker presentingViewController ] dismissViewControllerAnimated:YES completion:nil];
     cell.defaultBackImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
 
+//this function will end editing by dissmissing keyboard if user touches outside the textfields
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.tableView endEditing:YES];
+}
+
+- (IBAction)save:(id)sender {
+    
+    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    
+    
+    if([tableCell.nameTextField validate] & [tableCell.emailTextField validate]&[tableCell.phoneTextField validate]){
+        [self startProcessing];
+        int status=[self updateUserProfile];
+        
+        if(status==1){
+            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+            [defaults setValue:appAlerts forKey:APPALLERTS];
+            [defaults setValue:emailAlerts forKey:EMAILALLERTS];
+            [defaults setValue:smsAlerts forKey:SMSALLERTS];
+            [self.tableView reloadData];
+            [global showAllertMsg:@"Profile updated successfully"];
+            
+            [self stopProcessing];
+        }
+        else{
+            [self stopProcessing];
+            [global showAllertMsg:@"Error occureed while updating profile"];
+            
+        }
+    }
+    [self stopProcessing];
+}
 @end

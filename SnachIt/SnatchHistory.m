@@ -13,7 +13,7 @@
 #import "global.h"
 #import "UserProfile.h"
 #import "SnachHistory.h"
-
+#import <SDWebImage/UIImageView+WebCache.h>
 NSString * const INFLIG=@"inflight";
 NSString * const DELIVE=@"delivered";
 NSString * const AL=@"all";
@@ -51,9 +51,14 @@ UIRefreshControl *refreshControl;
     [self.tableView addSubview:refreshControl];
 }
 -(void)viewWillAppear:(BOOL)animated{
-    [self getMYLatestSnachs];
-    subCellId=@"all";
+  
+    subCellId=AL;
     user=[UserProfile sharedInstance];
+}
+
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    [self getMYLatestSnachs];
 }
 
 - (void)viewDidUnload
@@ -69,33 +74,19 @@ UIRefreshControl *refreshControl;
 {
     int count=0;
 
-        if([subCellId isEqual:@"inFlight"]){
+        if([subCellId isEqual:INFLIG]){
             count=[myLetestINFSnachs count];
         }
-        else if([subCellId isEqual:@"delivered"])
+        else if([subCellId isEqual:DELIVE])
         {
             count=[myLetestDELSnachs count];
         }
-        else if([subCellId isEqual:@"all"])
+        else if([subCellId isEqual:AL])
         {
             count=[myLetestALLSnachs count];
         }
-    
-    
-    return count;
-}
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{ self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-    
-    // Return the number of sections.
-    if (myLetestALLSnachs) {
-        
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-        return 1;
-        
-    } else {
-        
-        // Display a message when the table is empty
+    // Display a message when the table is empty
+    if(count<=0){
         UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
         
         messageLabel.text = @"No snachs history Available!";
@@ -108,9 +99,26 @@ UIRefreshControl *refreshControl;
         self.tableView.backgroundView = messageLabel;
         
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
+    else{
+        self.tableView.backgroundView =nil;
         
     }
+    return count;
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{ self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     
+    // Return the number of sections.
+    if (myLetestALLSnachs) {
+        
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+        return 1;
+        
+    }
+    else{
+          self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
     return 0;
 }
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -165,22 +173,18 @@ UIRefreshControl *refreshControl;
     }
     SnachHistoryCell *cell = (SnachHistoryCell *)[tableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
     cell.tag = indexPath.row;
-    [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:productImageUrl]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-        if(!error)
-        {
-            cell.productImage.image= [UIImage imageWithData:data];
-            
-        }
-    }];
+    
+    [cell.productImage setImageWithURL:[NSURL URLWithString:productImageUrl] placeholderImage:nil];
     [cell.productImage.layer setBorderColor: [[UIColor lightGrayColor] CGColor]];
     [cell.productImage.layer setBorderWidth: 1.0];
     cell.productNameLbl.text = productname;
     cell.dateOrdered.text = orderedDate;
     cell.dateDelivered.text=deliveryDate;
     if([statusImg isEqual:@"inflightIcon.png"]){
-        [cell.deliveryDateLbl setHidden:YES];}
+       cell.deliveryDateLbl.text=@"";
+    }
     else
-        [cell.deliveryDateLbl setHidden:NO];
+        cell.deliveryDateLbl.text=@"Delivery Date :";
     
     cell.statusFlag.image=[UIImage imageNamed:statusImg];
     return cell;
@@ -195,19 +199,19 @@ UIRefreshControl *refreshControl;
     switch (self.snachHistorySegmentControl.selectedSegmentIndex)
     {
         case 0:
-            subCellId=@"all";
+            subCellId=AL;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
             break;
         case 1:
-              subCellId=@"delivered";
+              subCellId=DELIVE;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
             break;
         case 2:
-            subCellId=@"inFlight";
+            subCellId=INFLIG;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             

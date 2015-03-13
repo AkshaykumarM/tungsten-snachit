@@ -263,7 +263,7 @@ CGFloat animatedDistance;
        
         if([[response objectForKey:@"success"] isEqual:@"true"])
         {
-            [global showAllertMsg:@"Sign in success"];
+            //[global showAllertMsg:@"Sign in success"];
             NSDictionary *userprofile=[response objectForKey:@"userProfile"];
             [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"]];
             NSLog(@"UserProfile:%@",userprofile);
@@ -271,13 +271,14 @@ CGFloat animatedDistance;
             [defaults setObject:ssoUsing forKey:SSOUSING];
             [defaults setObject:username forKey:USERNAME];
             [defaults setObject:password forKey:PASSWORD];
-       
+            [defaults setObject:@"1" forKey:LOGGEDIN];
+            isAllreadyTried=TRUE;
             [defaults synchronize];
             status=1;
         }
         else{
             status=0;
-            [global showAllertForInvalidCredentials];
+            
         }
         
     }

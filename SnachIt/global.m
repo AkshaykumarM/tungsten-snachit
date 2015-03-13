@@ -7,26 +7,22 @@
 //
 
 #import "global.h"
-
+#import "RegexValidator.h"
 //NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
-//NSString const *tempmaschineIP=@"http://192.168.0.120/";
 NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
-NSString const *tempmaschineIP=@"http://ecellmit.com/snachit/";
-NSString * const APPALLERTS=@"appAllerts";
+NSString * const APPALLERTS=@"appAllerts";     
 NSString * const EMAILALLERTS=@"emailAllerts";
 NSString * const SMSALLERTS=@"smsAllerts";
-NSString * const VISA = @"^4[0-9]{12}(?:[0-9]{3})?$";
-NSString * const MASTERCARD=@"^5[1-5][0-9]{14}$";
-NSString * const AMEX=@"^3[47][0-9]{13}$";
-NSString * const DINNERSCLUB=@"^3(?:0[0-5]|[68][0-9])[0-9]{11}$";
-NSString * const DISCOVER=@"^6(?:011|5[0-9]{2})[0-9]{12}$";
-NSString * const EMAIL_REGEX=@"[A-Z0-9a-z._%+-]{3,}+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}";
+NSString *USERID;                                   //this will be the global userid
 bool isApplicationLaunchedFromNotification=FALSE;
-
+bool isAllreadyTried=FALSE;
  NSString * const SSOUSING=@"SSOUsing";
  NSString * const USERNAME=@"Username";
  NSString * const PASSWORD=@"Password";
-NSString *const DEFAULT_BACK_IMG=@"DefaultBackImg";
+ NSString * const LOGGEDIN=@"LoggedIn";
+ NSString *const DEFAULT_BACK_IMG=@"DefaultBackImg";
+ NSString *const DEFAULT_BILLING=@"DefaultBilling";
+ NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
 
 NSString * const PRODUCT_IMAGES=@"productImages";
 NSString * const PRODUCT_NAME=@"productName";
@@ -48,8 +44,8 @@ int i=0;//for screen tracking
 NSString *cardNumber=@"";
 NSString *cardExp=@"";
 NSString *cardCVV=@"";
-NSString *RECENTLY_ADDED_PAYMENT_INFO_TRACKER=@"";
-NSString *RECENTLY_ADDED_SHIPPING_INFO_TRACKER=@"";
+int RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
 @implementation global
 float  RADIOUS=37.5f;//to make profile pic circular
 float BORDERWIDTH=5.0f;

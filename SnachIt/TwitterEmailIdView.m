@@ -11,7 +11,7 @@
 #import "SnachItLogin.h"
 #import "UserProfile.h"
 #import "global.h"
-
+#import "RegexValidator.h"
 
 @implementation TwitterEmailIdView
 {

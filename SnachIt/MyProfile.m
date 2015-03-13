@@ -22,6 +22,7 @@
 #import "SnachHistory.h"
 #import "Product.h"
 #import "Common.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 NSString * const SNACH_CELL=@"snachsCell";
 NSString * const FRIEND_CELL=@"friendsCell";
 NSString * const BRAND_CELL=@"brandsCell";
@@ -33,12 +34,12 @@ NSString * const PRODUCTIMAGE=@"productImage";
 NSString * const PRODUCTIMAGES=@"productImages";
 NSString * const PRODUCTBRANDNAME=@"brandName";
 NSString * const PRODUCTBRANDIMAGE=@"brandImage";
-NSString * const FRIEND_IMAGE=@"freindImage";
-NSString * const FRIEND_NAME=@"freindName";
+NSString * const FRIEND_IMAGE=@"friendImage";
+NSString * const FRIEND_NAME=@"friendName";
 NSString * const SNACHFEED=@"snachfeed";
 NSString * const DATEORDERED=@"dateOrdered";
 NSString * const DATEDELIVERED=@"deliveryDate";
-@interface MyProfile ()
+@interface MyProfile ()<UIImagePickerControllerDelegate,UINavigationControllerDelegate>
 {
     NSMutableArray *friendsSnachs;
     NSMutableArray *snachs;
@@ -48,9 +49,9 @@ NSString * const DATEDELIVERED=@"deliveryDate";
     NSMutableArray *myLetestINFSnachs;
     NSMutableArray *myLetestDELSnachs;
     NSArray *singleProduct;
-    NSDictionary *dictionaryForEmails;
+    
      NSDictionary *dictionaryForFriendsCountResponse;
-       NSData *friendCountJson;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UICollectionView *collectionView;
@@ -70,15 +71,8 @@ NSString * const DATEDELIVERED=@"deliveryDate";
 
 @interface customTapGestureRecognizer : UITapGestureRecognizer
 
-@property (nonatomic, strong) NSString * productId;
-@property (nonatomic, strong) NSString * brandId;
 @property (nonatomic, strong) NSString * snachId;
-@property (nonatomic, strong) NSString * productName;
-@property (nonatomic, strong) NSString * brandName;
-@property (nonatomic, strong) NSURL * brandImageURL;
-@property (nonatomic, strong) NSURL * productImageURL;
-@property (nonatomic, strong) NSString * price;
-@property (nonatomic, strong) NSString * productDescription;
+
 
 @end
 @interface FollowStatusRecognizer1 : UITapGestureRecognizer
@@ -126,8 +120,9 @@ NSString * const DATEDELIVERED=@"deliveryDate";
     NSString *snoopedProductPrice;
     NSString *snoopedProductDescription;
     NSString *snoopedBrandName;
+    NSDictionary *dictionaryForEmails;
+    NSData *friendCountJson;
     
-
 }
 
 @synthesize tabSelect=_tabSelect;
@@ -153,6 +148,7 @@ UIView* backView ;
      [_subTabSelect setHidden:YES];//hiding the sub tab
     [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
+    
     viewHalfWidth=self.view.frame.size.width/2.0f;
     viewQuarterWidth=viewHalfWidth/2.0f;
     viewHalfHeight=self.view.frame.size.height/2.0f;
@@ -185,11 +181,9 @@ UIView* backView ;
 
 -(void)initialLize{
     
-    if([global isValidUrl:user.profilePicUrl]){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            self.profilePic.image = [UIImage imageWithData:data];
-        }];
-    }
+    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    
+
     if(![user.fullName isKindOfClass:[NSNull class]])
         self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
@@ -200,7 +194,7 @@ UIView* backView ;
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
         self.defaultbackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
-
+  
 }
 
 
@@ -218,15 +212,42 @@ UIView* backView ;
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     int count=0;
+    UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    messageLabel.textColor = [UIColor blackColor];
+    messageLabel.numberOfLines = 0;
+    messageLabel.textAlignment = NSTextAlignmentCenter;
+    messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
+    [messageLabel sizeToFit];
+
     if([cellId isEqual:FRIEND_CELL]){
         
         count=(int)[friendsSnachs count];
         [refreshControl addTarget:self action:@selector(getLatestFriendsSnachs) forControlEvents:UIControlEventValueChanged];
+        if(count<=0)
+        {
+            messageLabel.text = @"No Friends Found!";
+            self.tableView.backgroundView = messageLabel;
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        }
+        else{
+            self.tableView.backgroundView=nil;
+        }
+        
     }
     else if([cellId isEqual:BRAND_CELL]){
         count=(int)[followedBrand count];
         [refreshControl addTarget:self action:@selector(getLatestFollowedBrandsProducts) forControlEvents:UIControlEventValueChanged];
-
+        
+        if(count<=0)
+        {
+            messageLabel.text = @"No Brand Followed Yet!";
+            self.tableView.backgroundView = messageLabel;
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        }
+        else{
+            self.tableView.backgroundView=nil;
+        }
+        
     }
     else if ([cellId isEqual:SNACH_CELL]){
         [refreshControl addTarget:self action:@selector(getMYLatestSnachs) forControlEvents:UIControlEventValueChanged];
@@ -242,8 +263,19 @@ UIView* backView ;
         {
             count=(int)[myLetestALLSnachs count];
         }
-    }
         
+        if(count<=0)
+        {
+            messageLabel.text = @"No Snachs Yet!";
+            self.tableView.backgroundView = messageLabel;
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+        }
+        else{
+            self.tableView.backgroundView=nil;
+        }
+
+    }
+    
     return count;
 }
 
@@ -265,15 +297,15 @@ UIView* backView ;
         
         
         NSString *friendName;
-        NSString *friendProfilePic;
+       
         NSArray *snachedProducts;
-        NSString *defaultProfile=@"userIcon.png";
+       
         
         
         FriendSnachs *snaches=[friendsSnachs objectAtIndex:indexPath.row];
         
         friendName=snaches.friendName;
-        friendProfilePic=snaches.freindProfilePic;
+       
         snachedProducts=snaches.snachedProducts;
         
         MyProfileFreindsCell *cell = (MyProfileFreindsCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
@@ -284,18 +316,11 @@ UIView* backView ;
             
         }
         
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:friendProfilePic]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            if(!error)
-            {
-                cell.friendPic.image=[UIImage imageNamed:defaultProfile];
-                //cell.friendPic.image = [UIImage imageWithData:data];
-                
-            }
-            else{
-                cell.friendPic.image=[UIImage imageNamed:defaultProfile];
-            }
-        }];
-        
+        [cell.friendPic setImageWithURL:[NSURL URLWithString:snaches.freindProfilePic] placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+        cell.friendPic.layer.cornerRadius= RADIOUS;
+        cell.friendPic.clipsToBounds = YES;
+        cell.friendPic.layer.borderWidth = BORDERWIDTH;
+        cell.friendPic.layer.borderColor = [UIColor whiteColor].CGColor;
         cell.friendName.text = friendName;
         
         int scrollWidth = 100;
@@ -329,26 +354,15 @@ UIView* backView ;
                                 if (image != nil) {
                                     [image removeFromSuperview];
                                 }
-                
-                                [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:snProducts.productImage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                                    if(!error)
-                                    {
-                                        img.tag=index+10;
-                                        [cell.scrollview addSubview:img];
-                                        img.image = [UIImage imageWithData:data];
-                                    }
-                                }];
+                                img.tag=index+10;
+                                
+                                [cell.scrollview addSubview:img];
+                                
+                                [img setImageWithURL:[NSURL URLWithString:snProducts.productImage] placeholderImage:nil];
                                 [customTap setNumberOfTapsRequired:1];
                                 img.userInteractionEnabled = YES;
                 
-                                customTap.productImageURL=[NSURL URLWithString:[NSString stringWithFormat:@"%@Products/product.png",tempmaschineIP]];
-                                customTap.productName=[NSString stringWithFormat:@"%@ %@", @"Mikasa",@"Mixer"];
-                                customTap.price=@"100";
-                                customTap.productId=snProducts.productId;
-                                customTap.brandId=@"2015114173316";
-                                customTap.brandName=@"Breville";
-                                customTap.brandImageURL= [NSURL URLWithString:[NSString stringWithFormat:@"%@Products/breviele.png",tempmaschineIP]];
-                                customTap.snachId=@"1";
+                                customTap.snachId=snProducts.snachId;
                                 
                                 [img addGestureRecognizer:customTap];
                                 
@@ -371,15 +385,8 @@ UIView* backView ;
          NSArray *products;
         Brand *brand=[followedBrand objectAtIndex:indexPath.row];
         if(brand){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:brand.brandImg]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            if(!error)
-            {
-                if(cell.tag==indexPath.row){
-                 cell.brandName.image=[UIImage imageWithData:data];
-                }
-                
-            }
-        }];
+        
+            [cell.brandName setImageWithURL:[NSURL URLWithString:brand.brandImg] placeholderImage:nil];
       
         products=brand.products;
         cell.productImageConatainer.scrollEnabled = YES;
@@ -398,29 +405,17 @@ UIView* backView ;
             
             UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,70, 70)];
             [img setContentMode:UIViewContentModeScaleAspectFit];
-            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.productImage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                if(!error)
-                {if(cell.tag==indexPath.row){
-                    img.image=[UIImage imageWithData:data];
+                if(cell.tag==indexPath.row){
+                    [img setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
                     [cell.productImageConatainer addSubview:img];
                 }
-                    
-                }
-            }];
             
             customTapGestureRecognizer *customTap = [[customTapGestureRecognizer alloc]
                                                      initWithTarget:self
                                                      action:@selector(myAction:) ];
             [customTap setNumberOfTapsRequired:1];
             img.userInteractionEnabled = YES;
-            customTap.productImageURL=[NSURL URLWithString:[NSString stringWithFormat:@"%@Products/product.png",tempmaschineIP]];
-            customTap.productName=[NSString stringWithFormat:@"%@ %@", @"Nike", @"Shoes"];
-            customTap.price=@"299";
-            customTap.productId=prod.productId;
-            customTap.brandId=@"2015114173316";
-            customTap.brandName=@"Breville";
-            customTap.brandImageURL= [NSURL URLWithString:[NSString stringWithFormat:@"%@Products/breviele.png",tempmaschineIP]];
-            customTap.snachId=@"1";
+            customTap.snachId=prod.snachId;
 
             [img addGestureRecognizer:customTap];
             
@@ -493,13 +488,7 @@ UIView* backView ;
         }
         MyProfileSnachsCell *cell = (MyProfileSnachsCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
          cell.tag = indexPath.row;
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:productImageUrl]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            if(!error)
-            {
-            cell.productImg.image= [UIImage imageWithData:data];
-            
-            }
-        }];
+        [cell.productImg setImageWithURL:[NSURL URLWithString:productImageUrl] placeholderImage:nil];
         [cell.productImg.layer setBorderColor: [[UIColor lightGrayColor] CGColor]];
         [cell.productImg.layer setBorderWidth: 1.0];
         cell.productName.text = productname;
@@ -519,19 +508,12 @@ UIView* backView ;
     return nil;
     }
 }
+
+
 -(void)myAction:(UITapGestureRecognizer *)tapRecognizer {
    
     
     customTapGestureRecognizer *tap = (customTapGestureRecognizer *)tapRecognizer;
-    snoopedProductId=tap.productId;
-    snoopedBrandId=tap.brandId;
-    snoopedProductName=tap.productName;
-    snoopedProductImageURL=tap.productImageURL;
-    snoopedBrandImageURL=tap.brandImageURL;
-    snoopedProductName=tap.productName;
-    snoopedProductPrice=tap.price;
-    snoopedProductDescription=tap.productDescription;
-    snoopedBrandName=tap.brandName;
     snoopedSnachId=tap.snachId;
 
    
@@ -545,40 +527,54 @@ UIView* backView ;
   
     [backView addSubview:_freindsPopupView];
     _productImg.image=nil;
+    [_snoopBtn setEnabled:NO];
+    [_followStatus setEnabled:NO];
     [_freindsPopupView setNeedsDisplay];
-    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatch_group_t group = dispatch_group_create();
-    
-    // Add a task to the group
-    dispatch_group_async(group, queue, ^{
+   
        
          [self getproductForSnachId:tap.snachId];
         
-    });
+
     
   
     
     // Add a handler function for when the entire group completes
     // It's possible that this will happen immediately if the other methods have already finished
-    dispatch_group_notify(group, queue, ^{
-        if(singleProduct){
+  
+        if(singleProduct!=nil){
             
              Product *prod=[singleProduct objectAtIndex:0];
+            snoopedProductId=prod.productId;
+            snoopedBrandId=prod.brandId;
+            snoopedProductName=prod.productname;
+            snoopedProductImageURL=[NSURL URLWithString:prod.productImage];
+            snoopedBrandImageURL=[NSURL URLWithString:prod.brandimage];
+            snoopedProductPrice=prod.price;
+            snoopedProductDescription=prod.productDescription;
+            snoopedBrandName=prod.brandname;
+            snoopedSnachId=prod.snachId;
             
-            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:prod.productImage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                if(!error)
-                _productImg.image=[UIImage imageWithData:data];
-            }];
-            
+            [_productImg setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
             [_productNameLbl setTitle:[NSString stringWithFormat:@"%@ %@",prod.brandname,prod.productname] forState:UIControlStateNormal];
-            [_productPriceLbl setTitle:[NSString stringWithFormat:@"$Retail:%@",prod.price] forState:UIControlStateNormal];
+            _productNameLbl.titleLabel.numberOfLines = 1;
+            _productNameLbl.titleLabel.adjustsFontSizeToFitWidth = YES;
+            _productNameLbl.titleLabel.minimumScaleFactor=0.62;
+            _productPriceLbl.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
+            _productPriceLbl.titleLabel.minimumScaleFactor=0.67;
+            [_productPriceLbl setTitle:[NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
+            
+            if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil)
+            {
+                [_snoopBtn setEnabled:YES];
+                [_followStatus setEnabled:YES];
+            }
             NSError *error;
-            dictionaryForEmails=[Common getDictionaryForFriendCount:@"20150210112535" SnachId:@"2" EmailId:@"akshay@gmail.com"];
-            NSLog(@"dictionaryForEmails:%@",dictionaryForEmails);
+            dictionaryForEmails=[Common getDictionaryForFriendCount:snoopedProductId SnachId:snoopedSnachId EmailId:user.emailID];
+            //NSLog(@"dictionaryForEmails:%@",dictionaryForEmails);
             if(dictionaryForEmails!=nil){
                 
                 friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&error];
-                NSLog(@"DIctionary %@",dictionaryForEmails);
+               // NSLog(@"DIctionary %@",dictionaryForEmails);
                 
                 NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
                 [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
@@ -620,9 +616,9 @@ UIView* backView ;
                     }];
             }
 
-            }
-        
-    });
+        }
+    
+    
     }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath   *)indexPath
 {
@@ -636,6 +632,39 @@ UIView* backView ;
  
     
 }
+
+//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+//{ self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+//    
+//    // Return the number of sections.
+//    if (friendsSnachs|| followedBrand|| myLetestALLSnachs) {
+//        
+//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+//        return 1;
+//        
+//    }
+//
+//    else {
+//        
+//        // Display a message when the table is empty
+//        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+//        
+//        messageLabel.text = @"Please pull down to fill the snachs";
+//        messageLabel.textColor = [UIColor blackColor];
+//        messageLabel.numberOfLines = 0;
+//        messageLabel.textAlignment = NSTextAlignmentCenter;
+//        messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
+//        [messageLabel sizeToFit];
+//        
+//        self.tableView.backgroundView = messageLabel;
+//        
+//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//        
+//    }
+//    
+//    return 0;
+//}
+
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     // This will create a "invisible" footer
     return 0.01f;
@@ -720,7 +749,7 @@ case 2:
     
         SnoopedProduct *product=[[SnoopedProduct
                               sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
-    snooptTracking=1;
+        snooptTracking=1;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:SNACHFEED];
     
@@ -755,15 +784,30 @@ case 2:
     }
     
 }
+
+//this function will return all the friends and their snachs
 - (void)getLatestFriendsSnachs
 {
-    NSLog(@"Get latest friends");
-    [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@freindsSnaches.json",tempmaschineIP]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    NSError *err = [[NSError alloc] init];
+    dictionaryForEmails=[Common getEmailDictionary:user.emailID];
+    if(dictionaryForEmails!=nil){
+        
+        friendCountJson = [NSJSONSerialization dataWithJSONObject:dictionaryForEmails options:NSJSONWritingPrettyPrinted error:&err];
+        
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Accept"];
+        [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-friend-snach-list/",ec2maschineIP]]];
+        [request setHTTPMethod:@"POST"];
+        [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+        [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[friendCountJson length]] forHTTPHeaderField:@"Content-Length"];
+        [request setHTTPBody:friendCountJson];
+
+     [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         
         if (!error) {
             NSArray *latestFriendSnachs = [self makeRequest:data];
             friendsSnachs = [NSMutableArray arrayWithCapacity:10];
-            
+            NSLog(@"Response : %@",latestFriendSnachs);
             if (latestFriendSnachs) {
                 for (NSDictionary *tempDic in latestFriendSnachs) {
                     FriendSnachs *fSnachs = [[FriendSnachs alloc] init];
@@ -775,8 +819,9 @@ case 2:
                       {
                            for (NSDictionary *tempSnachDic in latestFriendSnachs2) {
                                Products *snached= [[Products alloc] init];
-                               snached.productId=[tempSnachDic objectForKey:@"productId"];
+                               snached.snachId=[tempSnachDic objectForKey:@"snachId"];
                                snached.productImage=[tempSnachDic objectForKey:@"productImg"];
+                               snached.snachStatus=[tempSnachDic objectForKey:@"status"];
                                [snachs addObject:snached];
                            }
                       }
@@ -789,11 +834,14 @@ case 2:
             [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
         }
     }];
+    }
 }
+
+//this function will return all brands and their running snachs
 - (void)getLatestFollowedBrandsProducts
 {
       NSLog(@"Get followed brand products");
-    [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@brandProducts.json",tempmaschineIP]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+    [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-users-followed-brands/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         
         if (!error) {
             NSArray *latestFollowedBrands = [self makeRequest:data];
@@ -812,6 +860,7 @@ case 2:
                         for (NSDictionary *tempFollowDic in latestFriendSnachs2) {
                             Products *followed= [[Products alloc] init];
                             followed.productId=[tempFollowDic objectForKey:@"productId"];
+                            followed.snachId=[tempFollowDic objectForKey:@"snach_id"];
                             followed.productImage=[tempFollowDic objectForKey:@"productImg"];
                             [brandProducts addObject:followed];
                         }
@@ -826,6 +875,8 @@ case 2:
         }
     }];
 }
+
+//this function will return all snached snachs
 - (void)getMYLatestSnachs
 {
       NSLog(@"Get my snachs");
@@ -893,6 +944,8 @@ case 2:
     }
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
+   
        return [latestFriendSnachs objectForKey:@"data"];
 }
 -(NSDictionary*)makeHistoryRequest:(NSData *)response{
@@ -914,10 +967,10 @@ case 2:
     
     picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
-    [self presentModalViewController:picker animated:YES];
+    [self presentViewController:picker animated:YES completion:nil];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    [picker dismissModalViewControllerAnimated:YES];
+    [picker dismissViewControllerAnimated:YES completion:nil];
     self.defaultbackImg.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
 
@@ -937,7 +990,7 @@ case 2:
     
     if (jasonData) {
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-        
+        NSLog(@"Response: %@",response);
         if (!error) {
             NSDictionary *prodDic = response;
             
@@ -1023,9 +1076,39 @@ case 2:
             
             
         }
-    
-    
+
    
+}
+
+
+- (UIImage *)convertImageToGrayScale:(UIImage *)image
+{
+    // Create image rectangle with current image width/height
+    CGRect imageRect = CGRectMake(0, 0, image.size.width, image.size.height);
+    
+    // Grayscale color space
+    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
+    
+    // Create bitmap content with current image size and grayscale colorspace
+    CGContextRef context = CGBitmapContextCreate(nil, image.size.width, image.size.height, 8, 0, colorSpace, kCGImageAlphaNone);
+    
+    // Draw image into current context, with specified rectangle
+    // using previously defined context (with grayscale colorspace)
+    CGContextDrawImage(context, imageRect, [image CGImage]);
+    
+    // Create bitmap image info from pixel data in current context
+    CGImageRef imageRef = CGBitmapContextCreateImage(context);
+    
+    // Create a new UIImage object
+    UIImage *newImage = [UIImage imageWithCGImage:imageRef];
+    
+    // Release colorspace, context and bitmap information
+    CGColorSpaceRelease(colorSpace);
+    CGContextRelease(context);
+    CFRelease(imageRef);
+    
+    // Return the new grayscale image
+    return newImage;
 }
 
 

@@ -19,6 +19,7 @@
 @property (strong, nonatomic) NSString *brandId;
 @property (strong, nonatomic) NSString *productId ;
 @property (strong, nonatomic) NSString *snachId ;
+@property (nonatomic,assign) int snooptime ;
 @property (strong, nonatomic) NSString *productDescription;
 @property (strong, nonatomic) NSString *followStatus ;
 @property (strong, nonatomic) NSString *friendCount ;

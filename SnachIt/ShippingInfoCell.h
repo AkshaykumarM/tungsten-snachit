@@ -13,6 +13,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
-@property (weak, nonatomic) IBOutlet UIButton *saveBtn;
+
 
 @end

@@ -42,15 +42,15 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 }
 
 -(void)initializeView{
-     self.navigationController.navigationBar.topItem.title = @"snach details";
+     self.navigationController.navigationBar.topItem.title = @"order total";
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
-    productImg.image=[UIImage imageWithData:product.productImageData];
+     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
     
-    totalLabel.text=[NSString stringWithFormat:@"$%@",order.orderTotal];
+    totalLabel.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
     
     //hiding the backbutton from top bar
     [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
@@ -72,15 +72,19 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.subtotalLabel.text = [NSString stringWithFormat:@"$%@",order.subTotal];
-    cell.shippingAndhandlingLabel.text=order.shippingAndHandling;
-    cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%@",order.salesTax];
+    cell.subtotalLabel.text = [NSString stringWithFormat:@"$%.2f",[order.subTotal floatValue]];
+    cell.shippingAndhandlingLabel.text=[NSString stringWithFormat:@"$%.2f",[order.shippingAndHandling floatValue]];
+    cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%.2f",[order.salesTax floatValue]];
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shippingAndHandling)];
     singleTap.numberOfTapsRequired = 1;
     [cell.shippingandHandling setUserInteractionEnabled:YES];
     [cell.shippingandHandling  addGestureRecognizer:singleTap];
     return cell;
     
+}
+-(float)getOrderTotal{
+  
+    return  [order.subTotal floatValue]+[order.shippingAndHandling floatValue]+[order.salesTax floatValue];;
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

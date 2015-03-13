@@ -10,5 +10,7 @@
 
 @interface Products : NSObject
 @property (strong, nonatomic) NSString *productId;
+@property (strong, nonatomic) NSString *snachId;
 @property (strong, nonatomic) NSString *productImage;
+@property (nonatomic, assign) bool snachStatus;
 @end

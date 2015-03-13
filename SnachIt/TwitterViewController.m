@@ -79,8 +79,7 @@ NSString *callback = @"http://codegerms.com/callback";
     accessToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
     // WebServiceSocket *connection = [[WebServiceSocket alloc] init];
     //  connection.delegate = self;
-    NSString *pdata = [NSString stringWithFormat:@"type=2&token=%@&secret=%@&login=%@", accessToken.key, accessToken.secret, self.isLogin];
-    // [connection fetch:1 withPostdata:pdata withGetData:@"" isSilent:NO];
+     // [connection fetch:1 withPostdata:pdata withGetData:@"" isSilent:NO];
     NSLog(@"%@",accessToken.secret);
  
     
@@ -109,8 +108,7 @@ NSString *callback = @"http://codegerms.com/callback";
 
 - (void)didReceiveuserdata:(OAServiceTicket*)ticket data:(NSData*)data {
     
-    NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-
+    
     NSError *error;
     NSDictionary *userData = [NSJSONSerialization JSONObjectWithData:data options:0 error:&error];
     NSLog(@"%@",userData);

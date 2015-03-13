@@ -15,6 +15,9 @@
 #import "BillingInfoCell.h"
 #import "BillingInformationCell.h"
 #import "DBManager.h"
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "RegexValidator.h"
+
 
 @interface BillingInformation()
 @property (nonatomic, strong) DBManager *dbManager;
@@ -23,29 +26,32 @@
 @implementation BillingInformation
 {
     UserProfile *user;
+    NSUserDefaults *defaults;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
     _sidebarButton.target = self.revealViewController;
     _sidebarButton.action = @selector(revealToggle:);
-    
+     defaults=[NSUserDefaults standardUserDefaults];
     // Set the gesture
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     [self setViewLookAndFeel];
     self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Load the file content and read the data into arrays
       [self loadData];
+   
+   
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
+   [self viewDidLoad];
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
     [self initialLize];
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
-    // Set the Label text with the selected recipe
-    [self loadData];
+    
+    
 }
 - (void)viewDidUnload
 {
@@ -62,6 +68,8 @@
     [self.backButton setTarget:self.revealViewController];
     [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    
+     RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[defaults valueForKey:DEFAULT_BILLING] intValue];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -103,15 +111,12 @@
     cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    if([global isValidUrl:user.profilePicUrl]){
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            cell.profilePicImg.image = [UIImage imageWithData:data];
-        }];
-    }
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+   
     if([defaults valueForKey:DEFAULT_BACK_IMG])
         cell.defBackImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
 
@@ -121,23 +126,41 @@
 else{
     BillingInformationCell *cell = (BillingInformationCell *)[tableView dequeueReusableCellWithIdentifier:@"BillingInformationCell" forIndexPath:indexPath];
     NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
-    NSInteger indexOfCardNumber=[self.dbManager.arrColumnNames indexOfObject:@"cardNumber"];
+   
     NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
     
     // Set the loaded data to the appropriate cell labels.
-    cell.cardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[self getCardType:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardNumber]]]];
-    cell.CardTypeLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
+    NSString *cardname=[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName];
+    cell.CardTypeLbl.text = [NSString stringWithFormat:@"%@", cardname];
+    cell.cardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[cardname stringByReplacingOccurrencesOfString:@" " withString:@""].lowercaseString]];
     
     cell.cvvLbl.text =
     [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
     
-    cell.selectionStyle=UITableViewCellSelectionStyleNone;
+    
+    cell.tag=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    
+    
+    int rowid=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    
+   
+  
+    if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER){
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+    }
+    else{
+            cell.selectionStyle=UITableViewCellSelectionStyleNone;
+            cell.accessoryView=nil;
+    }
+    
     return cell;
 }
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSLog(@"%ld",(long)indexPath.row);
-    if(tableView!=self.tableView1)
+
+    if(tableView!=self.tableView1){
+        UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
+        tmp.accessoryView=nil;
         if(self.checkedIndexPath)
         {
             UITableViewCell* uncheckCell = [tableView
@@ -153,6 +176,8 @@ else{
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
+    }
     }
 }
 -(NSString*)getCardType:(NSString*)number{
@@ -192,9 +217,19 @@ else{
 
 -(void)initialLize{
     }
+
 - (IBAction)saveBtn:(id)sender {
-   
-    [self performSegueWithIdentifier:@"billSegue" sender:self];
+    if(RECENTLY_ADDED_PAYMENT_INFO_TRACKER>0){
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+        [def synchronize];
+        [global showAllertMsg:@"Saved successfully"];
+    }
+    else{
+        [global showAllertMsg:@"Please select atleast one billing address."];
+    }
+
+  
 }
 
 
@@ -221,5 +256,4 @@ else{
     // Reload the table view.
     [self.tableView1 reloadData];
 }
-
 @end

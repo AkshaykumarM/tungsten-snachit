@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ShippingInformation : UIViewController
+@interface ShippingInformation : UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 
@@ -18,5 +18,6 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView2;
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
+- (IBAction)doneBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 @end
