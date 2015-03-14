@@ -20,7 +20,8 @@
 @property (nonatomic, strong) NSString *streetAddress;
 @property (nonatomic, strong) NSString *cityStateZip;
 
-- (IBAction)swipeToSnach:(id)sender;
+
 @property (weak, nonatomic) IBOutlet UIButton *swipeToPay;
+@property (strong, nonatomic) IBOutlet UIView *mainview;
 
 @end

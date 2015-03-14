@@ -40,17 +40,7 @@ extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
 
 extern NSString *const DEFAULT_BACK_IMG;
 
-extern NSString * const PRODUCT_IMAGES;
-extern NSString * const PRODUCT_NAME;
-extern NSString * const PRODUCT_BRAND_NAME;
-extern NSString * const PRODUCT_PRICE;
-extern NSString * const PRODUCT_BRAND_IMAGE;
-extern NSString * const PRODUCT_IMAGE;
-extern NSString * const PRODUCT_BRAND_ID;
-extern NSString * const PRODUCT_ID;
-extern NSString * const PRODUCT_SNACH_ID;
-extern NSString * const PRODUCT_DESCRIPTION;
-extern NSString * const PRODUCT_FOLLOW_STATUS;
+
 @interface global : NSObject
 /*
  This method will make post request and will return the response

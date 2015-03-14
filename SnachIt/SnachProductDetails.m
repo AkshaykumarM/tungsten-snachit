@@ -190,18 +190,38 @@
     
     // Release any retained subviews of the main view.
 }
+-(float)getOrderTotal{
+    
+    return  [product.productPrice floatValue]+[product.productShippingCost floatValue]+[product.    productSalesTax floatValue];
+}
 
 
 
 -(void)initializeOrder{
+    double shippingcost;
+    double salesTax;
+    int speed;
     @try{
-        
-        
-        
+    shippingcost=[product.productShippingCost doubleValue];
+    salesTax=[product.productSalesTax doubleValue];
+    speed=[product.productShippingSpeed intValue];
     }
     @catch(NSException *e){
-        
+        shippingcost=0;
+        salesTax=0;
+        speed=0;
     }
-    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:[NSString stringWithFormat:@"%d",1] withSubTotal:product.productPrice withOrderTotal:product.productPrice withShippingAndHandling:[NSString stringWithFormat:@"%d",5] withSalesTax:[NSString stringWithFormat:@"%d",2] withSpeed:@"2" withShippingCost:[NSString stringWithFormat:@"%d",8] withOrderDate:@"23/1/2015" withDeliveryDate:@"2015-1-29"];
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.day = speed;
+    NSDate *currentdate=[NSDate date];
+    NSDate *deliverydate = [[NSCalendar currentCalendar]dateByAddingComponents:dateComponents
+                                                                   toDate: currentdate
+                                                                  options:0];
+   
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+   
+    [df setDateFormat:@"dd/MM/yy"];
+    
+    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate]];
 }
 @end

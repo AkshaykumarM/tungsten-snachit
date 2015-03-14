@@ -7,7 +7,9 @@
 //
 
 #import <Foundation/Foundation.h>
-
+extern NSString * const FRIEND_NAME;
+extern NSString * const FRIEND_IMAGE;
+extern NSString * const FRIEND_SNACHS;
 @interface FriendSnachs : NSObject
 @property (strong, nonatomic) NSString *friendName;
 @property (strong, nonatomic) NSString *freindProfilePic;

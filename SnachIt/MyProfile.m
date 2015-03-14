@@ -26,16 +26,6 @@
 NSString * const SNACH_CELL=@"snachsCell";
 NSString * const FRIEND_CELL=@"friendsCell";
 NSString * const BRAND_CELL=@"brandsCell";
-NSString * const INFLIGHT=@"inflight";
-NSString * const DELIVERED=@"delivered";
-NSString * const ALL=@"all";
-NSString * const PRODUCTNAME=@"productName";
-NSString * const PRODUCTIMAGE=@"productImage";
-NSString * const PRODUCTIMAGES=@"productImages";
-NSString * const PRODUCTBRANDNAME=@"brandName";
-NSString * const PRODUCTBRANDIMAGE=@"brandImage";
-NSString * const FRIEND_IMAGE=@"friendImage";
-NSString * const FRIEND_NAME=@"friendName";
 NSString * const SNACHFEED=@"snachfeed";
 NSString * const DATEORDERED=@"dateOrdered";
 NSString * const DATEDELIVERED=@"deliveryDate";
@@ -120,6 +110,9 @@ NSString * const DATEDELIVERED=@"deliveryDate";
     NSString *snoopedProductPrice;
     NSString *snoopedProductDescription;
     NSString *snoopedBrandName;
+    NSString *snoopedSalesTax;
+    NSString *snoopedShippingCost;
+    NSString *snoopedSpeed;
     NSDictionary *dictionaryForEmails;
     NSData *friendCountJson;
     
@@ -141,7 +134,7 @@ UIView* backView ;
     [self.backButton setTarget:self.revealViewController];
    [self.backButton setAction:@selector(revealToggle:)];
     cellId=FRIEND_CELL;
-    subCellId=ALL;
+    subCellId=HISTORY_ALL;
     
     
    
@@ -188,8 +181,7 @@ UIView* backView ;
         self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
     self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
-    self.fullNameLbl.adjustsFontSizeToFitWidth=YES;
-    self.fullNameLbl.minimumScaleFactor=0.5;
+   
     //setting background img
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
@@ -252,14 +244,14 @@ UIView* backView ;
     else if ([cellId isEqual:SNACH_CELL]){
         [refreshControl addTarget:self action:@selector(getMYLatestSnachs) forControlEvents:UIControlEventValueChanged];
 
-        if([subCellId isEqual:INFLIGHT]){
+        if([subCellId isEqual:HISTORY_INFLIGHT]){
           count=(int)[myLetestINFSnachs count];
         }
-        else if([subCellId isEqual:DELIVERED])
+        else if([subCellId isEqual:HISTORY_DELIVERED])
         {
           count=(int)[myLetestDELSnachs count];;
         }
-        else if([subCellId isEqual:ALL])
+        else if([subCellId isEqual:HISTORY_ALL])
         {
             count=(int)[myLetestALLSnachs count];
         }
@@ -457,7 +449,7 @@ UIView* backView ;
         SnachHistory *snachhistory;
         NSString *statusImg;
         
-            if([subCellId isEqual:INFLIGHT]){
+            if([subCellId isEqual:HISTORY_INFLIGHT]){
             snachhistory=[myLetestINFSnachs objectAtIndex:indexPath.row];
          
             productImageUrl=snachhistory.productImageUrl;
@@ -466,7 +458,7 @@ UIView* backView ;
             statusImg=snachhistory.statusIcon;
                 
         }
-        else if([subCellId isEqual:DELIVERED]){
+        else if([subCellId isEqual:HISTORY_DELIVERED]){
             snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
           
                 productImageUrl=snachhistory.productImageUrl;
@@ -476,7 +468,7 @@ UIView* backView ;
                 statusImg=snachhistory.statusIcon;
             
         }
-        else if([subCellId isEqual:ALL]){
+        else if([subCellId isEqual:HISTORY_ALL]){
             snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
             productImageUrl=snachhistory.productImageUrl;
             productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
@@ -719,19 +711,19 @@ UIView* backView ;
     switch (self.subTabSelect.selectedSegmentIndex)
     {
 case 0:
-    subCellId=ALL;
+    subCellId=HISTORY_ALL;
     NSLog(@"%@",subCellId);
     [_tableView reloadData];
         break;
 case 1:
-    subCellId=INFLIGHT;
+    subCellId=HISTORY_INFLIGHT;
     NSLog(@"%@",subCellId);
     [_tableView reloadData];
 
     
     break;
 case 2:
-    subCellId=DELIVERED;
+    subCellId=HISTORY_DELIVERED;
     NSLog(@"%@",subCellId);
     [_tableView reloadData];
       break;
@@ -748,7 +740,7 @@ case 2:
 - (IBAction)snoopButton:(id)sender {
     
         SnoopedProduct *product=[[SnoopedProduct
-                              sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
+                              sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription withProductSalesTax:snoopedSalesTax withProductShippingCost:snoopedShippingCost withProductShippingSpeed:snoopedSpeed];
         snooptTracking=1;
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
         SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:SNACHFEED];
@@ -813,15 +805,15 @@ case 2:
                     FriendSnachs *fSnachs = [[FriendSnachs alloc] init];
                     fSnachs.friendName=[tempDic objectForKey:FRIEND_NAME];
                     fSnachs.freindProfilePic=[tempDic objectForKey:FRIEND_IMAGE];
-                    NSArray *latestFriendSnachs2 = [tempDic objectForKey:@"snachs"];
+                    NSArray *latestFriendSnachs2 = [tempDic objectForKey:FRIEND_SNACHS];
                     snachs = [NSMutableArray arrayWithCapacity:10];
                       if (latestFriendSnachs2)
                       {
                            for (NSDictionary *tempSnachDic in latestFriendSnachs2) {
                                Products *snached= [[Products alloc] init];
-                               snached.snachId=[tempSnachDic objectForKey:@"snachId"];
-                               snached.productImage=[tempSnachDic objectForKey:@"productImg"];
-                               snached.snachStatus=[tempSnachDic objectForKey:@"status"];
+                               snached.snachId=[tempSnachDic objectForKey:PRODUCTS_SNACHID];
+                               snached.productImage=[tempSnachDic objectForKey:PRODUCTS_IMAGE];
+                               snached.snachStatus=[tempSnachDic objectForKey:PRODUCTS_SNACHSTATUS];
                                [snachs addObject:snached];
                            }
                       }
@@ -850,18 +842,18 @@ case 2:
             if (latestFollowedBrands) {
                 for (NSDictionary *tempDic in latestFollowedBrands) {
                     Brand *fBrand = [[Brand alloc] init];
-                    fBrand.brandId=[tempDic objectForKey:@"brandId"];
-                    fBrand.brandName=[tempDic objectForKey:@"brandName"];
-                    fBrand.brandImg=[tempDic objectForKey:@"brandImage"];
-                    NSArray *latestFriendSnachs2 = [tempDic objectForKey:@"products"];
+                    fBrand.brandId=[tempDic objectForKey:BRAND_BRANDID];
+                    fBrand.brandName=[tempDic objectForKey:BRAND_BRANDNAME];
+                    fBrand.brandImg=[tempDic objectForKey:BRAND_BRANDIMAGE];
+                    NSArray *latestFriendSnachs2 = [tempDic objectForKey:BRAND_BRANDPRODUCTS];
                     brandProducts = [NSMutableArray arrayWithCapacity:10];
                     if (latestFriendSnachs2)
                     {
                         for (NSDictionary *tempFollowDic in latestFriendSnachs2) {
                             Products *followed= [[Products alloc] init];
-                            followed.productId=[tempFollowDic objectForKey:@"productId"];
-                            followed.snachId=[tempFollowDic objectForKey:@"snach_id"];
-                            followed.productImage=[tempFollowDic objectForKey:@"productImg"];
+                            followed.productId=[tempFollowDic objectForKey:PRODUCTS_ID];
+                            followed.snachId=[tempFollowDic objectForKey:PRODUCTS_SNACHID];
+                            followed.productImage=[tempFollowDic objectForKey:PRODUCTS_IMAGE];
                             [brandProducts addObject:followed];
                         }
                     }
@@ -893,15 +885,15 @@ case 2:
 
                 for (NSDictionary *tempDic in [latestSnachs objectForKey:@"data"]) {
                     SnachHistory *snachhistory = [[SnachHistory alloc] init];
-                    snachhistory.productName=[tempDic objectForKey:@"productName"];
-                    snachhistory.productBrandName=[tempDic objectForKey:@"brandName"];
-                    snachhistory.productImageUrl=[tempDic objectForKey:@"productImage"];
-                    snachhistory.productOrderedDate=[tempDic objectForKey:@"dateOrdered"];
-                    snachhistory.productDeliveryDate=[tempDic objectForKey:@"deliveryDate"];
-                    snachhistory.productstatus=[tempDic objectForKey:@"status"];
-                    if([[tempDic valueForKey:@"status"] isEqual:INFLIGHT])
+                    snachhistory.productName=[tempDic objectForKey:HISTORY_PRODUCT_NAME];
+                    snachhistory.productBrandName=[tempDic objectForKey:HISTORY_PRODUCT_BRAND_NAME];
+                    snachhistory.productImageUrl=[tempDic objectForKey:HISTORY_PRODUCT_IMAGE];
+                    snachhistory.productOrderedDate=[tempDic objectForKey:HISTORY_PRODUCT_ORDERDATE];
+                    snachhistory.productDeliveryDate=[tempDic objectForKey:HISTORY_PRODUCT_DELIVERYDATE];
+                    snachhistory.productstatus=[tempDic objectForKey:HISTORY_PRODUCT_STATUS];
+                    if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
                     {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
-                    else if([[tempDic valueForKey:@"status"] isEqual:DELIVERED])
+                    else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])
                     {snachhistory.statusIcon=@"deliveredIcon.png";[myLetestDELSnachs addObject:snachhistory];}
                     
                     [myLetestALLSnachs addObject:snachhistory];

@@ -40,6 +40,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
     [self setupProfilePic];
     
+    self.sharingURL.text=[NSString stringWithFormat:@"%@",user.sharingURL];
 
 }
 -(void)viewWillAppear:(BOOL)animated{

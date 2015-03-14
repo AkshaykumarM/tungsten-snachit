@@ -10,24 +10,27 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="logo.png" translatesAutoresizingMaskIntoConstraints="NO" id="r7B-B4-oRw">
-                    <rect key="frame" x="93" y="154" width="135" height="154"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_page.png" translatesAutoresizingMaskIntoConstraints="NO" id="r7B-B4-oRw">
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                     <variation key="widthClass=compact" fixedFrame="YES">
                         <rect key="frame" x="83" y="188" width="135" height="154"/>
                     </variation>
                 </imageView>
             </subviews>
-            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+            <color key="backgroundColor" red="0.50834517050000005" green="0.083638318259999997" blue="0.44413461700000001" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstAttribute="centerY" secondItem="r7B-B4-oRw" secondAttribute="centerY" constant="53" id="6pM-Qx-P7G"/>
-                <constraint firstAttribute="centerX" secondItem="r7B-B4-oRw" secondAttribute="centerX" id="rJF-zd-zsa"/>
+                <constraint firstItem="r7B-B4-oRw" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="1bw-AJ-38C"/>
+                <constraint firstItem="r7B-B4-oRw" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="5p9-oA-ht9"/>
+                <constraint firstAttribute="trailing" secondItem="r7B-B4-oRw" secondAttribute="trailing" id="aDw-s9-UVe"/>
+                <constraint firstAttribute="bottom" secondItem="r7B-B4-oRw" secondAttribute="bottom" id="pJL-lV-tVU"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
+            <nil key="simulatedTopBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="112" y="241"/>
         </view>
     </objects>
     <resources>
-        <image name="logo.png" width="135" height="154"/>
+        <image name="loading_page.png" width="640" height="1136"/>
     </resources>
 </document>

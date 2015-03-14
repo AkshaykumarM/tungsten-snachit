@@ -16,7 +16,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UITableView *tableView1;
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView2;
+
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 - (IBAction)doneBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;

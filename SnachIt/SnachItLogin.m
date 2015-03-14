@@ -470,8 +470,8 @@ CGFloat animatedDistance;
 -(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate{
     
     UserProfile *profile=[[UserProfile
-                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate];
-    NSLog(@"profile:%@",profile.getUserId);
+                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ec2maschineIP,userId]]];
+    
     
 }
 

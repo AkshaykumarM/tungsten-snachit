@@ -37,7 +37,15 @@
     [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     defaults=[NSUserDefaults standardUserDefaults];
-    RECENTLY_ADDED_SHIPPING_INFO_TRACKER= [[defaults valueForKey:DEFAULT_SHIPPING] intValue];
+    if(RECENTLY_ADDED_SHIPPING_INFO_TRACKER==-1)
+    {
+        if([[defaults valueForKey:DEFAULT_SHIPPING] intValue]>=1)
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER= [[defaults valueForKey:DEFAULT_SHIPPING] intValue];
+        else
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+
+    }
+   
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -47,7 +55,7 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    
+    [self.tableView1 reloadData];
   }
 
 - (void)viewDidUnload
@@ -57,6 +65,7 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    
     if(tableView==self.tableView1)
     {
     return 1;

@@ -35,7 +35,7 @@
     
     selectFlag= 0;
     options = [NSArray arrayWithObjects:@"Snach Feed",@"My Profile", @"Account Settings",@"Billing Information",@"Shipping Information",@"Snach History", nil];
-    icons= [NSArray arrayWithObjects:@"snach_logo.png",@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
+    icons= [NSArray arrayWithObjects:@"snach_feed_icon.png",@"myprofile.png",@"setting.png",@"billing.png",@"shpping_cart.png",@"snach_tag.png",nil];
     menuItems = [NSArray arrayWithObjects: @"snachfeed",@"myaccount", @"accountsetting", @"billing", @"shipping", @"snatchhistory",nil];
     
     // This will remove extra separators from tableview

@@ -32,14 +32,22 @@
     [super viewDidLoad];
     _sidebarButton.target = self.revealViewController;
     _sidebarButton.action = @selector(revealToggle:);
-     defaults=[NSUserDefaults standardUserDefaults];
     // Set the gesture
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     [self setViewLookAndFeel];
     self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
     // Load the file content and read the data into arrays
       [self loadData];
-   
+    defaults=[NSUserDefaults standardUserDefaults];
+    if(RECENTLY_ADDED_PAYMENT_INFO_TRACKER==-1)
+    {
+        if([[defaults valueForKey:DEFAULT_SHIPPING] intValue]>=1)
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER= [[defaults valueForKey:DEFAULT_BILLING] intValue];
+        else
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+        
+    }
+
    
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -68,8 +76,7 @@
     [self.backButton setTarget:self.revealViewController];
     [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    
-     RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[defaults valueForKey:DEFAULT_BILLING] intValue];
+
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

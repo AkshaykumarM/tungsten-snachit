@@ -41,6 +41,10 @@
 @property (nonatomic, strong) NSURL * productImageURL;
 @property (nonatomic, strong) NSString * price;
 @property (nonatomic, strong) NSString * productDescription;
+@property (nonatomic, strong) NSString * productSalesTax;
+@property (nonatomic, strong) NSString * productShippingCost;
+@property (nonatomic, strong) NSString * productSpeed;
+
 
 @end
 
@@ -73,6 +77,9 @@
     NSString *snoopedProductPrice;
     NSString *snoopedProductDescription;
     NSString *snoopedBrandName;
+    NSString *snoopedSalesTax;
+    NSString *snoopedShippingCost;
+    NSString *snoopedSpeed;
     UserProfile *user;
     UIButton *topProfileBtn;
     NSDictionary *dictionaryForEmails;
@@ -130,6 +137,9 @@
                     product.productImage =[prodDic objectForKey:PRODUCT_IMAGE];
                     product.brandId =[prodDic objectForKey:PRODUCT_BRAND_ID];
                     product.productId =[prodDic objectForKey:PRODUCT_ID];
+                    product.salesTax=[prodDic objectForKey:PRODUCT_SALESTAX];
+                    product.speed=[prodDic objectForKey:PRODUCT_SHIPPINGSPEED];
+                    product.shippingPrice=[prodDic objectForKey:PRODUCT_SHIPPINGCOST];
                     product.snachId =[prodDic objectForKey:PRODUCT_SNACH_ID];
                     product.productDescription =[prodDic objectForKey:PRODUCT_DESCRIPTION];
                     product.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
@@ -478,6 +488,9 @@
     
     snoopTapped.productId=prod.productId;
     snoopTapped.brandId=prod.brandId;
+    snoopTapped.productSalesTax=prod.salesTax;
+    snoopTapped.productShippingCost=prod.shippingPrice;
+    snoopTapped.productSpeed=prod.speed;
     snoopTapped.snachId=prod.snachId;
     snoopTapped.productDescription=prod.productDescription;
     snoopTapped.productImageURL=[NSURL URLWithString:prod.productImage];
@@ -528,6 +541,9 @@
     snoopedProductDescription=tap.productDescription;
     snoopedBrandName=tap.brandName;
     snoopedSnachId=tap.snachId;
+    snoopedShippingCost=tap.productShippingCost;
+    snoopedSalesTax=tap.productSalesTax;
+    snoopedSpeed=tap.productSpeed;
     [self performSegueWithIdentifier:@"snoop" sender:self];
 }
 
@@ -572,7 +588,7 @@
     if ([segue.identifier isEqualToString:@"snoop"]) {
         
         SnoopedProduct *product=[[SnoopedProduct
-                                  sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription];
+                                  sharedInstance]initWithProductId:snoopedProductId withBrandId:snoopedBrandId withSnachId:snoopedSnachId withProductName:snoopedProductName withBrandName:snoopedBrandName withProductImageURL:snoopedProductImageURL withBrandImageURL:snoopedBrandImageURL withProductPrice:snoopedProductPrice withProductDescription:snoopedProductDescription withProductSalesTax:snoopedSalesTax withProductShippingCost:snoopedShippingCost withProductShippingSpeed:snoopedSpeed];
     }
     else if ([segue.identifier isEqualToString:@"productDetails"]) {
         

@@ -129,6 +129,10 @@ UIActivityIndicatorView *activitySpinner;
     
 }
 
+-(float)getOrderTotal{
+    
+    return  [order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];;
+}
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
@@ -147,14 +151,14 @@ UIActivityIndicatorView *activitySpinner;
         cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
         cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,userdetails.paymentCardCVV];
-        cell.orderTotal.text=[NSString stringWithFormat:@"$%@",prodPrice];
+        cell.orderTotal.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
     
         [cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
         [cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
-    [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
-      [cell.expandPayment addTarget:self action:@selector(exapndPaymentOverview) forControlEvents:UIControlEventTouchUpInside];
+        [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
+        [cell.expandPayment addTarget:self action:@selector(exapndPaymentOverview) forControlEvents:UIControlEventTouchUpInside];
    
-    [cell.expandOrderTotal addTarget:self action:@selector(exapndOrderTotalOverview) forControlEvents:UIControlEventTouchUpInside];
+        [cell.expandOrderTotal addTarget:self action:@selector(exapndOrderTotalOverview) forControlEvents:UIControlEventTouchUpInside];
     
 
     return cell;
@@ -219,18 +223,25 @@ UIActivityIndicatorView *activitySpinner;
 
 }
 -(void)setViewLookAndFeel{
+    UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self
+                                                                                action:@selector(snachIt:)];
+    swipe.direction = UISwipeGestureRecognizerDirectionRight;
         if(userdetails.shipFullName==nil || userdetails.paymentFullName==nil){
        
         [self.swipeToPay setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];
-        [self.swipeToPay setEnabled:NO];
+        [self.swipeToPay removeGestureRecognizer:swipe];
     }
     else{
         [self.swipeToPay setBackgroundColor:[UIColor colorWithRed:0.62 green:0.10 blue:0.47 alpha:1.0]];
-        [self.swipeToPay setEnabled:YES];
+        [self.swipeToPay addGestureRecognizer:swipe];
     }
+    
+    
+    
+    
 }
 
-- (IBAction)swipeToSnach:(id)sender {
+- (void)snachIt:(id)sender {
     [self startProcessing];
        if([self snachProduct]==1){
            [self stopProcessing];
@@ -240,7 +251,6 @@ UIActivityIndicatorView *activitySpinner;
        else{
            [self stopProcessing];
            [global showAllertMsg:@"Opps! not able to snach.it, please fill your details correctly"];
-           
        }
     
 }
@@ -310,10 +320,10 @@ UIActivityIndicatorView *activitySpinner;
       return status;
 }
 -(void)startProcessing{
-    
-    backView = [[UIView alloc] initWithFrame:self.view.frame];
+   
+    backView = [[UIView alloc] initWithFrame:self.mainview.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
-    [self.view addSubview:backView];
+    [self.tableView addSubview:backView];
     activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     [backView addSubview:activitySpinner];
     activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);

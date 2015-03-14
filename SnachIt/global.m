@@ -8,8 +8,8 @@
 
 #import "global.h"
 #import "RegexValidator.h"
-//NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
-NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
+NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
+//NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
 NSString * const APPALLERTS=@"appAllerts";     
 NSString * const EMAILALLERTS=@"emailAllerts";
 NSString * const SMSALLERTS=@"smsAllerts";
@@ -24,17 +24,7 @@ bool isAllreadyTried=FALSE;
  NSString *const DEFAULT_BILLING=@"DefaultBilling";
  NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
 
-NSString * const PRODUCT_IMAGES=@"productImages";
-NSString * const PRODUCT_NAME=@"productName";
-NSString * const PRODUCT_BRAND_NAME=@"brandName";
-NSString * const PRODUCT_PRICE=@"productPrice";
-NSString * const PRODUCT_BRAND_IMAGE=@"brandImage";
-NSString * const PRODUCT_IMAGE=@"productImage";
-NSString * const PRODUCT_BRAND_ID=@"brandId";
-NSString * const PRODUCT_ID=@"productId";
-NSString * const PRODUCT_SNACH_ID=@"snachId";
-NSString * const PRODUCT_DESCRIPTION=@"ProductDescription";
-NSString * const PRODUCT_FOLLOW_STATUS=@"followStatus";
+
 
 NSString *screenName;
 NSString *ssousing;

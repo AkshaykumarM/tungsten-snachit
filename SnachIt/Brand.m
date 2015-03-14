@@ -8,6 +8,10 @@
 
 #import "Brand.h"
 
-@implementation Brand
 
+@implementation Brand
+NSString * const BRAND_BRANDID=@"brandId";
+NSString * const BRAND_BRANDNAME=@"brandName";
+NSString * const BRAND_BRANDIMAGE=@"brandImage";
+NSString * const BRAND_BRANDPRODUCTS=@"products";
 @end

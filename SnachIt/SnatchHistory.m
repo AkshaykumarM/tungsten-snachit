@@ -14,9 +14,7 @@
 #import "UserProfile.h"
 #import "SnachHistory.h"
 #import <SDWebImage/UIImageView+WebCache.h>
-NSString * const INFLIG=@"inflight";
-NSString * const DELIVE=@"delivered";
-NSString * const AL=@"all";
+
 @interface SnatchHistory()
 @property(nonatomic,strong) NSArray *snachhistoryInflightList;
 @property(nonatomic,strong) NSArray *snachhistoryDeliveredList;
@@ -52,7 +50,7 @@ UIRefreshControl *refreshControl;
 }
 -(void)viewWillAppear:(BOOL)animated{
   
-    subCellId=AL;
+    subCellId=HISTORY_ALL;
     user=[UserProfile sharedInstance];
 }
 
@@ -74,14 +72,14 @@ UIRefreshControl *refreshControl;
 {
     int count=0;
 
-        if([subCellId isEqual:INFLIG]){
+        if([subCellId isEqual:HISTORY_INFLIGHT]){
             count=[myLetestINFSnachs count];
         }
-        else if([subCellId isEqual:DELIVE])
+        else if([subCellId isEqual:HISTORY_DELIVERED])
         {
             count=[myLetestDELSnachs count];
         }
-        else if([subCellId isEqual:AL])
+        else if([subCellId isEqual:HISTORY_ALL])
         {
             count=[myLetestALLSnachs count];
         }
@@ -142,7 +140,7 @@ UIRefreshControl *refreshControl;
     SnachHistory *snachhistory;
     NSString *statusImg;
     
-    if([subCellId isEqual:INFLIG]){
+    if([subCellId isEqual:HISTORY_INFLIGHT]){
         snachhistory=[myLetestINFSnachs objectAtIndex:indexPath.row];
         
         productImageUrl=snachhistory.productImageUrl;
@@ -151,7 +149,7 @@ UIRefreshControl *refreshControl;
         statusImg=snachhistory.statusIcon;
         
     }
-    else if([subCellId isEqual:DELIVE]){
+    else if([subCellId isEqual:HISTORY_DELIVERED]){
         snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
         
         productImageUrl=snachhistory.productImageUrl;
@@ -161,7 +159,7 @@ UIRefreshControl *refreshControl;
         statusImg=snachhistory.statusIcon;
         
     }
-    else if([subCellId isEqual:AL]){
+    else if([subCellId isEqual:HISTORY_ALL]){
         snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
         productImageUrl=snachhistory.productImageUrl;
         productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
@@ -199,19 +197,19 @@ UIRefreshControl *refreshControl;
     switch (self.snachHistorySegmentControl.selectedSegmentIndex)
     {
         case 0:
-            subCellId=AL;
+            subCellId=HISTORY_ALL;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
             break;
         case 1:
-              subCellId=DELIVE;
+              subCellId=HISTORY_DELIVERED;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
             break;
         case 2:
-            subCellId=INFLIG;
+            subCellId=HISTORY_INFLIGHT;
             NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
@@ -236,15 +234,15 @@ UIRefreshControl *refreshControl;
                 
                 for (NSDictionary *tempDic in [latestSnachs objectForKey:@"data"]) {
                     SnachHistory *snachhistory = [[SnachHistory alloc] init];
-                    snachhistory.productName=[tempDic objectForKey:@"productName"];
-                    snachhistory.productBrandName=[tempDic objectForKey:@"brandName"];
-                    snachhistory.productImageUrl=[tempDic objectForKey:@"productImage"];
-                    snachhistory.productOrderedDate=[tempDic objectForKey:@"dateOrdered"];
-                    snachhistory.productDeliveryDate=[tempDic objectForKey:@"deliveryDate"];
-                    snachhistory.productstatus=[tempDic objectForKey:@"status"];
-                    if([[tempDic valueForKey:@"status"] isEqual:INFLIG])
+                    snachhistory.productName=[tempDic objectForKey:HISTORY_PRODUCT_NAME];
+                    snachhistory.productBrandName=[tempDic objectForKey:HISTORY_PRODUCT_BRAND_NAME];
+                    snachhistory.productImageUrl=[tempDic objectForKey:HISTORY_PRODUCT_IMAGE];
+                    snachhistory.productOrderedDate=[tempDic objectForKey:HISTORY_PRODUCT_ORDERDATE];
+                    snachhistory.productDeliveryDate=[tempDic objectForKey:HISTORY_PRODUCT_DELIVERYDATE];
+                    snachhistory.productstatus=[tempDic objectForKey:HISTORY_PRODUCT_STATUS];
+                    if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
                     {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
-                    else if([[tempDic valueForKey:@"status"] isEqual:DELIVE])
+                    else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])
                     {snachhistory.statusIcon=@"deliveredIcon.png";[myLetestDELSnachs addObject:snachhistory];}
                     
                     [myLetestALLSnachs addObject:snachhistory];

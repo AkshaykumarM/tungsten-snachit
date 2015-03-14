@@ -9,5 +9,7 @@
 #import "FriendSnachs.h"
 
 @implementation FriendSnachs
-
+NSString * const FRIEND_NAME=@"friendName";
+NSString * const FRIEND_IMAGE=@"friendImage";
+NSString * const FRIEND_SNACHS=@"snachs";
 @end

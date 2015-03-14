@@ -20,7 +20,7 @@
     return sharedInstance;
 }
 
--(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingAndHandling:(NSString*)shippingAndHandling withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withShippingCost:(NSString*)shippingCost withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate{
+-(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingCost:(NSString*)shippingCost withFreeShipping:(NSString*)freeShipping withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate;{
     self = [super init];
     self.userId=userId;
     self.productId=productId;
@@ -29,17 +29,26 @@
     self.orderQuantity=orderQuantity;
     self.subTotal=subTotal;
     self.orderTotal=orderTotal;
-    self.shippingAndHandling=shippingAndHandling;
     self.salesTax=salesTax;
-    self.speed=speed;
     self.shippingCost=shippingCost;
+    self.freeshipping=freeShipping;
+    self.speed=speed;
     self.orderDate=orderDate;
     self.deliveryDate=deliveryDate;
     
     return self;
 }
+
 -(NSDictionary*)getOrderDetails{
-     NSDictionary *orderDetails=@{@"userId":self.userId,@"productId": self.productId,@"snachId": self.snachId,@"userEmail":self.emailId,@"orderQunatity":self.orderQuantity,@"subTotal":self.subTotal,@"orderTotal":self.orderTotal,@"shippingAndHandling":self.shippingAndHandling,@"salesTax": self.salesTax,@"speed":self.speed,@"shippingCost":self.shippingCost,@"orderDate":self.orderDate,@"deliveryDate":self.deliveryDate};
+
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    NSDate *orderDate = [[NSDate alloc] init];
+    NSDate *deliveryDate = [[NSDate alloc] init];
+    [df setDateFormat:@"dd/MM/yy"];
+    orderDate=[df dateFromString:self.orderDate];
+    deliveryDate=[df dateFromString:self.deliveryDate];
+    [df setDateFormat:@"yyyy-MM-dd"];
+     NSDictionary *orderDetails=@{@"userId":self.userId,@"productId": self.productId,@"snachId": self.snachId,@"userEmail":self.emailId,@"orderQunatity":self.orderQuantity,@"subTotal":self.subTotal,@"orderTotal":self.orderTotal,@"salesTax": self.salesTax,@"speed":self.speed,@"shippingCost":self.shippingCost,@"orderDate":[df stringFromDate:orderDate],@"deliveryDate":[df stringFromDate:deliveryDate]};
     return orderDetails;
 }
 

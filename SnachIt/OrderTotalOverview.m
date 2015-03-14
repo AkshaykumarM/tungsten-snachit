@@ -66,6 +66,8 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     // This will create a "invisible" footer
     return 0.01f;
 }
+
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     
     NSString *simpleTableIdentifier = [self.cellId objectAtIndex:indexPath.row];
@@ -73,8 +75,17 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
     cell.subtotalLabel.text = [NSString stringWithFormat:@"$%.2f",[order.subTotal floatValue]];
-    cell.shippingAndhandlingLabel.text=[NSString stringWithFormat:@"$%.2f",[order.shippingAndHandling floatValue]];
+    
+    //checking whether shipping cost is zero if zero "Free shipping" msg will be shown
+    if([order.shippingCost floatValue]<=0){
+    cell.shippingAndhandlingLabel.text=order.freeshipping;
+    }
+    else{
+        cell.shippingAndhandlingLabel.text=[NSString stringWithFormat:@"$%.2f",[order.shippingCost floatValue]];
+    }
     cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%.2f",[order.salesTax floatValue]];
+
+    //adding single tap gesture recognizer for
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shippingAndHandling)];
     singleTap.numberOfTapsRequired = 1;
     [cell.shippingandHandling setUserInteractionEnabled:YES];
@@ -84,7 +95,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 }
 -(float)getOrderTotal{
   
-    return  [order.subTotal floatValue]+[order.shippingAndHandling floatValue]+[order.salesTax floatValue];;
+    return  [order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];;
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

@@ -7,6 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+extern NSString * const HISTORY_PRODUCT_NAME;
+extern NSString * const HISTORY_PRODUCT_BRAND_NAME;
+extern NSString * const HISTORY_PRODUCT_ORDERDATE;
+extern NSString * const HISTORY_PRODUCT_DELIVERYDATE;
+extern NSString * const HISTORY_PRODUCT_IMAGE;
+extern NSString * const HISTORY_PRODUCT_STATUS;
+extern NSString * const HISTORY_INFLIGHT;
+extern NSString * const HISTORY_DELIVERED;
+extern NSString * const HISTORY_ALL;
+
 
 @interface SnachHistory : NSObject
 @property (strong, nonatomic) NSString *productImageUrl;
