@@ -42,6 +42,11 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
                                                            [NSValue valueWithUIOffset:UIOffsetMake(0, 0)],
                                                            UITextAttributeTextShadowOffset,
                                                            [UIFont fontWithName:@"Helvetica-Light" size:18.0], UITextAttributeFont, nil]];
+    
+   
+   
+    
+    
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleDefault];
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1]];
 

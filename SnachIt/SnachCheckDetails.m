@@ -74,7 +74,7 @@ UIActivityIndicatorView *activitySpinner;
 }
 -(void)initializeView{
 
-    self.navigationController.navigationBar.topItem.title = @"confirm snach";
+    self.navigationController.navigationBar.topItem.title = @"Confirm Snach";
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];

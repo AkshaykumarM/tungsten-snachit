@@ -63,10 +63,20 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     productDesc.text=product.productDescription;
     //hiding the backbutton from top bar
-    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+    //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
     
 }
-
+-(void)back:(id)sender{
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
 - (IBAction)addNewCardBtn:(id)sender{
     [self performSegueWithIdentifier:@"addNewCardSeague" sender:self];
     

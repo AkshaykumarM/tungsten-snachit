@@ -69,7 +69,13 @@ CGFloat animatedDistance;
     productDesc.text=product.productDescription;
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
-    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
     //set textfield look and fill
     [global setTextFieldInsets:self.fullNameTextField];
     [global setTextFieldInsets:self.streetAddressTextField];
@@ -82,8 +88,13 @@ CGFloat animatedDistance;
     self.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     self.streetAddressTextField.keyboardType=UIKeyboardTypeAlphabet;
     self.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
+    self.fullNameTextField.keyboardType=UIKeyboardTypeAlphabet;
+       
 }
-
+-(void)back:(id)sender{
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
 
 -(void)viewWillAppear:(BOOL)animated{
    }

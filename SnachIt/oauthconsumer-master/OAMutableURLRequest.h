@@ -38,6 +38,7 @@
     OAConsumer *consumer;
     OAToken *token;
     NSString *realm;
+    NSString *callback;
     NSString *signature;
     id<OASignatureProviding> signatureProvider;
     NSString *nonce;
@@ -51,6 +52,12 @@
 			token:(OAToken *)aToken
             realm:(NSString *)aRealm
 signatureProvider:(id<OASignatureProviding>)aProvider;
+
+- (id)initWithURL:(NSURL *)aUrl
+         consumer:(OAConsumer *)aConsumer
+            token:(OAToken *)aToken
+         callback:(NSString *)aCallback
+signatureProvider:(id<OASignatureProviding, NSObject>)aProvider;
 
 - (id)initWithURL:(NSURL *)aUrl
 		 consumer:(OAConsumer *)aConsumer

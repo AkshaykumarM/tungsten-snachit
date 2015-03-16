@@ -76,6 +76,44 @@ signatureProvider:(id<OASignatureProviding>)aProvider {
     return self;
 }
 
+- (id)initWithURL:(NSURL *)aUrl
+         consumer:(OAConsumer *)aConsumer
+            token:(OAToken *)aToken
+         callback:(NSString *)aCallback
+signatureProvider:(id<OASignatureProviding, NSObject>)aProvider
+{
+    [super initWithURL:aUrl
+           cachePolicy:NSURLRequestReloadIgnoringCacheData
+       timeoutInterval:10.0];
+    
+    consumer = aConsumer;
+    
+    // empty token for Unauthorized Request Token transaction
+    if (aToken == nil) {
+        token = [[OAToken alloc] init];
+    } else {
+        token = [aToken retain];
+    }
+    
+    if (aCallback == nil) {
+        callback = @"";
+    } else {
+        callback = [aCallback copy];
+    }
+    
+    // default to HMAC-SHA1
+    if (aProvider == nil) {
+        signatureProvider = [[OAHMAC_SHA1SignatureProvider alloc] init];
+    } else {
+        signatureProvider = [aProvider retain];
+    }
+    
+    [self _generateTimestamp];
+    [self _generateNonce];
+    
+    return self;
+}
+
 // Setting a timestamp and nonce to known
 // values can be helpful for testing
 - (id)initWithURL:(NSURL *)aUrl

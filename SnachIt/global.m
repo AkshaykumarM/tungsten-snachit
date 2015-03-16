@@ -8,8 +8,8 @@
 
 #import "global.h"
 #import "RegexValidator.h"
-NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
-//NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
+//NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
+NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
 NSString * const APPALLERTS=@"appAllerts";     
 NSString * const EMAILALLERTS=@"emailAllerts";
 NSString * const SMSALLERTS=@"smsAllerts";

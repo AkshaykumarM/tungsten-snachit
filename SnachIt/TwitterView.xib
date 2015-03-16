@@ -23,7 +23,7 @@
                     </constraints>
                     <items>
                         <navigationItem title="log in with twitter" id="ZFc-Kf-Sxz">
-                            <barButtonItem key="leftBarButtonItem" style="plain" id="Yhp-N9-J3p">
+                            <barButtonItem key="leftBarButtonItem" style="done" id="Yhp-N9-J3p">
                                 <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HfI-pX-RLz">
                                     <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>

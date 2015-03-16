@@ -15,6 +15,7 @@
 #import "AFNetworking.h"
 #import <Social/Social.h>
 #import "global.h"
+#import "ProfileTabView.h"
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 
 @interface AppShare()<GPPSignInDelegate>
@@ -25,6 +26,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 {
     UserProfile *user;
     UIButton *topProfileBtn;
+    UIView *backView;
 }
 
 
@@ -89,9 +91,27 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 }
 
 - (IBAction)linkedInBtn:(id)sender {
-   
-  }
+    
+    backView = [[UIView alloc] initWithFrame:self.view.frame];
+    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
+    [self.view addSubview:backView];
+    
+    profileTabView=[[ProfileTabView alloc] init];
+    profileTabView.parentVC=self;
+    profileTabView.view.frame=CGRectMake(0, 30, backView.frame.size.width, backView.frame.size.height-60);
+    //place device check here
+    
+    //profileTabView.view.center=self.view.center;
+    [backView addSubview:profileTabView.view];
 
+  }
+-(void) removeLinkedInview
+{
+    [profileTabView.view removeFromSuperview];
+    [backView removeFromSuperview];
+    profileTabView=nil;
+    backView=nil;
+}
 
 - (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
                    error: (NSError *) error {
@@ -177,9 +197,9 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     signIn.scopes = @[ kGTLAuthScopePlusLogin ];
     signIn.delegate = self;
     [signIn authenticate];
-    
-   
 }
+
+
 -(void)setupProfilePic{
     /*Upper left profile pic work starts here*/
     

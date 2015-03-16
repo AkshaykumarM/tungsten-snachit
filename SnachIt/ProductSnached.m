@@ -23,7 +23,8 @@
    
   }
 -(void)initialize{
-    self.navigationController.navigationBar.topItem.title = @"";
+    
+    
      userDetails=[SnoopingUserDetails sharedInstance];
     self.fullNameLbl.text=userDetails.shipFullName;
     self.streetAddressLbl.text=userDetails.shipStreetName;
@@ -46,15 +47,16 @@
 }
 -(void) viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
-    if ([self.navigationController.viewControllers indexOfObject:self]==NSNotFound) {
+    
+}
+
+
+- (IBAction)backBtn:(id)sender {
+    
         // Navigation button was pressed. Do some stuff
         
         [self dismissViewControllerAnimated:NO completion:nil];
         [self.navigationController popToRootViewControllerAnimated:YES];
         
-    }
-    
 }
-
-
 @end

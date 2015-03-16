@@ -292,7 +292,7 @@
     [self setupProfilePic];
     
    
-   // [self getLatestProducts];
+    [self getLatestProducts];
     [self requestContactBookAccess];
     viewSize = self.view.frame.size.width-93.0f;//for setting product scrollview size
   
