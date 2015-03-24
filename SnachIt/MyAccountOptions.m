@@ -2,7 +2,7 @@
 //  MyAccountOptions.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/12/14.
+//  Created by Akshay Maldhure on 12/12/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 

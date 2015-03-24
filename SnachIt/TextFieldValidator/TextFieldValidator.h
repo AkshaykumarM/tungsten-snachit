@@ -31,7 +31,7 @@
 /**
     Font style name of the message.
  */
-#define FontName @"Helvetica-Bold"
+#define FontName @"OpenSans-Regular"
 
 /**
     Padding in pixels for the popup.

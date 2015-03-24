@@ -2,7 +2,7 @@
 //  global.h
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/2/15.
+//  Created by Akshakumar Maldhure on 1/2/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 // Added comment
 
@@ -15,6 +15,7 @@ extern NSString * const EMAILALLERTS;
 extern NSString * const SMSALLERTS;
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
+extern NSInteger const DEFAULT_SNOOPTIME;
 extern int i;
 extern NSString *USERID;
 extern bool isAllreadyTried;
@@ -28,6 +29,9 @@ extern NSString * const PASSWORD;
 extern NSString * const LOGGEDIN;
 extern NSString * const DEFAULT_BILLING;
 extern NSString * const DEFAULT_SHIPPING;
+extern NSString * const SnachItDBFile;
+extern NSString * const SnoopTimeDBFile;
+extern NSString *CURRENTDB;
 
 extern bool isApplicationLaunchedFromNotification;
 extern float  RADIOUS;

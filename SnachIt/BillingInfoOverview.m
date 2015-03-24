@@ -2,7 +2,7 @@
 //  BillingInfoOverview.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/27/14.
+//  Created by Akshakumar Maldhure on 12/27/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -10,12 +10,13 @@
 #import "UserProfile.h"
 #import "BillingInfoScanCell.h"
 #import "global.h"
-#import "DBManager.h"
+
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RegexValidator.h"
+#import "SnachItDB.h"
 @interface BillingInfoOverview()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
-@property (nonatomic,strong) DBManager *dbManager;
+;
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
 
@@ -26,7 +27,6 @@
     NSDateFormatter *formatter;
     UIPickerView *statePicker,*datePicker;
     CGFloat viewSize;
-    CGFloat viewCenter;
     NSDateComponents *currentDateComponents;
     NSMutableArray *monthsArray,*yearsArray;
 
@@ -42,7 +42,7 @@ CGFloat animatedDistance;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+     
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";
@@ -59,7 +59,7 @@ CGFloat animatedDistance;
     [super viewDidAppear:YES];
     [self.tableView reloadData];
     viewSize=self.view.frame.size.width;
-    viewCenter=self.view.center.x-50;
+    CURRENTDB=SnachItDBFile;
     [self setupAlerts];
 }
 -(void)initializePickers{
@@ -153,6 +153,7 @@ CGFloat animatedDistance;
     cell.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.addressTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
+    cell.cardHolderNameTextField.keyboardType=UIKeyboardTypeAlphabet;
     [cell.cardNumberTextField setText:cardNumber];
     [cell.expDateTextField setText:cardExp];
     [cell.securityCodeText setText:cardCVV];
@@ -300,18 +301,18 @@ CGFloat animatedDistance;
     
     BillingInfoScanCell *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if([cell.cardNumberTextField validate]&[cell.expDateTextField validate]&[cell.securityCodeText validate]&[cell.cardHolderNameTextField validate] &[cell.addressTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.stateTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
-        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]],cell.cardNumberTextField.text,cell.expDateTextField.text,cell.securityCodeText.text, cell.cardHolderNameTextField.text, cell.addressTextField.text, cell.cityTextField.text,cell.stateTextField.text,cell.postalCodeTextField.text,cell.phoneTextField.text];
         
-        // Execute the query.
+         // Execute the query.
+        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text];
+                            
         
-        [self.dbManager executeQuery:query];
+    
         
         // If the query was successfully executed then pop the view controller.
-        if (self.dbManager.affectedRows != 0) {
-            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
+        if ([info valueForKey:@"status"]!= 0) {
             
             //this is to track recently added 
-            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)self.dbManager.lastInsertedRowID;
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             // Pop the view controller.
             [self dismissViewControllerAnimated:true completion:nil];
         }
@@ -450,10 +451,11 @@ CGFloat animatedDistance;
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
 {
     if(pickerView.tag==1){
-        UILabel *statenamelbl = [[UILabel alloc] initWithFrame:CGRectMake(viewCenter+20, 0, 180, 32)];
+        UILabel *statenamelbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 40)];
         statenamelbl.text = [self.states objectAtIndex:row];
         
         statenamelbl.backgroundColor = [UIColor clearColor];
+        statenamelbl.textAlignment=NSTextAlignmentCenter;
         
         UIView *tmpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)] ;
       

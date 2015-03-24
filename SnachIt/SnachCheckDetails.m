@@ -2,7 +2,7 @@
 //  SnachCheckDetails.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/18/14.
+//  Created by Akshay Maldhure on 12/18/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -16,7 +16,7 @@
 #import "SnoopingUserDetails.h"
 #import "Order.h"
 #import "global.h"
-#import "DBManager.h"
+#import "SnachItDB.h"
 #import "UserProfile.h"
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
@@ -26,7 +26,7 @@ double orderTotal;
 @interface SnachCheckDetails()
 
 @property (nonatomic, strong) NSArray *cellId;
-@property (nonatomic,strong) DBManager *dbManager;
+
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
@@ -51,14 +51,13 @@ UIActivityIndicatorView *activitySpinner;
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
 
     // Set the Label text with the selected recipe
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snoopTimes.sql"];
     userdetails=[SnoopingUserDetails sharedInstance];
     product=[SnoopedProduct sharedInstance];
     order=[Order sharedInstance];
     price= [order.orderTotal doubleValue];
     prodPrice=order.orderTotal;
     tempQuntity=[order.orderQuantity intValue];
-  
+    CURRENTDB=SnoopTimeDBFile;
 
 }
 
@@ -74,13 +73,13 @@ UIActivityIndicatorView *activitySpinner;
 }
 -(void)initializeView{
 
-    self.navigationController.navigationBar.topItem.title = @"Confirm Snach";
+    self.navigationController.navigationBar.topItem.title = @"confirm snach";
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
-    productDescription.text=product.productDescription;
-    
+    productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+
     //hiding the backbutton from top bar
     [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     
@@ -95,43 +94,28 @@ UIActivityIndicatorView *activitySpinner;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 0) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-        [self logtime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+       
+        if(![[SnachItDB database] logtime:USERID SnachId:[product.snachId intValue] SnachTime:0])
+        {
+            [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+        }
         [self dismissViewControllerAnimated:NO completion:nil];
         [self.navigationController popToRootViewControllerAnimated:YES];
         
     }
 }
 
--(void)logtime:(NSString*)userid SnachId:(int)snachid SnachTime:(int)time{
-    NSString *query = [NSString stringWithFormat:@"insert into snachtimes values(null,%d, %@, %d)",snachid,userid,time];
-    
-    // Execute the query.
-    [self.dbManager executeQuery:query];
-    NSLog(@"Query :%@",query);
-    
-    if (self.dbManager.affectedRows != 0) {
-        NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
-        
-    }
-    else{
-        query = [NSString stringWithFormat:@"update snachtimes set snachtime=%d where snachid=%d and userid=%@",time,snachid,userid];
-         NSLog(@"Query :%@",query);
-        [self.dbManager executeQuery:query];
-        if (self.dbManager.affectedRows != 0) {
-            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
-            
-        }
-         else{
-             NSLog(@"Database error");
-         }
-        
-    }
-    
-}
+
 
 -(float)getOrderTotal{
-    
-    return  [order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];;
+    if([userdetails.shipState isEqual:@"UT"])
+    {
+        order.salesTax=[NSString stringWithFormat:@"%f",(6.85/100)*[order.subTotal doubleValue]];
+    }
+    else{
+        order.salesTax=[NSString stringWithFormat:@"%f",([order.st doubleValue]/1000)*[order.subTotal doubleValue]];
+    }
+    return  [order.subTotal doubleValue]+[order.shippingCost doubleValue]+[order.salesTax doubleValue];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -150,11 +134,14 @@ UIActivityIndicatorView *activitySpinner;
         if(userdetails.shipFullName!=nil)
         cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
-        cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,userdetails.paymentCardCVV];
+        cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,[userdetails.paymentCardNumber substringFromIndex:[userdetails.paymentCardNumber length]-3]];
         cell.orderTotal.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
     
-        [cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
-        [cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+            
+        //[cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
+        //[cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
         [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
         [cell.expandPayment addTarget:self action:@selector(exapndPaymentOverview) forControlEvents:UIControlEventTouchUpInside];
    
@@ -245,6 +232,7 @@ UIActivityIndicatorView *activitySpinner;
     [self startProcessing];
        if([self snachProduct]==1){
            [self stopProcessing];
+           [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
     [self performSegueWithIdentifier:STP_SEGUE sender:self];
            
     }

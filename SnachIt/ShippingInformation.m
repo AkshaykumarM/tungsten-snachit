@@ -2,7 +2,7 @@
 //  ShippingInformation.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/13/14.
+//  Created by Akshay Maldhure on 12/13/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -13,26 +13,26 @@
 #import "SnatchFeed.h"
 #import "UserProfile.h"
 #import "global.h"
-#import "DBManager.h"
-#import <SDWebImage/UIImageView+WebCache.h>
-@interface ShippingInformation()
-@property (nonatomic, strong) DBManager *dbManager;
 
-@property (nonatomic, strong) NSArray *arrAddressInfo;
+#import <SDWebImage/UIImageView+WebCache.h>
+#import "SnachItDB.h"
+#import "SnachItAddressInfo.h"
+@interface ShippingInformation()
+
 @end
 @implementation ShippingInformation
 {
     UserProfile *user;
     NSUserDefaults *defaults;
+    NSArray *snachItAddressInfo;
 }
 @synthesize checkedIndexPath;
 - (void)viewDidLoad {
     [super viewDidLoad];
-        self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+      
     // Set the Label text with the selected recipe
-    
-    [self loadData];
    
+   [self loadData];
     [self.backButton setTarget:self.revealViewController];
     [self.backButton setAction:@selector(revealToggle:)];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
@@ -71,7 +71,7 @@
     return 1;
     }
     else{
-        return self.arrAddressInfo.count;
+        return [snachItAddressInfo count];
     }
 }
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -99,7 +99,7 @@
     {
 
     ShippingInfoCell *cell = (ShippingInfoCell *)[tableView dequeueReusableCellWithIdentifier:@"ShippingInfoCell" forIndexPath:indexPath];
-        if (self.arrAddressInfo==nil) {
+        if (snachItAddressInfo==nil) {
             tableView.separatorStyle=UITableViewCellSeparatorStyleNone;
         }
     cell.profilePicImg.layer.cornerRadius=RADIOUS;
@@ -126,20 +126,16 @@
     }
     else{
         ShippingInfoTableCellcell *cell = (ShippingInfoTableCellcell *)[tableView dequeueReusableCellWithIdentifier:@"ShippingInfoTableCellcell" forIndexPath:indexPath];
-        NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
-        NSInteger indexOfStreetAddress = [self.dbManager.arrColumnNames indexOfObject:@"streetAddress"];
-        NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
-        NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
-        NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
         
+        SnachItAddressInfo *info=[snachItAddressInfo objectAtIndex:indexPath.row];
         // Set the loaded data to the appropriate cell labels.
         
-        cell.nameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
+        cell.nameLbl.text = [NSString stringWithFormat:@"%@",info.name];
         
-        cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
+        cell.streetNameLbl.text = [NSString stringWithFormat:@"%@",info.street];
         
-        cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
-        int rowid=[[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+        cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", info.city,info.state,[NSString stringWithFormat:@"%d",info.zip ]];
+        int rowid=info.uniqueId;
         cell.tag=rowid;
         
         if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER){
@@ -191,13 +187,8 @@
 
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from address";
-    
-    // Get the results.
-    if (self.arrAddressInfo != nil) {
-        self.arrAddressInfo = nil;
-    }
-    self.arrAddressInfo = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+     CURRENTDB=SnachItDBFile;
+    snachItAddressInfo = [SnachItDB database].snachItAddressInfo;
     
     // Reload the table view.
     [self.tableView1 reloadData];
@@ -219,6 +210,9 @@
     cell.backImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
 
+
+
+
 - (IBAction)doneBtn:(id)sender {
     
     if(RECENTLY_ADDED_SHIPPING_INFO_TRACKER>0){
@@ -234,4 +228,9 @@
 }
 
 
+
+- (IBAction)addAddress:(id)sender {
+    
+    [self performSegueWithIdentifier:@"addaddressSegue" sender:nil];
+}
 @end

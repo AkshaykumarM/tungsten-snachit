@@ -2,7 +2,7 @@
 //  ScanCard.h
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/26/14.
+//  Created by Akshakumar Maldhure on 12/26/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -12,4 +12,5 @@
 
 - (IBAction)closeBtn:(id)sender;
 
+@property (weak, nonatomic) IBOutlet UIView *scanView;
 @end

@@ -3,6 +3,15 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="1105886371.ttf">
+            <string>CenturyGothic</string>
+            <string>CenturyGothic</string>
+        </mutableArray>
+        <mutableArray key="OpenSans-Regular.ttf">
+            <string>OpenSans</string>
+        </mutableArray>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="MyProfile">
             <connections>
@@ -35,7 +44,7 @@
                     <rect key="frame" x="0.0" y="225" width="90" height="39"/>
                     <color key="backgroundColor" red="0.1296963404" green="0.74332129940000002" blue="0.91354955810000005" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="-4"/>
+                    <inset key="contentEdgeInsets" minX="13" minY="7" maxX="13" maxY="2"/>
                     <state key="normal" image="friends_count.png">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
@@ -105,7 +114,7 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="22" id="8Zo-qK-Mwj"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
                     <inset key="contentEdgeInsets" minX="10" minY="0.0" maxX="0.0" maxY="0.0"/>
                     <state key="normal" title="Product Name">
                         <color key="titleColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
@@ -133,7 +142,7 @@
                         <constraint firstAttribute="height" constant="22" id="U0P-yL-del"/>
                         <constraint firstAttribute="width" constant="100" id="llU-8y-5kS"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="13"/>
                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="9" maxY="0.0"/>
                     <state key="normal" title="Price">
                         <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
@@ -159,7 +168,7 @@
                         <constraint firstAttribute="width" constant="18" id="SE6-Fv-2m1"/>
                         <constraint firstAttribute="height" constant="18" id="avA-rA-SnO"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                    <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="12"/>
                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <state key="normal">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

@@ -269,7 +269,7 @@
 }
 
 -(void)showErrorIconForMsg:(NSString *)msg{
-    UIButton *btnError=[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 25, 25)];
+    UIButton *btnError=[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     [btnError addTarget:self action:@selector(tapOnError) forControlEvents:UIControlEventTouchUpInside];
     [btnError setBackgroundImage:[UIImage imageNamed:IconImageName] forState:UIControlStateNormal];
     self.rightView=btnError;

@@ -2,7 +2,7 @@
 //  OrderTotalOverview.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 12/31/14.
+//  Created by Akshakumar Maldhure on 12/31/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -48,8 +48,9 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
     
+    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+
     totalLabel.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
     
     //hiding the backbutton from top bar

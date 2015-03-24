@@ -2,7 +2,7 @@
 //  BillingInfoOverview.h
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/27/14.
+//  Created by Akshakumar Maldhure on 12/27/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 

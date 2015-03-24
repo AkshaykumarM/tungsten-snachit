@@ -2,17 +2,19 @@
 //  AppDelegate.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/10/14.
+//  Created by Akshakumar Maldhure on 12/10/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
 #import "AppDelegate.h"
 #import "SnachItLogin.h"
 #import "global.h"
-#import <FacebookSDK/FacebookSDK.h>
-#import <GoogleOpenSource/GoogleOpenSource.h>
+
+
+#import "SnachItDB.h"
+#import "SnachItAddressInfo.h"
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
-@interface AppDelegate ()<GPPSignInDelegate>
+@interface AppDelegate ()<GPPDeepLinkDelegate,GPPSignInDelegate>
 
 @end
 
@@ -22,6 +24,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     // color selected text ---> Pink
+    
     UIUserNotificationSettings *settings =
     [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
      UIUserNotificationTypeBadge |
@@ -41,7 +44,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
                                                            [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] ,UITextAttributeTextShadowColor,
                                                            [NSValue valueWithUIOffset:UIOffsetMake(0, 0)],
                                                            UITextAttributeTextShadowOffset,
-                                                           [UIFont fontWithName:@"Helvetica-Light" size:18.0], UITextAttributeFont, nil]];
+                                                           [UIFont fontWithName:@"CenturyGothic" size:18.0], UITextAttributeFont, nil]];
     
    
    
@@ -255,6 +258,8 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    
+    NSLog(@"Terminating app");
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
@@ -263,6 +268,8 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
    
     
 }
+
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }

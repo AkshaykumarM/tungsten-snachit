@@ -2,7 +2,7 @@
 //  MyProfile.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/12/14.
+//  Created by Akshay Maldhure on 12/12/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -181,7 +181,13 @@ UIView* backView ;
         self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
     self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
-   
+    
+    //setting user snoop time
+    self.snoopTime.titleLabel.adjustsFontSizeToFitWidth=YES;
+    self.snoopTime.titleLabel.minimumScaleFactor=0.44;
+    [self.snoopTime setTitle:[NSString stringWithFormat:@"%d",user.snoopTime] forState:UIControlStateNormal];
+  
+    
     //setting background img
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
@@ -208,7 +214,7 @@ UIView* backView ;
     messageLabel.textColor = [UIColor blackColor];
     messageLabel.numberOfLines = 0;
     messageLabel.textAlignment = NSTextAlignmentCenter;
-    messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
+    messageLabel.font = [UIFont fontWithName:@"OpenSans-Regular" size:20];
     [messageLabel sizeToFit];
 
     if([cellId isEqual:FRIEND_CELL]){
@@ -218,6 +224,7 @@ UIView* backView ;
         if(count<=0)
         {
             messageLabel.text = @"No Friends Found!";
+            messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         }
@@ -233,6 +240,7 @@ UIView* backView ;
         if(count<=0)
         {
             messageLabel.text = @"No Brand Followed Yet!";
+            messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         }
@@ -259,6 +267,7 @@ UIView* backView ;
         if(count<=0)
         {
             messageLabel.text = @"No Snachs Yet!";
+             messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         }
@@ -351,6 +360,7 @@ UIView* backView ;
                                 [cell.scrollview addSubview:img];
                                 
                                 [img setImageWithURL:[NSURL URLWithString:snProducts.productImage] placeholderImage:nil];
+                                
                                 [customTap setNumberOfTapsRequired:1];
                                 img.userInteractionEnabled = YES;
                 
@@ -358,10 +368,10 @@ UIView* backView ;
                                 
                                 [img addGestureRecognizer:customTap];
                                 
-                                xOffset+=70;
+                                xOffset+=80;
                                 
                             }
-                            cell.scrollview.contentSize = CGSizeMake(scrollWidth+xOffset,70);
+                            cell.scrollview.contentSize = CGSizeMake(scrollWidth+xOffset,80);
             
         }
     
@@ -400,6 +410,7 @@ UIView* backView ;
                 if(cell.tag==indexPath.row){
                     [img setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
                     [cell.productImageConatainer addSubview:img];
+                    
                 }
             
             customTapGestureRecognizer *customTap = [[customTapGestureRecognizer alloc]
@@ -411,9 +422,7 @@ UIView* backView ;
 
             [img addGestureRecognizer:customTap];
             
-            
-       
-            xOffset+=70;
+            xOffset+=80;
             
         }
             }
@@ -426,7 +435,7 @@ UIView* backView ;
             }
 
         }
-        cell.productImageConatainer.contentSize = CGSizeMake(scrollWidth+xOffset,70);
+        cell.productImageConatainer.contentSize = CGSizeMake(scrollWidth+xOffset,80);
             
        
             cell.followStatus.tag=indexPath.row+100;

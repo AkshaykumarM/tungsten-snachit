@@ -2,7 +2,7 @@
 //  SnatchTimeUp.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/16/14.
+//  Created by Akshay Maldhure on 12/16/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -27,7 +27,9 @@
 //     navbar= [[UINavigationBar alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, 50)];
 //    //do something like background color, title, etc you self
 //    [self.view addSubview:navbar];
-    
+     navbar = [[UINavigationBar alloc]initWithFrame:CGRectMake(0, 23,  self.view.frame.size.width, 39)];
+    //do something like background color, title, etc you self
+    [self.view addSubview:navbar];
     // Load the file content and read the data into arrays
 }
 
@@ -68,7 +70,7 @@
     /*Upper left profile pic work starts here*/
     
     //here i am setting the frame of profile pic and assigning it to a button
-    CGRect frameimg = CGRectMake(0, 5, 40, 40);
+    CGRect frameimg = CGRectMake(0, 0, 40, 40);
     topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
      [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     //assigning the default background image
@@ -90,7 +92,8 @@
     //adding bar item to left bar button item
     self.navigationItem.leftBarButtonItem=mailbutton;
     
-    [self.navigationBar setItems:@[self.navigationItem]];
+    [navbar setItems:@[self.navigationItem]];
+    navbar.topItem.title = @"time's up";
     //checking if profile pic url is nil else download the image and assign it to imageview
     
     

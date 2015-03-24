@@ -10,18 +10,31 @@
 #import <Foundation/NSNotificationQueue.h>
 #import "ProfileTabView.h"
 #import "AppShare.h"
-
+#import "SnachItDB.h"
+#import "SnoopedProduct.h"
+#import "global.h"
+#import "SnatchFeed.h"
 #define OAUTH_CONSUMER @"oAuth_consumer"
 #define OAUTH_ACCESSTOKEN @"oAuth_accessToken"
 
+@interface ProfileTabView()
 
+
+@end
 
 @implementation ProfileTabView
-
+{
+    SnoopedProduct *product;
+}
 @synthesize button, name, headline, oAuthLoginView, 
             status, postButton, postButtonLabel,
             statusTextView, updateStatusLabel,iconPostButton,iconSignInButton, activity, logoutButton, iconLogoutButton;
-
+static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
+static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
+static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
+static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
+static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
+CGFloat animatedDistance;
 - (IBAction)closeButtonPressed:(id)sender {
     [_parentVC removeLinkedInview];
 }
@@ -156,6 +169,7 @@
     [self networkApiCall:NO];
 
 }
+
 
 - (void)profileApiCallResult:(OAServiceTicket *)ticket didFail:(NSData *)error 
 {
@@ -348,9 +362,13 @@
 - (void)postUpdateApiCallResult:(OAServiceTicket *)ticket didFinish:(NSData *)data 
 {
     // The next thing we want to do is call the network updates
+    [self resetSnoopTime];
+    linkedinsharetracker=1;
     [self networkApiCall:YES];
     
 }
+
+
 
 - (void)postUpdateApiCallResult:(OAServiceTicket *)ticket didFail:(NSData *)error 
 {
@@ -360,7 +378,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+
     self.view.backgroundColor=[UIColor colorWithPatternImage:[UIImage imageNamed:@"background1.png"]];
     
     consumer=nil;
@@ -392,7 +410,17 @@
     [activity setHidden:YES];
 
 }
-
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
+    
+    product=[SnoopedProduct sharedInstance];
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+    
+    self.statusTextView.text=self.sharingMsg;
+    
+}
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -509,7 +537,7 @@
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"consumer.txt"];
     
-    NSMutableArray *myObject=[NSMutableArray aray];
+    NSMutableArray *myObject=[NSMutableArray array];
     [myObject addObject:consumer1];
     
     [NSKeyedArchiver archiveRootObject:myObject toFile:appFile];
@@ -569,6 +597,78 @@
     NSString *appFile = [documentsDirectory stringByAppendingPathComponent:@"accessToken.txt"];
     [[NSFileManager defaultManager] removeItemAtPath:appFile error:nil];
 }
+-(BOOL)textFieldShouldReturn:(UITextField *)textField{
+    
+    if(textField){
+        [textField resignFirstResponder];
+    }
+    return NO;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField{
+    CGRect textFieldRect =
+    [self.view.window convertRect:textField.bounds fromView:textField];
+    CGRect viewRect =
+    [self.view.window convertRect:self.view.bounds fromView:self.view];
+    CGFloat midline = textFieldRect.origin.y + 0.5 * textFieldRect.size.height;
+    CGFloat numerator =
+    midline - viewRect.origin.y
+    - MINIMUM_SCROLL_FRACTION * viewRect.size.height;
+    CGFloat denominator =
+    (MAXIMUM_SCROLL_FRACTION - MINIMUM_SCROLL_FRACTION)
+    * viewRect.size.height;
+    CGFloat heightFraction = numerator / denominator;
+    if (heightFraction < 0.0)
+    {
+        heightFraction = 0.0;
+    }
+    else if (heightFraction > 1.0)
+    {
+        heightFraction = 1.0;
+    }
+    UIInterfaceOrientation orientation =
+    [[UIApplication sharedApplication] statusBarOrientation];
+    if (orientation == UIInterfaceOrientationPortrait ||
+        orientation == UIInterfaceOrientationPortraitUpsideDown)
+    {
+        animatedDistance = floor(PORTRAIT_KEYBOARD_HEIGHT * heightFraction);
+    }
+    else
+    {
+        animatedDistance = floor(LANDSCAPE_KEYBOARD_HEIGHT * heightFraction);
+    }
+    CGRect viewFrame = self.view.frame;
+    viewFrame.origin.y -= animatedDistance;
+    
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    
+    [self.view setFrame:viewFrame];
+    
+    [UIView commitAnimations];
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textfield{
+    
+    CGRect viewFrame = self.view.frame;
+    viewFrame.origin.y += animatedDistance;
+    
+    [UIView beginAnimations:nil context:NULL];
+    [UIView setAnimationBeginsFromCurrentState:YES];
+    [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
+    
+    [self.view setFrame:viewFrame];
+    
+    [UIView commitAnimations];
+}
+-(void)resetSnoopTime{
+    if(![[SnachItDB database] logtime:self.userid SnachId:[self.snachid intValue] SnachTime:DEFAULT_SNOOPTIME]){
+        [[SnachItDB database] updatetime:self.userid SnachId:[self.snachid intValue] SnachTime:DEFAULT_SNOOPTIME];
+    }
+}
+
 
 
 @end

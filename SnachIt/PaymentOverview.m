@@ -2,7 +2,7 @@
 //  PaymentOverview.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/22/14.
+//  Created by Akshakumar Maldhure on 12/22/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -12,28 +12,28 @@
 #import "SnachCheckDetails.h"
 #import "SnoopedProduct.h"
 #import "SnoopingUserDetails.h"
-#import "DBManager.h"
 #import "global.h"
 #import "RegexValidator.h"
+#import "SnachItDB.h"
+#import "SnachItPaymentInfo.h"
 NSString *const STPSEAGUE=@"backtoSTP";
 @interface PaymentOverview()
-@property (nonatomic, strong) DBManager *dbManager;
-@property (nonatomic, strong) NSArray *arrPaymentInfo;
+
 @end
 
 @implementation PaymentOverview{
     SnoopedProduct *product;
     SnoopingUserDetails *userDetails;
     NSUserDefaults *defaults;
+    NSArray *snachItPaymentInfo;
 }
 @synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
-    // Set the Label text with the selected recipe
+
+    CURRENTDB=SnachItDBFile;
     [self loadData];
     defaults=[NSUserDefaults standardUserDefaults];
    
@@ -61,7 +61,8 @@ NSString *const STPSEAGUE=@"backtoSTP";
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
+    
+     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -74,7 +75,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     
 }
 -(void)back:(id)sender{
-    [self.navigationController popViewControllerAnimated:YES];
+    [self performSegueWithIdentifier:@"backtoSTP" sender:nil];
     
 }
 - (IBAction)addNewCardBtn:(id)sender{
@@ -91,7 +92,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.arrPaymentInfo.count;
+    return [snachItPaymentInfo count];
 }
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     // This will create a "invisible" footer
@@ -106,25 +107,27 @@ NSString *const STPSEAGUE=@"backtoSTP";
     // Dequeue the cell.
 
     PaymentOverviewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"paymentCell" forIndexPath:indexPath];
-   
-    NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
-    NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
+
+    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
   
     // Set the loaded data to the appropriate cell labels.
-    cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]].lowercaseString];
-    cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName]];
+    cell.cardImage.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[info.cardname stringByReplacingOccurrencesOfString:@" " withString:@""].lowercaseString]];
+    cell.cardNameLbl.text = [NSString stringWithFormat:@"%@", info.cardname];
     
     
-    cell.cvvLbl.text = 
-    [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
+    //displaying last three digit of card number
+    NSString *tempNumber=info.cardnumber;
+    cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
+    
+    cell.tag=info.uniqueId;
    
-    int rowid=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    int rowid=info.uniqueId;
     
     //for auto selection
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ||rowid==[[defaults valueForKey:DEFAULT_BILLING] intValue]){
           cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
        
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName:info.name withPaymentStreetName:info.street  withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:[NSString stringWithFormat:@"%d",info.zip] withPaymentPhoneNumber: info.phone];
     }else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
     cell.accessoryView=nil;
@@ -153,13 +156,13 @@ NSString *const STPSEAGUE=@"backtoSTP";
     else
     {
        
-       
 
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
+        SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
         
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:1] withPaymentCardNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:2] withpaymentCardExpDate:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:3] withPaymentCardCvv:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:4] withPaymentFullName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:5] withPaymentStreetName:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:6] withPaymentCity:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:7] withPaymentState:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:8] withPaymentZipCode:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:9] withPaymentPhoneNumber:[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:10]];
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName: info.name withPaymentStreetName:info.street withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:[NSString stringWithFormat:@"%d",info.zip] withPaymentPhoneNumber:info.phone];
 
         
     }
@@ -183,13 +186,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from payment";
-    
-    // Get the results.
-    if (self.arrPaymentInfo != nil) {
-        self.arrPaymentInfo = nil;
-    }
-    self.arrPaymentInfo = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+      snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
     
     // Reload the table view.
     [self.paymentTableView reloadData];

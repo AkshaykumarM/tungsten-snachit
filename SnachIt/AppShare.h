@@ -2,7 +2,7 @@
 //  AppShare.h
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/31/15.
+//  Created by Akshay Maldhure on 1/31/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -10,7 +10,7 @@
 #import <GooglePlus/GooglePlus.h>
 @class GPPSignInButton;
 @class ProfileTabView;
-
+extern int linkedinsharetracker;
 @interface AppShare : UIViewController
 {
     ProfileTabView* profileTabView;
@@ -24,7 +24,7 @@
 - (IBAction)linkedInBtn:(id)sender;
 -(void) removeLinkedInview;
 - (IBAction)gPBtn:(id)sender;
-@property (weak, nonatomic) IBOutlet UILabel *sharingURL;
-- (IBAction)backBtn:(id)sender;
+-(void)resetSnoopTime;
+
 
 @end

@@ -2,7 +2,7 @@
 //  Common.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 2/20/15.
+//  Created by Akshay Maldhure on 2/20/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -89,5 +89,39 @@ NSMutableArray *emailIds;
     }
     return dic;
 }
+
+
+
++(NSString *) getRandomStringWithLength: (int) len {
+    NSString *letters = @"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    NSMutableString *randomString = [NSMutableString stringWithCapacity: len];
+    
+    for (int i=0; i<len; i++) {
+        [randomString appendFormat: @"%C", [letters characterAtIndex: arc4random_uniform([letters length])]];
+    }
+    
+    return randomString;
+}
+
++(NSString*)getTinyUrlForLink:(NSString*)URL{
+    
+    NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"http://tinyurl.com/api-create.php?url=%@", URL]];
+    NSURLRequest *request = [ NSURLRequest requestWithURL:url
+                                              cachePolicy:NSURLRequestReloadIgnoringCacheData
+                                          timeoutInterval:10.0 ];
+    NSError *error;
+    NSURLResponse *response;
+    NSData *data = [ NSURLConnection sendSynchronousRequest:request
+                                          returningResponse:&response
+                                                      error:&error];
+    NSString *tempurl;
+    if(!error)
+    tempurl= [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    else
+        tempurl=nil;
+    
+    return tempurl;
+}
+
 
 @end

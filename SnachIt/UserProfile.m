@@ -23,7 +23,7 @@ NSString * twProfilePic;
     return sharedInstance;
 }
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL *)sharingURL
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL *)sharingURL withSnoopTime:(int)snoopTime
 {
     self = [super init];
     self.userID=userId;
@@ -37,6 +37,7 @@ NSString * twProfilePic;
     self.dateOfBirth=dateOfBirth;
     self.joiningDate=joiningDate;
     self.sharingURL=sharingURL;
+    self.snoopTime=snoopTime;
     return self;
 }
 

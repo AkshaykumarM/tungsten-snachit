@@ -2,23 +2,22 @@
 //  ShippingOverview.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/19/14.
+//  Created by Akshakumar Maldhure on 12/19/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
 #import "ShippingOverview.h"
 #import "AddNewAddressForm.h"
 #import "SnachCheckDetails.h"
-#import "DBManager.h"
+#import "SnachItDB.h"
 #import "ShippingOverviewAddressCell.h"
 #import "SnoopedProduct.h"
 #import "SnoopingUserDetails.h"
 #import "UserProfile.h"
 #import "global.h"
+#import "SnachItPaymentInfo.h"
 @interface ShippingOverview()
-@property (nonatomic, strong) DBManager *dbManager;
 
-@property (nonatomic, strong) NSArray *arrAddressInfo;
 @property (nonatomic, strong) NSString *selectedFirstName;
 @property (nonatomic, strong) NSString *selectedStreetAddress;
 @property (nonatomic, strong) NSString *selectedCityStateZip;
@@ -33,6 +32,7 @@
     SnoopingUserDetails *userDetails;
     UserProfile *user;
     NSUserDefaults *defaults;
+    NSArray *snachItPaymentInfo;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc,checkedIndexPath;
 
@@ -41,8 +41,7 @@
 {
     [super viewDidLoad];
     
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
-    // Set the Label text with the selected recipe
+    CURRENTDB=SnachItDBFile;
     [self loadData];
     
     user =[UserProfile sharedInstance];
@@ -69,7 +68,8 @@
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
+
+     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -82,7 +82,7 @@
 }
 
 -(void)back:(id)sender{
-    [self.navigationController popViewControllerAnimated:YES];
+    [self performSegueWithIdentifier:@"shippingoverviewseague" sender:nil];
     
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -91,7 +91,7 @@
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return self.arrAddressInfo.count;
+    return [snachItPaymentInfo count];
 }
 
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -99,35 +99,30 @@
     return 0.01f;
 }
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 60.0;
+    return 80.0;
 }
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
 
     ShippingOverviewAddressCell *cell = [tableView dequeueReusableCellWithIdentifier:@"addressCell" forIndexPath:indexPath];
-   
-    NSInteger indexOfFullName = [self.dbManager.arrColumnNames indexOfObject:@"fullName"];
-    NSInteger indexOfStreetAddress = [self.dbManager.arrColumnNames indexOfObject:@"streetAddress"];
-    NSInteger indexOfCity = [self.dbManager.arrColumnNames indexOfObject:@"city"];
-     NSInteger indexOfState = [self.dbManager.arrColumnNames indexOfObject:@"state"];
-     NSInteger indexOfZip = [self.dbManager.arrColumnNames indexOfObject:@"zip"];
-  
+   SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
+   cell.accessoryView=nil;
     // Set the loaded data to the appropriate cell labels.
 
-    cell.nameLbl.text =  [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfFullName]];
+    cell.nameLbl.text =  [NSString stringWithFormat:@"%@",info.name];
     
-    cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfStreetAddress]];
+    cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", info.street];
     
-    cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %@", [[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCity],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfState],[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfZip]];
+    cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %d",info.city,info.state,info.zip];
     
     
     //for autoselect functionality
-    int rowid=[[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    int rowid=info.uniqueId;
     NSLog(@"Row %d %d",rowid,[[defaults valueForKey:DEFAULT_SHIPPING] intValue]);
     if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER || rowid==[[defaults valueForKey:DEFAULT_SHIPPING] intValue] ){
           cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
-          userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:1] withShipStreetName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:2] withShipCity:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:3] withShipState:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:4] withShipZipCode:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:5] withShipPhoneNumber:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:6]];
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
     }
     else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
@@ -159,13 +154,13 @@
     {
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        
         self.checkedIndexPath = indexPath;
     }
-
+    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
     // initializing address details
-    userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:1] withShipStreetName:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:2] withShipCity:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:3] withShipState:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:4] withShipZipCode:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:5] withShipPhoneNumber:[[self.arrAddressInfo objectAtIndex:indexPath.row] objectAtIndex:6]];
+    userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
     
-
 }
 
 
@@ -183,13 +178,7 @@
 
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from address";
-    
-    // Get the results.
-    if (self.arrAddressInfo != nil) {
-        self.arrAddressInfo = nil;
-    }
-    self.arrAddressInfo = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+    snachItPaymentInfo = [SnachItDB database].snachItAddressInfo;
     
     // Reload the table view.
     [self.addressTableView reloadData];

@@ -2,20 +2,19 @@
 //  AddNewAddressForm.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/19/14.
+//  Created by Akshay Maldhure on 12/19/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
 #import "AddNewAddressForm.h"
 #import "ShippingOverview.h"
-#import "DBManager.h"
+#import "SnachItDB.h"
 #import "SnoopedProduct.h"
 #import "global.h"
 #import "RegexValidator.h"
 
 
 @interface AddNewAddressForm()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
-@property (nonatomic, strong) DBManager *dbManager;
 
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
@@ -38,9 +37,6 @@ CGFloat animatedDistance;
 {
     [super viewDidLoad];
     
-
-      self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
-    
     UIPickerView *picker = [[UIPickerView alloc] init];
     picker.dataSource = self;
     picker.delegate = self;
@@ -58,6 +54,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     viewCenter=self.view.center.x-50;
     [self setupAlerts];
+    CURRENTDB=SnachItDBFile;
 }
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"ship to";
@@ -66,7 +63,8 @@ CGFloat animatedDistance;
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
+    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -92,8 +90,7 @@ CGFloat animatedDistance;
        
 }
 -(void)back:(id)sender{
-    [self.navigationController popViewControllerAnimated:YES];
-    
+        [self performSegueWithIdentifier:@"addressaddedseague" sender:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -103,19 +100,17 @@ CGFloat animatedDistance;
     
     if([self.fullNameTextField validate] &[self.streetAddressTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
         
-       //NSString *query=@"create table if not exists address(id integer primary key,fullName text,streetAddress text,city text,state text,zip text,phone text)";
-    NSString *query = [NSString stringWithFormat:@"insert into address values(null, '%@', '%@', '%@' ,'%@','%@','%@')", self.fullNameTextField.text, self.streetAddressTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+        
+        NSDictionary *info=[[SnachItDB database] addAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text];
     
     // Execute the query.
        
-    [self.dbManager executeQuery:query];
+
     
     // If the query was successfully executed then pop the view controller.
-    if (self.dbManager.affectedRows != 0) {
+    if ([info objectForKey:@"status"] != 0) {
         
-      
-        NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=(int)self.dbManager.lastInsertedRowID;
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
         // Pop the view controller.
          [self performSegueWithIdentifier:@"addressaddedseague" sender:self];
     }
@@ -125,8 +120,6 @@ CGFloat animatedDistance;
     }
     }
     
-    
-//    [self dismissViewControllerAnimated:true completion:nil];
     
 }
 

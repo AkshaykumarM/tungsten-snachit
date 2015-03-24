@@ -2,7 +2,7 @@
 //  AppShare.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/31/15.
+//  Created by Akshay Maldhure on 1/31/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -10,15 +10,20 @@
 #import "UserProfile.h"
 #import "SWRevealViewController.h"
 #import <FacebookSDK/FacebookSDK.h>
-#import <GoogleOpenSource/GoogleOpenSource.h>
 #import <GooglePlus/GooglePlus.h>
+#import <GoogleOpenSource/GoogleOpenSource.h>
+
 #import "AFNetworking.h"
 #import <Social/Social.h>
 #import "global.h"
+#import "Common.h"
 #import "ProfileTabView.h"
+#import "SnachItDB.h"
+#import "SnoopedProduct.h"
+#import "SnatchFeed.h"
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
-
-@interface AppShare()<GPPSignInDelegate>
+int linkedinsharetracker;
+@interface AppShare()<GPPSignInDelegate,GPPShareDelegate>
 
 
 @end
@@ -27,28 +32,51 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     UserProfile *user;
     UIButton *topProfileBtn;
     UIView *backView;
+    NSString *sharingMsg;
+    NSString *sharingURL;
+    NSString *appiconURL;
+    NSString *referalCode;
+    SnoopedProduct *product;
+    
 }
 
 
 -(void)viewDidLoad{
     [super viewDidLoad];
     
+    CURRENTDB=SnoopTimeDBFile;
+    [GPPShare sharedInstance].delegate = self;
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
     
     // Set the gesture
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-
-    [self setupProfilePic];
     
-    self.sharingURL.text=[NSString stringWithFormat:@"%@",user.sharingURL];
+    appiconURL=@"http://www.ecellmit.com/snachit/snach_logo.png";
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    [self setupProfilePic];
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if(![[defaults valueForKey:@"referalCodeStatus"] isEqual:@"1"])
+    {
+        referalCode=[NSString stringWithFormat:@"%@%@",user.userID,[Common getRandomStringWithLength:6]];
+        [self sendReferalCode];
+    }
+    else{
+        referalCode=[defaults valueForKey:@"referalCode"];
+    }
+    sharingURL=[self generateSharingURL];
+    sharingMsg=@"A fun + simple way to snach things!";
+    linkedinsharetracker=0;
+    
+}
 
+-(void)viewDidDisappear:(BOOL)animated{
+    NSLog(@"view did appear");
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
-  
+    product=[SnoopedProduct sharedInstance];
 }
 
 
@@ -56,14 +84,36 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     // Put together the dialog parameters
    
         
-        SLComposeViewController *controller = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+        SLComposeViewController *fbsheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+    
+    fbsheet.completionHandler = ^(SLComposeViewControllerResult result) {
+        switch(result) {
+                //  This means the user cancelled without sending the Tweet
+            case SLComposeViewControllerResultCancelled:
+                break;
+                //  This means the user hit 'Send'
+            case SLComposeViewControllerResultDone:
+                [self resetSnoopTime];
+                [self AskToViewDealNow];
+                break;
+        }
         
-        [controller setInitialText:@"snach.it, A fun + simple way to snach things!"];
-        [controller addURL:[NSURL URLWithString:@"http://snach.it"]];
-    [controller addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.ecellmit.com/snachit/snach_logo.png"]]]];
-        
-        [self presentViewController:controller animated:YES completion:Nil];
-   
+        //  dismiss the Tweet Sheet
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissViewControllerAnimated:NO completion:^{
+                NSLog(@"Tweet Sheet has been dismissed.");
+            }];
+        });
+    };
+
+        [fbsheet setInitialText:sharingMsg];
+        [fbsheet addURL:[NSURL URLWithString:sharingURL]];
+    [fbsheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:appiconURL]]]];
+    
+    [self presentViewController:fbsheet animated:NO completion:^{
+        NSLog(@"Tweet sheet has been presented.");
+    }];
+    
 }
 
 
@@ -78,14 +128,75 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     }
     return params;
 }
+
+
+-(void)AskToViewDealNow{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Yippee!"
+                                                    message:@"You got one more chance to snach this deal.Do you want to snach.it now?"
+                                                   delegate:self
+                                          cancelButtonTitle:@"Yes"
+                                          otherButtonTitles:@"No",nil];
+    [alert show];
+
+    
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 0) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        snooptTracking=1;
+        UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"Main" bundle:nil];
+        SnatchFeed *rootViewController = [storyboard instantiateViewControllerWithIdentifier:@"snachfeed"];
+        
+        UINavigationController *navController = [[UINavigationController alloc] initWithRootViewController:rootViewController];
+        [navController setViewControllers: @[rootViewController] animated: YES];
+        
+        [self.revealViewController pushFrontViewController:navController animated:YES];
+    }
+}
+
+
+
 - (IBAction)twBtn:(id)sender {
    
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
-        [tweetSheet setInitialText:@"snach.it, A fun + simple way to snach things!"];
-    [tweetSheet addURL:[NSURL URLWithString:@"http://snach.it"]];
-    [tweetSheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.ecellmit.com/snachit/snach_logo.png"]]]];
-        [self presentViewController:tweetSheet animated:YES completion:nil];
+    // Sets the completion handler.  Note that we don't know which thread the
+    // block will be called on, so we need to ensure that any UI updates occur
+    // on the main queue
+   
+
+    tweetSheet.completionHandler = ^(SLComposeViewControllerResult result) {
+        switch(result) {
+                //  This means the user cancelled without sending the Tweet
+            case SLComposeViewControllerResultCancelled:
+                 break;
+                //  This means the user hit 'Send'
+            case SLComposeViewControllerResultDone:
+                 [self resetSnoopTime];
+                [self AskToViewDealNow];
+                 break;
+        }
+        
+        //  dismiss the Tweet Sheet
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self dismissViewControllerAnimated:NO completion:^{
+                
+            }];
+        });
+    };
+    
+    //  Set the initial body of the Tweet
+    [tweetSheet setInitialText: sharingMsg];
+    [tweetSheet addURL:[NSURL URLWithString:sharingURL]];
+    [tweetSheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:appiconURL]]]];
+    //  Adds an image to the Tweet.  For demo purposes, assume we have an
+    //  image named 'larry.png' that we wish to attach
+
+    
+    //  Presents the Tweet Sheet to the user
+    [self presentViewController:tweetSheet animated:NO completion:^{
+        NSLog(@"Tweet sheet has been presented.");
+    }];
+    
    
     
 }
@@ -96,9 +207,13 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
     [self.view addSubview:backView];
     
+    //initializing linked in profile view 
     profileTabView=[[ProfileTabView alloc] init];
     profileTabView.parentVC=self;
     profileTabView.view.frame=CGRectMake(0, 30, backView.frame.size.width, backView.frame.size.height-60);
+    profileTabView.sharingMsg=[NSString stringWithFormat:@"Snach.it %@ %@ %@",sharingMsg,appiconURL,sharingURL];
+    profileTabView.userid=user.userID;
+    profileTabView.snachid=product.snachId;
     //place device check here
     
     //profileTabView.view.center=self.view.center;
@@ -111,12 +226,15 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     [backView removeFromSuperview];
     profileTabView=nil;
     backView=nil;
+    if(linkedinsharetracker==1){
+        [self AskToViewDealNow];
+    }
 }
 
 - (void)finishedWithAuth: (GTMOAuth2Authentication *)auth
                    error: (NSError *) error {
     
-    NSLog(@"Received Error %@ and auth object==%@", error, auth);
+  
     
     if (error) {
         // Do some error handling here.
@@ -142,27 +260,41 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
                 completionHandler:^(GTLServiceTicket *ticket,
                                     GTLPlusPerson *person,
                                     NSError *error) {
-                    id<GPPShareBuilder> shareBuilder = [[GPPShare sharedInstance] shareDialog];
-                    
-                    [shareBuilder setURLToShare:[NSURL URLWithString:@"http://snach.it"]];
-                    [shareBuilder setTitle:@"snach.it" description:@" A fun + simple way to snach things!" thumbnailURL:[NSURL URLWithString:@"http://www.ecellmit.com/snachit/snach_logo.png"]];
-                    
-                    [shareBuilder setContentDeepLinkID:kClientId];
+                  
+                    id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
+                    [shareBuilder setURLToShare:[NSURL URLWithString:@"snach.it"]];
+                    [shareBuilder setPrefillText:sharingURL];
+                    [shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:appiconURL]];
                     [shareBuilder open];
                     
                     if (error) {
                         //Handle Error
+                          NSLog(@"Error Occured");
                        
                     } else {
                         
+                        
                     }
                 }];
+        
+        NSLog(@"Reset time");
     }
-    
-
     
 }
 
+#pragma mark - GPPShareDelegate
+- (void)finishedSharingWithError:(NSError *)error {
+    
+    if (!error) {
+        [self resetSnoopTime];
+        [self AskToViewDealNow];
+    }
+    
+}
+
+- (void)finishedSharing:(BOOL)shared{
+    
+}
 -(void)refreshInterfaceBasedOnSignIn {
     if ([[GPPSignIn sharedInstance] authentication]) {
         // The user is signed in.
@@ -191,11 +323,13 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
 
 - (IBAction)gPBtn:(id)sender {
+    
     GPPSignIn *signIn = [GPPSignIn sharedInstance];
     signIn.shouldFetchGooglePlusUser = YES;
     signIn.clientID = kClientId;
     signIn.scopes = @[ kGTLAuthScopePlusLogin ];
     signIn.delegate = self;
+    
     [signIn authenticate];
 }
 
@@ -236,5 +370,49 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
         }];}
     
 }
+
+//this method generates referal code with combination of userid and 6 digit random text
+-(NSString*)generateSharingURL{
+    
+    NSString *tempURL=[Common getTinyUrlForLink:[NSString stringWithFormat:@"%@snachit-referal-encode/?referal_cd=%@",ec2maschineIP,referalCode]];
+    return tempURL;
+}
+
+//this method sends referal code to the backend
+-(void)sendReferalCode{
+      NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    NSString *url=[NSString stringWithFormat:@"%@store-user-referal-code/?customer_id=%@&referal_code=%@",ec2maschineIP,user.userID,referalCode];
+    
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+    NSURLResponse *response = nil;
+    NSError *error = nil;
+    //getting the data
+    NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    
+    if(jasonData)
+    {
+        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+        NSLog(@"\nResponse:%@ ",response);
+        
+        if([[response objectForKey:@"success"] isEqual:@"true"])
+           {
+            [defaults setObject:@"1" forKey:@"referalCodeStatus"];
+            [defaults setObject:referalCode forKey:@"referalCode"];
+           }
+        else
+            [defaults setObject:@"0" forKey:@"referalCodeStatus"];
+        
+    }
+    
+}
+
+-(void)resetSnoopTime{
+    if(![[SnachItDB database] logtime:user.userID SnachId:[product.snachId intValue] SnachTime:DEFAULT_SNOOPTIME]){
+        [[SnachItDB database] updatetime:user.userID SnachId:[product.snachId intValue] SnachTime:DEFAULT_SNOOPTIME];
+    }
+}
+
+
 
 @end

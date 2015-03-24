@@ -2,7 +2,7 @@
 //  SnachitStartScreen.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/24/14.
+//  Created by Akshakumar Maldhure on 12/24/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 #import "SnachItLogin.h"
@@ -20,7 +20,7 @@ NSString *const LOGINSEGUE=@"logInSegue";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self setViewLookAndFeel];
+    
     
     
 }
@@ -35,16 +35,7 @@ NSString *const LOGINSEGUE=@"logInSegue";
 }
 
 }
--(void) setViewLookAndFeel{
-    
-    self.signUpBtn.layer.borderWidth = 2.0f;
-    self.logInBtn.layer.borderWidth = 2.0f;
-    
-    self.signUpBtn.layer.borderColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    self.logInBtn.layer.borderColor =[UIColor colorWithRed:1 green:1 blue:1 alpha:0.4].CGColor;
-    
-    
-}
+
 - (IBAction)logInBtn:(id)sender {
     CATransition* transition = [CATransition animation];
     transition.duration = 0.35;

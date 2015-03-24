@@ -2,7 +2,7 @@
 //  BillingInformation.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/13/14.
+//  Created by Akshay Maldhure on 12/13/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -14,19 +14,18 @@
 #import "global.h"
 #import "BillingInfoCell.h"
 #import "BillingInformationCell.h"
-#import "DBManager.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RegexValidator.h"
-
+#import "SnachItDB.h"
+#import "SnachItPaymentInfo.h"
 
 @interface BillingInformation()
-@property (nonatomic, strong) DBManager *dbManager;
-@property (nonatomic, strong) NSArray *arrPaymentInfo;
 @end
 @implementation BillingInformation
 {
     UserProfile *user;
     NSUserDefaults *defaults;
+    NSArray *snachItPaymentInfo;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -35,7 +34,7 @@
     // Set the gesture
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     [self setViewLookAndFeel];
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+    CURRENTDB=SnachItDBFile;
     // Load the file content and read the data into arrays
       [self loadData];
     defaults=[NSUserDefaults standardUserDefaults];
@@ -86,7 +85,7 @@
         return 1;
     }
     else{
-        return self.arrPaymentInfo.count;
+        return [snachItPaymentInfo  count];
     }
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -96,7 +95,7 @@
         return 600;
     }
     else{
-        return 75;
+        return 80;
     }
 }
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -132,26 +131,22 @@
 }
 else{
     BillingInformationCell *cell = (BillingInformationCell *)[tableView dequeueReusableCellWithIdentifier:@"BillingInformationCell" forIndexPath:indexPath];
-    NSInteger indexOfCardName = [self.dbManager.arrColumnNames indexOfObject:@"cardName"];
-   
-    NSInteger indexOfCVV = [self.dbManager.arrColumnNames indexOfObject:@"cvv"];
+    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
     
     // Set the loaded data to the appropriate cell labels.
-    NSString *cardname=[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCardName];
+    NSString *cardname=info.cardname;
     cell.CardTypeLbl.text = [NSString stringWithFormat:@"%@", cardname];
     cell.cardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[cardname stringByReplacingOccurrencesOfString:@" " withString:@""].lowercaseString]];
     
-    cell.cvvLbl.text =
-    [NSString stringWithFormat:@"%@", [[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:indexOfCVV]];
+    //displaying last three digit of card number
+    NSString *tempNumber=info.cardnumber;
+    cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
+    
+    cell.tag=info.uniqueId;
     
     
-    cell.tag=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
+    int rowid=info.uniqueId;
     
-    
-    int rowid=[[[self.arrPaymentInfo objectAtIndex:indexPath.row] objectAtIndex:0] intValue];
-    
-   
-  
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER){
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
     }
@@ -172,7 +167,7 @@ else{
         {
             UITableViewCell* uncheckCell = [tableView
                                             cellForRowAtIndexPath:self.checkedIndexPath];
-            uncheckCell.accessoryView=NO;
+            uncheckCell.accessoryView=nil;
         }
     if([self.checkedIndexPath isEqual:indexPath])
     {
@@ -213,7 +208,7 @@ else{
     }
     else if ([amex evaluateWithObject:number])
     {
-        type=@"amex";
+        type=@"americanexpress";
     }
     else{
         type=@"none";
@@ -252,13 +247,8 @@ else{
 }
 -(void)loadData{
     // Form the query.
-    NSString *query = @"select * from payment";
-    
-    // Get the results.
-    if (self.arrPaymentInfo != nil) {
-        self.arrPaymentInfo = nil;
-    }
-    self.arrPaymentInfo = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
+    snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
+
     
     // Reload the table view.
     [self.tableView1 reloadData];

@@ -2,14 +2,14 @@
 //  AddNewCardForm.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/22/14.
+//  Created by Akshakumar Maldhure on 12/22/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
 #import "AddNewCardForm.h"
 #import "PaymentOverview.h"
 #import "SnoopedProduct.h"
-#import "DBManager.h"
+#import "SnachItDB.h"
 #import "global.h"
 #import "RegexValidator.h"
 
@@ -17,7 +17,7 @@
 NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
 @interface AddNewCardForm()<UIPickerViewDataSource,UIPickerViewDelegate>
-@property (nonatomic,strong) DBManager *dbManager;
+
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
 @end
@@ -27,7 +27,7 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     UIPickerView *statePicker,*datePicker;
     NSDateComponents *currentDateComponents;
     CGFloat viewSize;
-    CGFloat viewCenter;
+  
     NSMutableArray *monthsArray,*yearsArray;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
@@ -43,7 +43,7 @@ CGFloat animatedDistance;
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+  
     // Set the Label text with the selected recipe
     [self initializePickers];
 
@@ -52,7 +52,7 @@ CGFloat animatedDistance;
 -(void)viewDidAppear:(BOOL)animated{
     [self initializeView];
     viewSize=self.view.frame.size.width;
-    viewCenter=self.view.center.x-50;
+    CURRENTDB=SnachItDBFile;
     [self setupAlerts];
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -98,7 +98,8 @@ CGFloat animatedDistance;
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
+   
+    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -128,7 +129,7 @@ CGFloat animatedDistance;
     self.zipTextField.keyboardType=UIKeyboardTypeNumberPad;
     self.streetTextField.keyboardType=UIKeyboardTypeAlphabet;
     self.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
-
+    self.fullNameTextField.keyboardType=UIKeyboardTypeAlphabet;
     
     [self.cardNumber addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingChanged];
 
@@ -147,7 +148,7 @@ CGFloat animatedDistance;
 }
 
 -(void)back:(id)sender{
-    [self.navigationController popViewControllerAnimated:YES];
+    [self performSegueWithIdentifier:@"backtoPaymentOverview" sender:nil];
     
 }
 -(void)detectCardType{
@@ -186,24 +187,22 @@ CGFloat animatedDistance;
 }
 - (IBAction)doneBtn:(id)sender {
     if([self.cardNumber validate]&[self.expDateTxtField validate]&[self.cvvTextField validate]&[self.fullNameTextField validate] &[self.streetTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
-        NSString *query = [NSString stringWithFormat:@"insert into payment values(null, '%@', '%@', '%@' ,'%@','%@','%@','%@','%@','%@','%@')",[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ],self.cardNumber.text,self.expDateTxtField.text,self.cvvTextField.text, self.fullNameTextField.text, self.streetTextField.text, self.cityTextField.text,self.stateTextField.text,self.zipTextField.text,self.phoneTextField.text];
+     
         
+        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text];
         // Execute the query.
-        
-        [self.dbManager executeQuery:query];
+    
         
         // If the query was successfully executed then pop the view controller.
-        if (self.dbManager.affectedRows != 0) {
+        if ([info objectForKey:@"status"] != 0) {
          
-            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
-            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)self.dbManager.lastInsertedRowID;
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
             // Pop the view controller.
             [self performSegueWithIdentifier:BACKTOPAYMENT_OVERVIEW_SEAGUE sender:self];
 
         }
         else{
-            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=0;
-            NSLog(@"Could not execute the query.");
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
         }
     }
     
@@ -402,10 +401,11 @@ CGFloat animatedDistance;
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
 {
     if(pickerView.tag==1){
-        UILabel *statenamelbl = [[UILabel alloc] initWithFrame:CGRectMake(viewCenter+20, 0, 180, 32)];
+        UILabel *statenamelbl = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)];
         statenamelbl.text = [self.states objectAtIndex:row];
         
         statenamelbl.backgroundColor = [UIColor clearColor];
+         statenamelbl.textAlignment=NSTextAlignmentCenter;
         
         UIView *tmpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)] ;
         

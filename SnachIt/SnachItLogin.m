@@ -2,7 +2,7 @@
 //  SnachItLogin.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/24/14.
+//  Created by Akshakumar Maldhure on 12/24/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 #import "SnachItLogin.h"
@@ -16,6 +16,7 @@
 #import "TwitterViewController.h"
 #import "UserProfile.h"
 
+
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 
 NSString *const SIGNINSEGUE=@"signInSegue";
@@ -24,6 +25,10 @@ NSString *const USER_ID=@"userId";
 UIView *backView;
 @interface SnachItLogin()<GPPSignInDelegate>
 
+@property (nonatomic, strong)	NSDictionary	*contents;
+@property (nonatomic, strong)	id				currentPopTipViewTarget;
+
+@property (nonatomic, strong)	NSMutableArray	*visiblePopTipViews;
 @end
 
 @implementation SnachItLogin
@@ -43,8 +48,18 @@ CGFloat animatedDistance;
 {
     [self setViewLookAndFeel];
     [super viewDidLoad];
+    self.visiblePopTipViews = [NSMutableArray array];
+    
+    self.contents = [NSDictionary dictionaryWithObjectsAndKeys:
+                     // Rounded rect buttons
+                     @"Password must be atleast 6 characters", [NSNumber numberWithInt:13],
+                     nil];
    
-}
+    
+    // Array of (backgroundColor, textColor) pairs.
+    // NSNull for either means leave as default.
+    // A color scheme will be picked randomly per CMPopTipView.
+   }
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -265,7 +280,7 @@ CGFloat animatedDistance;
         {
             //[global showAllertMsg:@"Sign in success"];
             NSDictionary *userprofile=[response objectForKey:@"userProfile"];
-            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"]];
+            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue]];
             NSLog(@"UserProfile:%@",userprofile);
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:ssoUsing forKey:SSOUSING];
@@ -467,18 +482,123 @@ CGFloat animatedDistance;
     [self presentViewController:startscreen animated:NO completion:nil];
 }
 
--(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate{
+- (IBAction)passwordHelpBtn:(id)sender {
+    [self dismissAllPopTipViews];
+    
+    if (sender == self.currentPopTipViewTarget) {
+        // Dismiss the popTipView and that is all
+        self.currentPopTipViewTarget = nil;
+    }
+    else {
+        NSString *contentMessage = nil;
+        UIView *contentView = nil;
+        NSNumber *key = [NSNumber numberWithInteger:[(UIView *)sender tag]];
+        id content = [self.contents objectForKey:key];
+        if ([content isKindOfClass:[UIView class]]) {
+            contentView = content;
+        }
+        else if ([content isKindOfClass:[NSString class]]) {
+            contentMessage = content;
+        }
+    
+        UIColor *backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
+        UIColor *textColor = [UIColor colorWithRed:0.882 green:0.643 blue:0.788 alpha:1] ;
+        
+       
+        
+        CMPopTipView *popTipView;
+        if (contentView) {
+            popTipView = [[CMPopTipView alloc] initWithCustomView:contentView];
+        }
+        else {
+            popTipView = [[CMPopTipView alloc] initWithMessage:contentMessage];
+        }
+        popTipView.delegate = self;
+        
+        /* Some options to try.
+         */
+        //popTipView.disableTapToDismiss = YES;
+        //popTipView.preferredPointDirection = PointDirectionUp;
+        //popTipView.hasGradientBackground = NO;
+        //popTipView.cornerRadius = 2.0;
+        //popTipView.sidePadding = 30.0f;
+        //popTipView.topMargin = 20.0f;
+        //popTipView.pointerSize = 50.0f;
+        popTipView.hasShadow = NO;
+        popTipView.borderWidth=0;
+          popTipView.textFont=[UIFont fontWithName:@"OpenSans" size:10];
+        if (backgroundColor && ![backgroundColor isEqual:[NSNull null]]) {
+            popTipView.backgroundColor = backgroundColor;
+        }
+        if (textColor && ![textColor isEqual:[NSNull null]]) {
+            popTipView.textColor = textColor;
+          
+        }
+        
+        popTipView.animation =1.5;
+        popTipView.has3DStyle = YES;
+        
+        popTipView.dismissTapAnywhere = YES;
+        [popTipView autoDismissAnimated:YES atTimeInterval:2.0];
+        
+        if ([sender isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)sender;
+            [popTipView presentPointingAtView:button inView:self.view animated:YES];
+        }
+       
+        [self.visiblePopTipViews addObject:popTipView];
+        self.currentPopTipViewTarget = sender;
+    }
+
+    
+}
+
+-(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime{
     
     UserProfile *profile=[[UserProfile
-                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ec2maschineIP,userId]]];
+                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:@""] withSnoopTime:snoopTime];
     
     
 }
 
+- (void)dismissAllPopTipViews
+{
+    while ([self.visiblePopTipViews count] > 0) {
+        CMPopTipView *popTipView = [self.visiblePopTipViews objectAtIndex:0];
+        [popTipView dismissAnimated:YES];
+        [self.visiblePopTipViews removeObjectAtIndex:0];
+    }
+}
 
 
 
+#pragma mark - CMPopTipViewDelegate methods
 
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    [self.visiblePopTipViews removeObject:popTipView];
+    self.currentPopTipViewTarget = nil;
+}
+
+
+#pragma mark - UIViewController methods
+
+- (void)willAnimateRotationToInterfaceOrientation:(__unused UIInterfaceOrientation)toInterfaceOrientation duration:(__unused NSTimeInterval)duration
+{
+    for (CMPopTipView *popTipView in self.visiblePopTipViews) {
+        id targetObject = popTipView.targetObject;
+        [popTipView dismissAnimated:NO];
+        
+        if ([targetObject isKindOfClass:[UIButton class]]) {
+            UIButton *button = (UIButton *)targetObject;
+            [popTipView presentPointingAtView:button inView:self.view animated:NO];
+        }
+        else {
+            UIBarButtonItem *barButtonItem = (UIBarButtonItem *)targetObject;
+            [popTipView presentPointingAtBarButtonItem:barButtonItem animated:NO];
+        }
+    }
+}
 
 
 

@@ -21,6 +21,8 @@
     OAToken* accessToken;
     OAConsumer* consumer;
     IBOutlet UIButton *closeButton;
+    
+    
 }
 @property(nonatomic, assign) ViewController* parentVC;
 @property (retain, nonatomic) IBOutlet UIImageView *iconSignInButton;
@@ -37,8 +39,9 @@
 @property (retain, nonatomic) IBOutlet UIActivityIndicatorView *activity;
 @property (retain, nonatomic) IBOutlet UIButton *logoutButton;
 @property (retain, nonatomic) IBOutlet UIImageView *iconLogoutButton;
-
-
+@property (nonatomic,strong) NSString *sharingMsg;
+@property (nonatomic,strong) NSString *userid;
+@property (nonatomic,strong) NSString *snachid;
 
 - (IBAction)closeButtonPressed:(id)sender;
 

@@ -2,7 +2,7 @@
 //  AccountSetting.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/13/14.
+//  Created by Akshay Maldhure on 12/13/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -24,7 +24,7 @@
 #define REGEX_EMAIL @"[A-Z0-9a-z._%+-]{3,}+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
 #define REGEX_PASSWORD_LIMIT @"^.{6,20}$"
 #define REGEX_PASSWORD @"[A-Za-z0-9]{6,20}"
-#define REGEX_PHONE_DEFAULT @"[789][0-9]{9}"
+#define REGEX_PHONE_DEFAULT @"([1-9][0-9]{9})||([1-9][0-9]{11})"
 @interface AccountSetting()<UITextFieldDelegate>
 
 @end
@@ -86,7 +86,7 @@ CGFloat animatedDistance;
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 645;
+    return 640;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -101,8 +101,6 @@ CGFloat animatedDistance;
     [cell.profilePicImageView setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
     
     //initializing the textfields
-  
-    
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
@@ -183,7 +181,6 @@ CGFloat animatedDistance;
     signOut.isRounded = NO;
     signOut.on=NO;
     [cell.contentView addSubview:signOut];
-    
     
     
     return cell;
@@ -294,7 +291,7 @@ CGFloat animatedDistance;
         NSLog(@"UPDATE PROFILE RESPONSE:%@",response);
         if([[response objectForKey:@"success"] isEqual:@"true"]){
             SnachItLogin *login=[[SnachItLogin alloc] init];
-            [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"] withDateOfBirth:[response valueForKey:@"DateOfBirth"] withJoiningDate:[response valueForKey:@"JoiningDate"]];
+            [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"] withDateOfBirth:[response valueForKey:@"DateOfBirth"] withJoiningDate:[response valueForKey:@"JoiningDate"] withSnoopTime:[[response valueForKey:@"SnoopTime"] intValue]];
             status=1;
         }
         else

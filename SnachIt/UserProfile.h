@@ -20,6 +20,7 @@
 @property (nonatomic,strong) NSString *dateOfBirth;
 @property (nonatomic,strong) NSString *joiningDate;
 @property (nonatomic,strong) NSURL *sharingURL;
+@property (nonatomic,assign) int snoopTime;
 extern NSString * twUserId;
 extern NSString * twFullname;
 extern NSString * twProfilePic;
@@ -28,7 +29,7 @@ This instance will be used to access currently logged in user info*/
 + (UserProfile *)sharedInstance;
 
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL*)sharingURL;
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL*)sharingURL withSnoopTime:(int)snoopTime;
 
 -(NSString*)getUserId;
 @end

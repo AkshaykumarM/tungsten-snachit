@@ -2,7 +2,7 @@
 //  ScanCard.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/26/14.
+//  Created by Akshakumar Maldhure on 12/26/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -29,8 +29,13 @@ int cloaseStatus;
     if(cloaseStatus==0){
     [CardIOUtilities preload];
     CardIOPaymentViewController *scanViewController = [[CardIOPaymentViewController alloc] initWithPaymentDelegate:self];
-    scanViewController.modalPresentationStyle = UIModalPresentationFormSheet;
-    [self presentViewController:scanViewController animated:YES completion:nil];
+        scanViewController.hideCardIOLogo=true;
+        
+         scanViewController.view.frame = self.scanView.bounds;
+    [self.scanView addSubview:scanViewController.view];
+    [self addChildViewController:scanViewController];
+    [scanViewController didMoveToParentViewController:self];
+    
     }
     else{
          [self dismissViewControllerAnimated:true completion:nil];

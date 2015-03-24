@@ -1,8 +1,8 @@
-//
+                                                                                   //
 //  SnatchFeed.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/11/14.
+//  Created by Akshay Maldhure on 12/11/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 #import "SnachitStartScreen.h"
@@ -19,13 +19,13 @@
 #import "SnachItLogin.h"
 #import "Product.h"
 #import "Common.h"
-#import "DBManager.h"
+#import "SnachItDB.h"
 
 @interface SnatchFeed(){
     NSMutableArray *Products;
 }
 @property(nonatomic,strong) NSArray *productslist;
-@property (nonatomic,strong) DBManager *dbManager;
+
 
 @end
 
@@ -104,7 +104,7 @@
 - (void)viewDidLoad {
     
     [super viewDidLoad];
-    
+    CURRENTDB=SnoopTimeDBFile;
     [self setViewLookAndFeel];
     SWRevealViewController *sw=self.revealViewController;
     sw.rearViewRevealWidth=self.view.frame.size.width-60.0f;
@@ -114,7 +114,7 @@
     [self.refreshControl addTarget:self
                             action:@selector(getLatestProducts)
                     forControlEvents:UIControlEventValueChanged];
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snoopTimes.sql"];
+
     
 }
 - (void)getLatestProducts
@@ -143,7 +143,7 @@
                     product.snachId =[prodDic objectForKey:PRODUCT_SNACH_ID];
                     product.productDescription =[prodDic objectForKey:PRODUCT_DESCRIPTION];
                     product.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
-                    product.snooptime=[self getSnachTime:[product.snachId intValue]];
+                    product.snooptime=[[SnachItDB database] getSnachTime:[product.snachId intValue] UserId:user.userID SnoopTime:user.snoopTime];
                     if(product.snooptime>0){
                     [Products addObject:product];
                     }
@@ -166,33 +166,7 @@
     }
 }
 
--(int)getSnachTime:(int)snachid{
-    // Form the query.
-    NSString *query = [NSString stringWithFormat:@"select snachtime from snachtimes where snachid=%d and userid=%@",snachid,USERID];
-   
-    NSArray *snachtime;
-    int time=0;
-    // Get the results.
-    if (snachtime != nil) {
-        snachtime = nil;
-    }
-    snachtime = [[NSArray alloc] initWithArray:[self.dbManager loadDataFromDB:query]];
-    
-    if (snachtime!=nil) {
-        @try{
-            time=[[[snachtime objectAtIndex:0] objectAtIndex:0] integerValue];
-        }
-        @catch(NSException *e){
-            
-            time=30;
-        }
-    }
-    else{
-        time=30;
-    }
-     NSLog(@"Query in snach feed:%@  %@  %d",query,snachtime,time);
-    return time;
-}
+
 
 - (NSArray *)fetchData:(NSData *)response
 {
@@ -235,25 +209,10 @@
         
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
         return 1;
-        
-    } else {
-        
-        // Display a message when the table is empty
-        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-        
-        messageLabel.text = @"Please pull down to fill the snachs";
-        messageLabel.textColor = [UIColor blackColor];
-        messageLabel.numberOfLines = 0;
-        messageLabel.textAlignment = NSTextAlignmentCenter;
-        messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
-        [messageLabel sizeToFit];
-        
-        self.tableView.backgroundView = messageLabel;
-        
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        
     }
-    
+    else{
+            self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    }
     return 0;
 }
 -(float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -294,7 +253,7 @@
    
     [self getLatestProducts];
     [self requestContactBookAccess];
-    viewSize = self.view.frame.size.width-93.0f;//for setting product scrollview size
+    viewSize = self.view.frame.size.width-93;//for setting product scrollview size
   
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -317,10 +276,25 @@
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (Products) {
-        return [Products count];
+    int count=[Products count];
+    UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+    messageLabel.textColor = [UIColor blackColor];
+    messageLabel.numberOfLines = 0;
+    messageLabel.textAlignment = NSTextAlignmentCenter;
+    messageLabel.font = [UIFont fontWithName:@"OpenSans-Regular" size:20];
+    [messageLabel sizeToFit];
+
+    if(count<=0)
+    {
+        messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
+        messageLabel.text = @"Pull down to check for new snachs";
+        self.tableView.backgroundView = messageLabel;
+
     }
-    return 0;
+    else{
+        self.tableView.backgroundView=nil;
+    }
+    return count;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -366,12 +340,12 @@
     NSLog(@"Cleared User Defaults");
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     NSString *documentsDirectory = [paths objectAtIndex:0];
-    NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:@"snachit.sql"];
+    NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:SnachItDBFile];
     
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
     }
-    NSLog(@"Cleared Database");
+       NSLog(@"Cleared Database");
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -390,7 +364,7 @@
     }
     
     Product *prod = [Products objectAtIndex:indexPath.row];
-    if(prod.snooptime>0){
+   if(prod.snooptime>0){
       cell.tag = indexPath.row;
     //setting up product image carousel
     cell.productImagesContainer.scrollEnabled = YES;
@@ -449,22 +423,22 @@
             }
         }
     
-   
     NSInteger productImages=[prod.productImages count];
     for(int index=0; index < productImages; index++)
     {
         CGFloat  xOffset = index*viewSize;
         UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize, cell.productImagesContainer.frame.size.height)];
-       
+        
         [img setImageWithURL:[NSURL URLWithString:prod.productImages[index]] placeholderImage:nil];
         img.userInteractionEnabled = YES;
         [img setContentMode:UIViewContentModeScaleAspectFit];
-
+        
         [cell.productImagesContainer addSubview:img];
-     
+        
         
     }
     cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages,cell.productImagesContainer.frame.size.height);
+    
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];
     cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font

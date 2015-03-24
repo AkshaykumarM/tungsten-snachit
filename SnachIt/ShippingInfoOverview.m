@@ -2,7 +2,7 @@
 //  ShippingInfoOverview.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/27/14.
+//  Created by Akshakumar Maldhure on 12/27/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -10,11 +10,11 @@
 #import "ShippingInfoAddCell.h"
 #import "UserProfile.h"
 #import "global.h"
-#import "DBManager.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RegexValidator.h"
+#import "SnachItDB.h"
 @interface ShippingInfoOverview()<UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate>
-@property (nonatomic, strong) DBManager *dbManager;
+
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
 @end
@@ -38,7 +38,7 @@ CGFloat animatedDistance;
     // Set the Label text with the selected recipe
 
     
-    self.dbManager = [[DBManager alloc] initWithDatabaseFilename:@"snachit.sql"];
+      CURRENTDB=SnachItDBFile;
     statepicker = [[UIPickerView alloc] init];
     statepicker.dataSource = self;
     statepicker.delegate = self;
@@ -53,7 +53,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     viewCenter=self.view.center.x-50;
     [self setupAlerts];
-
+ 
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -107,7 +107,8 @@ CGFloat animatedDistance;
     cell.postalCodeTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.addressTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
-    
+    cell.firstNameTextField.keyboardType=UIKeyboardTypeAlphabet;
+    cell.lastNameTextField.keyboardType=UIKeyboardTypeAlphabet;
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
         cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
@@ -179,7 +180,7 @@ CGFloat animatedDistance;
 
 
 - (IBAction)backBtn:(id)sender {
-    NSLog(@"back");
+    
     [self dismissViewControllerAnimated:NO completion:nil];
 }
 
@@ -267,18 +268,14 @@ CGFloat animatedDistance;
     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
     if([cell.firstNameTextField validate] &[cell.lastNameTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.addressTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
-        
-        
-        NSString *query = [NSString stringWithFormat:@"insert into address values(null, '%@', '%@', '%@' ,'%@','%@','%@')", [NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text], cell.addressTextField.text, cell.cityTextField.text,cell.stateTextField.text,cell.postalCodeTextField.text,cell.phoneTextField.text];
-        
-        // Execute the query.
-        
-        [self.dbManager executeQuery:query];
-        
+    
+        //saving address into database
+        NSDictionary *info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text];
+
+            
         // If the query was successfully executed then pop the view controller.
-        if (self.dbManager.affectedRows != 0) {
-            NSLog(@"Query was executed successfully. Affected rows = %d", self.dbManager.affectedRows);
-            RECENTLY_ADDED_SHIPPING_INFO_TRACKER=(int)self.dbManager.lastInsertedRowID;
+        if ( [info valueForKey:@"status"]!= 0) {
+            RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             // Pop the view controller.
             [self dismissViewControllerAnimated:true completion:nil];
         }

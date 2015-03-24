@@ -2,7 +2,7 @@
 //  global.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/2/15.
+//  Created by Akshakumar Maldhure on 1/2/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -23,9 +23,11 @@ bool isAllreadyTried=FALSE;
  NSString *const DEFAULT_BACK_IMG=@"DefaultBackImg";
  NSString *const DEFAULT_BILLING=@"DefaultBilling";
  NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
+NSInteger const DEFAULT_SNOOPTIME=30;
+NSString * const SnachItDBFile=@"snachit.sql";
+NSString * const SnoopTimeDBFile=@"snoopTimes.sql";
 
-
-
+NSString *CURRENTDB;
 NSString *screenName;
 NSString *ssousing;
 NSString *APNSTOKEN;
@@ -39,6 +41,8 @@ int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
 @implementation global
 float  RADIOUS=37.5f;//to make profile pic circular
 float BORDERWIDTH=5.0f;
+
+
 /*
  This method will make post request and will return the response
  */
@@ -77,7 +81,7 @@ float BORDERWIDTH=5.0f;
 }
 +(void)showAllertForInvalidCredentials{
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert!"
-                                                    message:@"Please, enter valid email or password."
+                                                    message:@"Please, enter valid credentials."
                                                    delegate:self
                                           cancelButtonTitle:@"OK"
                                           otherButtonTitles:nil];

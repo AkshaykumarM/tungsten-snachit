@@ -2,7 +2,7 @@
 //  Order.h
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/24/15.
+//  Created by Akshay Maldhure on 1/24/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -22,10 +22,10 @@
 @property (nonatomic,strong) NSString *orderDate;
 @property (nonatomic,strong) NSString *deliveryDate;
 @property (nonatomic,strong) NSString *freeshipping;
-
+@property (nonatomic,strong) NSString *st;
 +(Order*)sharedInstance;
 
--(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingCost:(NSString*)shippingCost withFreeShipping:(NSString*)freeShipping withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate;
+-(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingCost:(NSString*)shippingCost withFreeShipping:(NSString*)freeShipping withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate withFixedSt:(NSString*)fixedSt;
 
 -(NSDictionary*)getOrderDetails;
 @end

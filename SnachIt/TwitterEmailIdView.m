@@ -2,7 +2,7 @@
 //  TwitterEmailIdView.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 2/6/15.
+//  Created by Akshay Maldhure on 2/6/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -44,7 +44,7 @@ CGFloat animatedDistance;
             int signinStatus=[signin performSignIn:self.emailIdTextField.text Password:twUserId SSOUsing:@"TW"];
             if(signinStatus==1)
             {
-                [self.presentingViewController.presentingViewController.presentingViewController.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+              [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
             }
             else{
             UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert"

@@ -2,7 +2,7 @@
 //  SnachitSignup.m
 //  SnatchIt
 //
-//  Created by Jayesh Kitukale on 12/26/14.
+//  Created by Akshakumar Maldhure on 12/26/14.
 //  Copyright (c) 2014 Tungsten. All rights reserved.
 //
 
@@ -146,13 +146,10 @@ CGFloat animatedDistance;
                                  initWithNibName:@"LoginScreen" bundle:nil];
                 [self presentViewController:startscreen animated:YES completion:nil];
             }
-            else{
-                [global showAllertForAllreadySignedUp];
-
-            }
+            
         }
         else{
-            [global showAllertMsg:@"Enter valid Email id and Password must be greater than 6 digits."];
+            [global showAllertMsg:@"Enter valid email id and password"];
         }
         
     }else{
@@ -382,9 +379,16 @@ CGFloat animatedDistance;
     [signIn authenticate];
 }
 - (IBAction)loginHereBtn:(id)sender {
+    
+    CATransition* transition = [CATransition animation];
+    transition.duration = 0.35;
+    transition.type = kCATransitionPush;
+    transition.subtype = kCATransitionFromRight;
+    [self.view.window.layer addAnimation:transition forKey:nil];
+
     SnachItLogin *startscreen = [[SnachItLogin alloc]
                                   initWithNibName:@"LoginScreen" bundle:nil];
-    [self presentViewController:startscreen animated:YES completion:nil];
+    [self presentViewController:startscreen animated:NO completion:nil];
 }
 
 
@@ -409,18 +413,21 @@ CGFloat animatedDistance;
         NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
         NSLog(@"RESPONSE:%@",response );
                    
-        if([[response valueForKey:@"success"] isEqual:@"true"]|| [[response valueForKey:@"error_code"] integerValue]==2)
+        if([[response valueForKey:@"success"] isEqual:@"true"])
         {
              //[global showAllertMsg:@"Signed up successfully"];
             status=1;
         }
-        else{
-             [global showAllertMsg:@"Opps! something went wrong, while sign you in"];
-            status=0;
+        if([[response valueForKey:@"error_code"] integerValue]==2){
+            
+            status=1;
+        }
+        if([[response valueForKey:@"error_code"] integerValue]==3){
+            [global showAllertMsg:[response valueForKey:@"error_message"]];
+            status=2;
         }
     }
     else{
-        
         [global showAllertMsg:@"Server not responding"];
         status=0;
     }

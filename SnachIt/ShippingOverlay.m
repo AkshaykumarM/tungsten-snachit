@@ -2,7 +2,7 @@
 //  ShippingOverlay.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/22/15.
+//  Created by Akshay Maldhure on 1/22/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -41,7 +41,9 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.text=product.productDescription;
+
+    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+
     //hiding the backbutton from top bar
     [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
@@ -62,7 +64,10 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     
     cell.estDeliveryLbl.text =order.deliveryDate;
     cell.speedLbl.text=[NSString stringWithFormat:@"%@ day delivery",order.speed];
+    if(![order.shippingCost floatValue]<=0.0f){
     cell.priceLbl.text=[NSString stringWithFormat:@"$%.2f",[order.shippingCost floatValue]];
+    }else
+        cell.priceLbl.text=[NSString stringWithFormat:@"%@",order.freeshipping];
     return cell;
     
 }

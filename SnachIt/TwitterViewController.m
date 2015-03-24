@@ -2,7 +2,7 @@
 //  TwitterViewController.m
 //  SnachIt
 //
-//  Created by Jayesh Kitukale on 1/12/15.
+//  Created by Akshakumar Maldhure on 1/12/15.
 //  Copyright (c) 2015 Tungsten. All rights reserved.
 //
 
@@ -34,17 +34,17 @@ NSString *callback = @"http://codegerms.com/callback";
 {
     [super viewDidLoad];
     [self.twitterLoginViewLoader startAnimating];
-    consumer = [[OAConsumer alloc] initWithKey:client_id secret:secret realm:nil];
+    consumer = [[OAConsumerTW alloc] initWithKey:client_id secret:secret realm:nil];
     NSURL* requestTokenUrl = [NSURL URLWithString:@"https://api.twitter.com/oauth/request_token"];
-    OAMutableURLRequest* requestTokenRequest = [[OAMutableURLRequest alloc] initWithURL:requestTokenUrl
+    OAMutableURLRequestTW* requestTokenRequest = [[OAMutableURLRequestTW alloc] initWithURL:requestTokenUrl
                                                                                consumer:consumer
                                                                                   token:nil
                                                                                   realm:nil
                                                                       signatureProvider:nil];
-    OARequestParameter* callbackParam = [[OARequestParameter alloc] initWithName:@"oauth_callback" value:callback];
+    OARequestParameterTW* callbackParam = [[OARequestParameterTW alloc] initWithName:@"oauth_callback" value:callback];
     [requestTokenRequest setHTTPMethod:@"POST"];
     [requestTokenRequest setParameters:[NSArray arrayWithObject:callbackParam]];
-    OADataFetcher* dataFetcher = [[OADataFetcher alloc] init];
+    OADataFetcherTW* dataFetcher = [[OADataFetcherTW alloc] init];
     [dataFetcher fetchDataWithRequest:requestTokenRequest
                              delegate:self
                     didFinishSelector:@selector(didReceiveRequestToken:data:)
@@ -57,26 +57,26 @@ NSString *callback = @"http://codegerms.com/callback";
     // Dispose of any resources that can be recreated.
 }
 
-- (void)didReceiveRequestToken:(OAServiceTicket*)ticket data:(NSData*)data {
+- (void)didReceiveRequestToken:(OAServiceTicketTW*)ticket data:(NSData*)data {
     NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    requestToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
+    requestToken = [[OATokenTW alloc] initWithHTTPResponseBody:httpBody];
     
     NSURL* authorizeUrl = [NSURL URLWithString:@"https://api.twitter.com/oauth/authorize"];
-    OAMutableURLRequest* authorizeRequest = [[OAMutableURLRequest alloc] initWithURL:authorizeUrl
+    OAMutableURLRequestTW* authorizeRequest = [[OAMutableURLRequestTW alloc] initWithURL:authorizeUrl
                                                                             consumer:nil
                                                                                token:nil
                                                                                realm:nil
                                                                    signatureProvider:nil];
     NSString* oauthToken = requestToken.key;
-    OARequestParameter* oauthTokenParam = [[OARequestParameter alloc] initWithName:@"oauth_token" value:oauthToken];
+    OARequestParameterTW* oauthTokenParam = [[OARequestParameterTW alloc] initWithName:@"oauth_token" value:oauthToken];
     [authorizeRequest setParameters:[NSArray arrayWithObject:oauthTokenParam]];
     
     [webview loadRequest:authorizeRequest];
 }
 
-- (void)didReceiveAccessToken:(OAServiceTicket*)ticket data:(NSData*)data {
+- (void)didReceiveAccessToken:(OAServiceTicketTW*)ticket data:(NSData*)data {
     NSString* httpBody = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    accessToken = [[OAToken alloc] initWithHTTPResponseBody:httpBody];
+    accessToken = [[OATokenTW alloc] initWithHTTPResponseBody:httpBody];
     // WebServiceSocket *connection = [[WebServiceSocket alloc] init];
     //  connection.delegate = self;
      // [connection fetch:1 withPostdata:pdata withGetData:@"" isSilent:NO];
@@ -86,14 +86,14 @@ NSString *callback = @"http://codegerms.com/callback";
     
     if (accessToken) {
         NSURL* userdatarequestu = [NSURL URLWithString:@"https://api.twitter.com/1.1/account/verify_credentials.json"];
-        OAMutableURLRequest* requestTokenRequest = [[OAMutableURLRequest alloc] initWithURL:userdatarequestu
+        OAMutableURLRequestTW* requestTokenRequest = [[OAMutableURLRequestTW alloc] initWithURL:userdatarequestu
                                                                                    consumer:consumer
                                                                                       token:accessToken
                                                                                       realm:nil
                                                                           signatureProvider:nil];
         
         [requestTokenRequest setHTTPMethod:@"GET"];
-        OADataFetcher* dataFetcher = [[OADataFetcher alloc] init];
+        OADataFetcherTW* dataFetcher = [[OADataFetcherTW alloc] init];
         [dataFetcher fetchDataWithRequest:requestTokenRequest
                                  delegate:self
                         didFinishSelector:@selector(didReceiveuserdata:data:)
@@ -106,7 +106,7 @@ NSString *callback = @"http://codegerms.com/callback";
 }
 
 
-- (void)didReceiveuserdata:(OAServiceTicket*)ticket data:(NSData*)data {
+- (void)didReceiveuserdata:(OAServiceTicketTW*)ticket data:(NSData*)data {
     
     
     NSError *error;
@@ -128,12 +128,12 @@ NSString *callback = @"http://codegerms.com/callback";
 
 }
 
-- (void)didFailOAuth:(OAServiceTicket*)ticket error:(NSError*)error {
+- (void)didFailOAuth:(OAServiceTicketTW*)ticket error:(NSError*)error {
     // ERROR!
 }
 
 
-- (void)didFailOdatah:(OAServiceTicket*)ticket error:(NSError*)error {
+- (void)didFailOdatah:(OAServiceTicketTW*)ticket error:(NSError*)error {
     // ERROR!
 }
 
@@ -164,11 +164,11 @@ NSString *callback = @"http://codegerms.com/callback";
         
         if (verifier) {
             NSURL* accessTokenUrl = [NSURL URLWithString:@"https://api.twitter.com/oauth/access_token"];
-            OAMutableURLRequest* accessTokenRequest = [[OAMutableURLRequest alloc] initWithURL:accessTokenUrl consumer:consumer token:requestToken realm:nil signatureProvider:nil];
-            OARequestParameter* verifierParam = [[OARequestParameter alloc] initWithName:@"oauth_verifier" value:verifier];
+            OAMutableURLRequestTW* accessTokenRequest = [[OAMutableURLRequestTW alloc] initWithURL:accessTokenUrl consumer:consumer token:requestToken realm:nil signatureProvider:nil];
+            OARequestParameterTW* verifierParam = [[OARequestParameterTW alloc] initWithName:@"oauth_verifier" value:verifier];
             [accessTokenRequest setHTTPMethod:@"POST"];
             [accessTokenRequest setParameters:[NSArray arrayWithObject:verifierParam]];
-            OADataFetcher* dataFetcher = [[OADataFetcher alloc] init];
+            OADataFetcherTW* dataFetcher = [[OADataFetcherTW alloc] init];
             [dataFetcher fetchDataWithRequest:accessTokenRequest
                                      delegate:self
                             didFinishSelector:@selector(didReceiveAccessToken:data:)
