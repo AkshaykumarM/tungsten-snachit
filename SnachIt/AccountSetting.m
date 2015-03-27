@@ -60,12 +60,9 @@ CGFloat animatedDistance;
     
 }
 -(void)viewDidAppear:(BOOL)animated{
-    self.navigationBar =  [[self navigationController] navigationBar];
     
     //    [self.view addSubview:navbar];
-    CGRect frame = [self.navigationBar frame];
-    frame.size.height = 50.0f;
-    [self.navigationBar setFrame:frame];
+    
     [self setupAlerts];
     
     
@@ -190,15 +187,18 @@ CGFloat animatedDistance;
    [[self.tableView superview] endEditing:YES];
 }
 -(void)setViewLookAndFeel{
-    
     // Set the gesture
-    [self.backButton setTarget:self.revealViewController];
-    [self.backButton setAction:@selector(revealToggle:)];
+//    [self.backButton setTarget:self.revealViewController];
+//    [self.backButton setAction:@selector(revealToggle:)];
+//    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    
-    
-    
-    
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
 }
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{

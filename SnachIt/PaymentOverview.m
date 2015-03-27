@@ -26,21 +26,22 @@ NSString *const STPSEAGUE=@"backtoSTP";
     SnoopingUserDetails *userDetails;
     NSUserDefaults *defaults;
     NSArray *snachItPaymentInfo;
+    int i;
 }
-@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath;
+@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath,lastchecked;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-    CURRENTDB=SnachItDBFile;
-    [self loadData];
     defaults=[NSUserDefaults standardUserDefaults];
    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
-    [self refreshView];
+    [super viewDidAppear:YES];
+    [self loadData];
+    i=0;
     
 }
 
@@ -48,12 +49,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [self initializeView];
     
 }
--(void)refreshView{
-    
-    [self viewDidLoad];
-    [self viewWillAppear:NO]; // If viewWillAppear also contains code
-    
-}
+
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"payment";
     product=[SnoopedProduct sharedInstance];
@@ -124,10 +120,19 @@ NSString *const STPSEAGUE=@"backtoSTP";
     int rowid=info.uniqueId;
     
     //for auto selection
-    if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ||rowid==[[defaults valueForKey:DEFAULT_BILLING] intValue]){
-          cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
-       
+    if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ){
+        @try{
+            if(i==0){
+        [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+        self.checkedIndexPath=indexPath;
         userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName:info.name withPaymentStreetName:info.street  withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:[NSString stringWithFormat:@"%d",info.zip] withPaymentPhoneNumber: info.phone];
+                i++;
+            }
+        }
+        @catch(NSException *e){
+            
+        }
+        
     }else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
     cell.accessoryView=nil;
@@ -138,39 +143,46 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
     UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
     tmp.accessoryView=nil;
-    self.checkedIndexPath=nil;
+  
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
         uncheckCell.accessoryView=nil;
-        
+         userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:nil withPaymentCardNumber:nil withpaymentCardExpDate:nil withPaymentCardCvv:nil withPaymentFullName:nil withPaymentStreetName:nil withPaymentCity:nil withPaymentState:nil withPaymentZipCode:nil withPaymentPhoneNumber:nil];
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
         self.checkedIndexPath = nil;
-        
+          userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:nil withPaymentCardNumber:nil withpaymentCardExpDate:nil withPaymentCardCvv:nil withPaymentFullName:nil withPaymentStreetName:nil withPaymentCity:nil withPaymentState:nil withPaymentZipCode:nil withPaymentPhoneNumber:nil];
     }
     else
     {
-       
-
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
-        self.checkedIndexPath = indexPath;
+        checkedIndexPath=indexPath;
         SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
-        
+        // initializing address details
         userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName: info.name withPaymentStreetName:info.street withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:[NSString stringWithFormat:@"%d",info.zip] withPaymentPhoneNumber:info.phone];
 
-        
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=indexPath.row;
     }
 
-    // initializing address details
-    
-
 }
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+    if (cell.isSelected) {
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+    }
+    else {
+        cell.accessoryView = nil;
+    }
+    
+}
+
 - (void)viewDidUnload
 {
     [super viewDidUnload];
@@ -186,7 +198,8 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(void)loadData{
     // Form the query.
-      snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
+    CURRENTDB=SnachItDBFile;
+    snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
     
     // Reload the table view.
     [self.paymentTableView reloadData];

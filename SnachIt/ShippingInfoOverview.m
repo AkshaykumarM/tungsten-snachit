@@ -36,7 +36,7 @@ CGFloat animatedDistance;
     [super viewDidLoad];
     
     // Set the Label text with the selected recipe
-
+    [self setViewLookAndFeel];
     
       CURRENTDB=SnachItDBFile;
     statepicker = [[UIPickerView alloc] init];
@@ -55,6 +55,21 @@ CGFloat animatedDistance;
     [self setupAlerts];
  
 }
+
+-(void)setViewLookAndFeel{
+    
+    self.navigationController.navigationBar.topItem.title = @"shipping information";
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self action:@selector(backBtn) forControlEvents:UIControlEventTouchUpInside];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
+    
+}
+
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
@@ -179,9 +194,9 @@ CGFloat animatedDistance;
 }
 
 
-- (IBAction)backBtn:(id)sender {
-    
-    [self dismissViewControllerAnimated:NO completion:nil];
+- (void)backBtn {
+    [self.view resignFirstResponder];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void) getPhoto:(id) sender {
@@ -277,7 +292,8 @@ CGFloat animatedDistance;
         if ( [info valueForKey:@"status"]!= 0) {
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             // Pop the view controller.
-            [self dismissViewControllerAnimated:true completion:nil];
+            [self.view resignFirstResponder];
+            [self.navigationController popViewControllerAnimated:YES];
         }
         else{
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;

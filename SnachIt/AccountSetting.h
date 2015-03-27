@@ -12,7 +12,6 @@
 @interface AccountSetting : UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 
 
-@property (weak, nonatomic) IBOutlet UINavigationBar *navigationBar;
 
 @property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
 

@@ -73,15 +73,15 @@ UIRefreshControl *refreshControl;
     int count=0;
 
         if([subCellId isEqual:HISTORY_INFLIGHT]){
-            count=[myLetestINFSnachs count];
+            count=(int)[myLetestINFSnachs count];
         }
         else if([subCellId isEqual:HISTORY_DELIVERED])
         {
-            count=[myLetestDELSnachs count];
+            count=(int)[myLetestDELSnachs count];
         }
         else if([subCellId isEqual:HISTORY_ALL])
         {
-            count=[myLetestALLSnachs count];
+            count=(int)[myLetestALLSnachs count];
         }
     // Display a message when the table is empty
     if(count<=0){

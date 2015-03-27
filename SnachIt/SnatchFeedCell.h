@@ -18,7 +18,8 @@
 @property (weak, nonatomic) IBOutlet UIButton *freind;
 
 @property (weak, nonatomic) IBOutlet UIScrollView *productImagesContainer;
-@property (weak, nonatomic) IBOutlet UIImageView *snoop;
+@property (weak, nonatomic) IBOutlet UIButton *snoopBtn;
+
 @property (weak, nonatomic) IBOutlet UIButton *friendCount;
 
 @end

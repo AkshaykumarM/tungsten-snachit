@@ -426,8 +426,8 @@
     NSInteger productImages=[prod.productImages count];
     for(int index=0; index < productImages; index++)
     {
-        CGFloat  xOffset = index*viewSize;
-        UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize, cell.productImagesContainer.frame.size.height)];
+        CGFloat  xOffset = index*viewSize+10;
+        UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize-10, cell.productImagesContainer.frame.size.height)];
         
         [img setImageWithURL:[NSURL URLWithString:prod.productImages[index]] placeholderImage:nil];
         img.userInteractionEnabled = YES;
@@ -437,7 +437,7 @@
         
         
     }
-    cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages,cell.productImagesContainer.frame.size.height);
+    cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages+10,cell.productImagesContainer.frame.size.height);
     
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];
@@ -448,13 +448,13 @@
     [cell.productPrice setTitle: [NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
     
     //Snoop button view setup
-    [cell.snoop setTag:indexPath.row];
+    [cell.snoopBtn setTag:indexPath.row];
     
     ImageTapped *snoopTapped = [[ImageTapped alloc]
                                 initWithTarget:self
                                 action:@selector(snoopButtonClicked:) ];
     [snoopTapped setNumberOfTapsRequired:1];
-    cell.snoop.userInteractionEnabled = YES;
+    cell.snoopBtn.userInteractionEnabled = YES;
     snoopTapped.productName=prod.productname;
     snoopTapped.brandName=[NSString stringWithFormat:@"%@", prod.brandname];
     [cell.brandImg setImageWithURL:[NSURL URLWithString:prod.brandimage] placeholderImage:nil];
@@ -469,7 +469,7 @@
     snoopTapped.productDescription=prod.productDescription;
     snoopTapped.productImageURL=[NSURL URLWithString:prod.productImage];
     snoopTapped.brandImageURL=[NSURL URLWithString:prod.brandimage];
-    [cell.snoop addGestureRecognizer:snoopTapped];
+    [cell.snoopBtn addGestureRecognizer:snoopTapped];
     
     
     

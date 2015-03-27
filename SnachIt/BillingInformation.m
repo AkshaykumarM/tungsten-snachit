@@ -26,39 +26,30 @@
     UserProfile *user;
     NSUserDefaults *defaults;
     NSArray *snachItPaymentInfo;
+    int i;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _sidebarButton.target = self.revealViewController;
-    _sidebarButton.action = @selector(revealToggle:);
+   
+
     // Set the gesture
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    
     [self setViewLookAndFeel];
-    CURRENTDB=SnachItDBFile;
-    // Load the file content and read the data into arrays
-      [self loadData];
-    defaults=[NSUserDefaults standardUserDefaults];
-    if(RECENTLY_ADDED_PAYMENT_INFO_TRACKER==-1)
-    {
-        if([[defaults valueForKey:DEFAULT_SHIPPING] intValue]>=1)
-            RECENTLY_ADDED_PAYMENT_INFO_TRACKER= [[defaults valueForKey:DEFAULT_BILLING] intValue];
-        else
-            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
-        
-    }
+    
+        defaults=[NSUserDefaults standardUserDefaults];
+
 
    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
-   [self viewDidLoad];
+   
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    [self initialLize];
-    
-    
+     [self loadData];
+    i=0;
 }
 - (void)viewDidUnload
 {
@@ -66,15 +57,15 @@
     // Release any retained subviews of the main view.
 }
 -(void)setViewLookAndFeel{
-    self.profilePic.layer.cornerRadius= RADIOUS;
-    
-    
-    self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = BORDERWIDTH;
-    self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
-    [self.backButton setTarget:self.revealViewController];
-    [self.backButton setAction:@selector(revealToggle:)];
+   
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
 
 }
 
@@ -143,12 +134,21 @@ else{
     cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
     
     cell.tag=info.uniqueId;
-    
-    
+
     int rowid=info.uniqueId;
     
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER){
-        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        if(i==0){
+            @try{
+        self.checkedIndexPath=indexPath;
+        [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+                
+            }
+            @catch(NSException *e){
+                
+            }
+            i++;
+        }
     }
     else{
             cell.selectionStyle=UITableViewCellSelectionStyleNone;
@@ -159,10 +159,12 @@ else{
 }
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-
+    [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
     if(tableView!=self.tableView1){
+        
         UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
         tmp.accessoryView=nil;
+        self.checkedIndexPath = nil;
         if(self.checkedIndexPath)
         {
             UITableViewCell* uncheckCell = [tableView
@@ -178,10 +180,24 @@ else{
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)indexPath.row;
     }
     }
 }
+
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if(tableView!=self.tableView1){
+        if (cell.isSelected) {
+            cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+        }
+        else {
+            cell.accessoryView = nil;
+        }
+    }
+}
+
+
 -(NSString*)getCardType:(NSString*)number{
     NSString *type;
     NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
@@ -217,13 +233,10 @@ else{
 }
 
 
--(void)initialLize{
-    }
-
 - (IBAction)saveBtn:(id)sender {
     if(RECENTLY_ADDED_PAYMENT_INFO_TRACKER>0){
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+        [def setObject:[NSString stringWithFormat:@"%lu",(unsigned long)RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
         [def synchronize];
         [global showAllertMsg:@"Saved successfully"];
     }
@@ -247,10 +260,10 @@ else{
 }
 -(void)loadData{
     // Form the query.
+    CURRENTDB=SnachItDBFile;
     snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
 
-    
-    // Reload the table view.
-    [self.tableView1 reloadData];
+    UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    [tbl reloadData];
 }
 @end

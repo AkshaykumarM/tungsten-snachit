@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ShippingInfoOverview : UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate,UITextFieldDelegate>
-- (IBAction)backBtn:(id)sender;
+
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIImageView *defBackImageView;
 

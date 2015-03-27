@@ -49,8 +49,24 @@ CGFloat animatedDistance;
     now = [NSDate date];
     formatter = [[NSDateFormatter alloc] init];
     [self initializePickers];
+    [self setViewLookAndFeel];
     
 }
+
+-(void)setViewLookAndFeel{
+     self.navigationController.navigationBar.topItem.title = @"billing information";
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self action:@selector(backBtn) forControlEvents:UIControlEventTouchUpInside];
+        [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
+    
+}
+
+
+
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
@@ -75,9 +91,9 @@ CGFloat animatedDistance;
     yearsArray=[[NSMutableArray alloc]init];
     
     
-    for (int i=15; i<30; i++)
+    for (NSUInteger i=currentDateComponents.year; i<=currentDateComponents.year+25; i++)
     {
-        [yearsArray addObject:[NSString stringWithFormat:@"20%d",+i]];
+        [yearsArray addObject:[NSString stringWithFormat:@"%lu",(unsigned long)+i]];
     }
     
     datePicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
@@ -293,8 +309,9 @@ CGFloat animatedDistance;
 }
 
 
-- (IBAction)backBtn:(id)sender {
-    [self dismissViewControllerAnimated:NO completion:nil];
+- (void)backBtn {
+    [self.view resignFirstResponder];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 - (IBAction)saveBtn:(id)sender {
@@ -314,7 +331,8 @@ CGFloat animatedDistance;
             //this is to track recently added 
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             // Pop the view controller.
-            [self dismissViewControllerAnimated:true completion:nil];
+            [self.view resignFirstResponder];
+            [self.navigationController popToRootViewControllerAnimated:YES];
         }
         else{
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
@@ -456,7 +474,8 @@ CGFloat animatedDistance;
         
         statenamelbl.backgroundColor = [UIColor clearColor];
         statenamelbl.textAlignment=NSTextAlignmentCenter;
-        
+        statenamelbl.font=[UIFont systemFontOfSize:22];
+
         UIView *tmpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)] ;
       
         [tmpView insertSubview:statenamelbl atIndex:0];

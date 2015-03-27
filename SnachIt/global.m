@@ -9,13 +9,13 @@
 #import "global.h"
 #import "RegexValidator.h"
 //NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
-NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
-NSString * const APPALLERTS=@"appAllerts";     
-NSString * const EMAILALLERTS=@"emailAllerts";
-NSString * const SMSALLERTS=@"smsAllerts";
-NSString *USERID;                                   //this will be the global userid
-bool isApplicationLaunchedFromNotification=FALSE;
-bool isAllreadyTried=FALSE;
+ NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
+ NSString * const APPALLERTS=@"appAllerts";
+ NSString * const EMAILALLERTS=@"emailAllerts";
+ NSString * const SMSALLERTS=@"smsAllerts";
+ NSString *USERID;                                   //this will be the global userid
+ bool isApplicationLaunchedFromNotification=FALSE;
+ bool isAllreadyTried=FALSE;
  NSString * const SSOUSING=@"SSOUsing";
  NSString * const USERNAME=@"Username";
  NSString * const PASSWORD=@"Password";
@@ -23,7 +23,7 @@ bool isAllreadyTried=FALSE;
  NSString *const DEFAULT_BACK_IMG=@"DefaultBackImg";
  NSString *const DEFAULT_BILLING=@"DefaultBilling";
  NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
-NSInteger const DEFAULT_SNOOPTIME=30;
+ NSUInteger const DEFAULT_SNOOPTIME=30;
 NSString * const SnachItDBFile=@"snachit.sql";
 NSString * const SnoopTimeDBFile=@"snoopTimes.sql";
 
@@ -36,8 +36,8 @@ int i=0;//for screen tracking
 NSString *cardNumber=@"";
 NSString *cardExp=@"";
 NSString *cardCVV=@"";
-int RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
-int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+NSUInteger RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+NSUInteger RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
 @implementation global
 float  RADIOUS=37.5f;//to make profile pic circular
 float BORDERWIDTH=5.0f;

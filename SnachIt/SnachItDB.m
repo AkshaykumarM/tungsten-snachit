@@ -385,14 +385,14 @@ static SnachItDB *_database;
 -(BOOL)bindString:(NSString *)value column:(NSInteger)column statement:(sqlite3_stmt *)statement
 {
     if (value) {
-        if (sqlite3_bind_text(statement, column, [value UTF8String], -1, SQLITE_TRANSIENT) != SQLITE_OK) {
-            NSLog(@"bind column %d to %@ failed: %s", column, value, sqlite3_errmsg(_database));
+        if (sqlite3_bind_text(statement, (int)column, [value UTF8String], -1, SQLITE_TRANSIENT) != SQLITE_OK) {
+            NSLog(@"bind column %ld to %@ failed: %s", (long)column, value, sqlite3_errmsg(_database));
             sqlite3_finalize(statement);
             return NO;
         }
     } else {
-        if (sqlite3_bind_null(statement, column) != SQLITE_OK) {
-            NSLog(@"bind column %d to null failed: %s", column, sqlite3_errmsg(_database));
+        if (sqlite3_bind_null(statement, (int)column) != SQLITE_OK) {
+            NSLog(@"bind column %ld to null failed: %s", (long)column, sqlite3_errmsg(_database));
             sqlite3_finalize(statement);
             return NO;
         }

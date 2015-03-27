@@ -72,9 +72,9 @@ CGFloat animatedDistance;
     yearsArray=[[NSMutableArray alloc]init];
     
     
-    for (int i=15; i<30; i++)
+    for (int i=currentDateComponents.year; i<=currentDateComponents.year+25; i++)
     {
-        [yearsArray addObject:[NSString stringWithFormat:@"20%d",+i]];
+        [yearsArray addObject:[NSString stringWithFormat:@"%d",i]];
     }
     
     datePicker = [[UIPickerView alloc] initWithFrame:CGRectMake(0, 200, 320, 200)];
@@ -405,8 +405,8 @@ CGFloat animatedDistance;
         statenamelbl.text = [self.states objectAtIndex:row];
         
         statenamelbl.backgroundColor = [UIColor clearColor];
-         statenamelbl.textAlignment=NSTextAlignmentCenter;
-        
+        statenamelbl.textAlignment=NSTextAlignmentCenter;
+        statenamelbl.font=[UIFont systemFontOfSize:22];
         UIView *tmpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)] ;
         
         [tmpView insertSubview:statenamelbl atIndex:0];

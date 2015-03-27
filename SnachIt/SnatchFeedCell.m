@@ -30,4 +30,6 @@
     
     // Configure the view for the selected state
 }
+- (IBAction)snoopBtn:(id)sender {
+}
 @end

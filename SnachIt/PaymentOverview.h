@@ -20,4 +20,5 @@
 - (IBAction)addNewCardBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UITableView *paymentTableView;
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
+@property (nonatomic,retain)NSIndexPath * lastchecked ;
 @end

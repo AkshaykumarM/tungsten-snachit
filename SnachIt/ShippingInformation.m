@@ -25,42 +25,48 @@
     UserProfile *user;
     NSUserDefaults *defaults;
     NSArray *snachItAddressInfo;
+    int i;
 }
 @synthesize checkedIndexPath;
 - (void)viewDidLoad {
     [super viewDidLoad];
-      
-    // Set the Label text with the selected recipe
-   
-   [self loadData];
-    [self.backButton setTarget:self.revealViewController];
-    [self.backButton setAction:@selector(revealToggle:)];
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    defaults=[NSUserDefaults standardUserDefaults];
-    if(RECENTLY_ADDED_SHIPPING_INFO_TRACKER==-1)
-    {
-        if([[defaults valueForKey:DEFAULT_SHIPPING] intValue]>=1)
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER= [[defaults valueForKey:DEFAULT_SHIPPING] intValue];
-        else
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
-
-    }
+    
+    [self setViewLookAndFeel];
+    UITableView *tb2=(UITableView *)[self.view viewWithTag:5];
+  
+    tb2.rowHeight = UITableViewAutomaticDimension;
+    UITableView *tb1=(UITableView *)[self.view viewWithTag:1];
+    tb1.estimatedRowHeight = 600; // for example. Set your average height
    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
-    [self viewDidLoad];
+    
     
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    [self.tableView1 reloadData];
+     [self loadData];
+    i=0;
+    
   }
-
+-(void)setViewLookAndFeel{
+    
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
+    
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];
+   
     // Release any retained subviews of the main view.
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -80,18 +86,18 @@
 }
 
 
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if(tableView==self.tableView1)
-    {
-        return 600;
-    }
-    else{
-   
-        return 80;
-    }
-
-}
+//- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    if(tableView==self.tableView1)
+//    {
+//        return 600;
+//    }
+//    else{
+//        
+//        return 80;
+//    }
+//
+//}
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -137,11 +143,19 @@
         cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", info.city,info.state,[NSString stringWithFormat:@"%d",info.zip ]];
         int rowid=info.uniqueId;
         cell.tag=rowid;
-        
         if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER){
-            cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+            @try{
+            if(i==0){
+            [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+            self.checkedIndexPath=indexPath;
+                i++;
+            }}
+            @catch(NSException *e){
+                
+            }
         }
-        
+
+    
         else{
             cell.selectionStyle=UITableViewCellSelectionStyleNone;
             cell.accessoryView=nil;
@@ -153,9 +167,10 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
    
     if(tableView!=self.tableView1){
-    UITableViewCell *tmp = [tableView cellForRowAtIndexPath:checkedIndexPath];
+        [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
+        UITableViewCell *tmp = [tableView cellForRowAtIndexPath:checkedIndexPath];
         tmp.accessoryView=nil;
-    self.checkedIndexPath = nil;
+        self.checkedIndexPath = nil;
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
@@ -171,27 +186,35 @@
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-        
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=indexPath.row;
     }
     }
 }
 
--(void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if(tableView!=self.tableView1)
-    [tableView cellForRowAtIndexPath:indexPath].accessoryType = UITableViewCellAccessoryNone;
+
+
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+      if(tableView!=self.tableView1){
+    if (cell.isSelected) {
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+    }
+    else {
+        cell.accessoryView = nil;
+    }
+      }
 }
-
-
-
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:YES];
+      RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.checkedIndexPath.row;
+}
 -(void)loadData{
     // Form the query.
      CURRENTDB=SnachItDBFile;
     snachItAddressInfo = [SnachItDB database].snachItAddressInfo;
     
     // Reload the table view.
-    [self.tableView1 reloadData];
+     UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    [tbl reloadData];
 }
 
 
@@ -217,7 +240,7 @@
     
     if(RECENTLY_ADDED_SHIPPING_INFO_TRACKER>0){
         
-        [defaults setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+        [defaults setObject:[NSString stringWithFormat:@"%lu",(unsigned long)RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
         [defaults synchronize];
         [global showAllertMsg:@"Saved successfully"];
     }

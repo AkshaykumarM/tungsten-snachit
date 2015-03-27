@@ -24,7 +24,7 @@
 @implementation SnachProductDetails
 {
     
-    NSInteger seconds;
+    NSUInteger seconds;
     NSTimer *timer;
     SnoopedProduct *product;
     Order *order;
@@ -54,7 +54,7 @@
     
     // Set the Label text with the selected recipe
     userId=user.userID;
-    snachId=[product.snachId integerValue];
+    snachId=[product.snachId intValue];
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                              target:self
                                            selector:@selector(subtractTime)
@@ -65,7 +65,7 @@
     seconds=[[SnachItDB database] getSnachTime:[product.snachId intValue] UserId:user.userID SnoopTime:user.snoopTime];
     counter.titleLabel.adjustsFontSizeToFitWidth=YES;
     counter.titleLabel.minimumScaleFactor=0.44;
-   [counter setTitle: [NSString stringWithFormat:@"%i",seconds] forState: UIControlStateNormal];
+   [counter setTitle: [NSString stringWithFormat:@"%lu",(unsigned long)seconds] forState: UIControlStateNormal];
     
     
 }
@@ -113,7 +113,7 @@
     [counter setTitle: [NSString stringWithFormat:@"%li",(long)seconds] forState: UIControlStateNormal];
 
     // 2
-    if (seconds == 0 || seconds<0) {
+    if (seconds == 0 || (int)seconds<0) {
         [timer invalidate];
         if(![[SnachItDB database] logtime:user.userID SnachId:[product.snachId intValue] SnachTime:0])
         {
@@ -125,9 +125,9 @@
 
 - (IBAction)snachit:(id)sender {
       [timer invalidate];
-    if(![[SnachItDB database] logtime:user.userID SnachId:[product.snachId intValue] SnachTime:seconds])
+    if(![[SnachItDB database] logtime:user.userID SnachId:[product.snachId intValue] SnachTime:(int)seconds])
     {
-        [[SnachItDB database]updatetime:user.userID SnachId:[product.snachId intValue] SnachTime:seconds];
+        [[SnachItDB database]updatetime:user.userID SnachId:[product.snachId intValue] SnachTime:(int)seconds];
     }
       [self performSegueWithIdentifier:@"snachit" sender:self];
     

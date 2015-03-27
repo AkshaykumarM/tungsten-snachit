@@ -130,7 +130,7 @@ UIActivityIndicatorView *activitySpinner;
     
     SnachConfirmCell *cell = (SnachConfirmCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-        cell.orderQuantity.text = [NSString stringWithFormat:@"%i",tempQuntity];
+        cell.orderQuantity.text = [NSString stringWithFormat:@"%li",(long)tempQuntity];
         if(userdetails.shipFullName!=nil)
         cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
@@ -256,7 +256,7 @@ UIActivityIndicatorView *activitySpinner;
 }
 -(void)calculateTotal{
     prodPrice=[NSString stringWithFormat:@"%.02f",price*tempQuntity];
-    order.orderQuantity=[NSString stringWithFormat:@"%d",tempQuntity];
+    order.orderQuantity=[NSString stringWithFormat:@"%ld",(long)tempQuntity];
     order.subTotal=prodPrice;
     orderTotal=0;
     orderTotal=[order.subTotal doubleValue]+[order.salesTax doubleValue]+[order.shippingCost doubleValue];

@@ -276,7 +276,9 @@ UIView* backView ;
         }
 
     }
-    
+    if(count>0){
+          self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    }
     return count;
 }
 
@@ -325,7 +327,7 @@ UIView* backView ;
         cell.friendName.text = friendName;
         
         int scrollWidth = 100;
-        int snachedProductCount=[snachedProducts count];
+        int snachedProductCount=(int)[snachedProducts count];
         if(snachedProductCount==0){
             
             cell.noSnachsYet.text=@"No Snachs Yet";
@@ -399,6 +401,12 @@ UIView* backView ;
         int xOffset = 0;
         
         if([products count]>0){
+            NSArray* subviews = [[NSArray alloc] initWithArray: cell.productImageConatainer.subviews];
+            for (UIView* view in subviews) {
+                if ([view isKindOfClass:[UIImageView class]]) {
+                    [view removeFromSuperview];
+                }
+            }
         for(int index=0; index < [products count]; index++)
         {
             Products *prod= [products objectAtIndex:index];
@@ -693,21 +701,18 @@ UIView* backView ;
     {
         case 0:
             cellId=FRIEND_CELL;
-            NSLog(@"%@",cellId);
             [_subTabSelect setHidden:YES];
              [_lastLine setHidden:YES];
             [_tableView reloadData];
             break;
         case 1:
             cellId=BRAND_CELL;
-            NSLog(@"%@",cellId);
             [_subTabSelect setHidden:YES];
               [_lastLine setHidden:YES];
             [_tableView reloadData];
             break;
         case 2:
             cellId=SNACH_CELL;
-            NSLog(@"%@",cellId);
             [_subTabSelect setHidden:NO];
             [_lastLine setHidden:NO];
             [_tableView reloadData];
@@ -716,24 +721,22 @@ UIView* backView ;
     }
 }
 - (IBAction)subTabIndexChanged:(id)sender {
-    NSLog(@"Changed");
+ 
     switch (self.subTabSelect.selectedSegmentIndex)
     {
 case 0:
     subCellId=HISTORY_ALL;
-    NSLog(@"%@",subCellId);
+    
     [_tableView reloadData];
         break;
 case 1:
     subCellId=HISTORY_INFLIGHT;
-    NSLog(@"%@",subCellId);
     [_tableView reloadData];
 
     
     break;
 case 2:
     subCellId=HISTORY_DELIVERED;
-    NSLog(@"%@",subCellId);
     [_tableView reloadData];
       break;
     }

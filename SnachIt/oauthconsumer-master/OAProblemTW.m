@@ -109,7 +109,7 @@ NSString *token_not_renewable1 = @"token_not_renewable";
 }
 
 - (int)code {
-	return [[[self class] validProblems] indexOfObject:problem];
+	return (int)[[[self class] validProblems] indexOfObject:problem];
 }
 
 - (NSString *)description

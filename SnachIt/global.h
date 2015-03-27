@@ -15,14 +15,13 @@ extern NSString * const EMAILALLERTS;
 extern NSString * const SMSALLERTS;
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
-extern NSInteger const DEFAULT_SNOOPTIME;
+extern NSUInteger const DEFAULT_SNOOPTIME;
 extern int i;
 extern NSString *USERID;
 extern bool isAllreadyTried;
 extern NSString *cardNumber;
 extern NSString *cardExp;
 extern NSString *cardCVV;
-
 extern NSString * const SSOUSING;
 extern NSString * const USERNAME;
 extern NSString * const PASSWORD;
@@ -38,8 +37,8 @@ extern float  RADIOUS;
 extern float BORDERWIDTH;
 extern int snooptTracking;
 extern NSString *ssousing;
-extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
-extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
+extern NSUInteger RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
+extern NSUInteger RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
 
 
 extern NSString *const DEFAULT_BACK_IMG;

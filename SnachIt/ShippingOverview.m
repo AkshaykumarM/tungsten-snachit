@@ -33,6 +33,7 @@
     UserProfile *user;
     NSUserDefaults *defaults;
     NSArray *snachItPaymentInfo;
+    int i;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc,checkedIndexPath;
 
@@ -41,8 +42,8 @@
 {
     [super viewDidLoad];
     
-    CURRENTDB=SnachItDBFile;
-    [self loadData];
+   
+    
     
     user =[UserProfile sharedInstance];
     defaults=[NSUserDefaults standardUserDefaults];
@@ -52,7 +53,7 @@
     [super viewDidAppear:YES];
     
     [self initializeView];
- 
+    [self loadData];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -79,6 +80,10 @@
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
+    
+    
+    
+    
 }
 
 -(void)back:(id)sender{
@@ -119,10 +124,20 @@
     
     //for autoselect functionality
     int rowid=info.uniqueId;
-    NSLog(@"Row %d %d",rowid,[[defaults valueForKey:DEFAULT_SHIPPING] intValue]);
-    if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER || rowid==[[defaults valueForKey:DEFAULT_SHIPPING] intValue] ){
-          cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+   
+    if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER ){
+        @try{
+            if(i==0){
+          [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+        
+        self.checkedIndexPath=indexPath;
         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+                i++;
+            }
+        }
+        @catch(NSException *e){
+            
+        }
     }
     else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
@@ -135,8 +150,11 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
+    [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
+    
     UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
     tmp.accessoryView=nil;
+    
     if(self.checkedIndexPath)
     {
         UITableViewCell* uncheckCell = [tableView
@@ -156,14 +174,25 @@
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         
         self.checkedIndexPath = indexPath;
+        SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
+        // initializing address details
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+           RECENTLY_ADDED_SHIPPING_INFO_TRACKER=(int)indexPath.row;
+
     }
-    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
-    // initializing address details
-    userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
     
 }
 
-
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+  
+        if (cell.isSelected) {
+            cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+        }
+        else {
+            cell.accessoryView = nil;
+        }
+    
+}
 - (IBAction)addNewAddressbtn:(id)sender {
     [self performSegueWithIdentifier:@"addnewaddressseague" sender:self];
     
@@ -178,6 +207,7 @@
 
 -(void)loadData{
     // Form the query.
+     CURRENTDB=SnachItDBFile;
     snachItPaymentInfo = [SnachItDB database].snachItAddressInfo;
     
     // Reload the table view.

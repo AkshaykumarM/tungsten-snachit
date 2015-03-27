@@ -10,8 +10,8 @@
 
 
 @interface SnachConfirmCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UIButton *orderAdd;
-@property (weak, nonatomic) IBOutlet UIButton *orderSubstract;
+//@property (weak, nonatomic) IBOutlet UIButton *orderAdd;
+//@property (weak, nonatomic) IBOutlet UIButton *orderSubstract;
 @property (weak, nonatomic) IBOutlet UILabel *orderQuantity;
 @property (weak, nonatomic) IBOutlet UIButton *expandShipto;
 @property (weak, nonatomic) IBOutlet UILabel *shiptoName;

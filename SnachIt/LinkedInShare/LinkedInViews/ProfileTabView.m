@@ -664,8 +664,8 @@ CGFloat animatedDistance;
     [UIView commitAnimations];
 }
 -(void)resetSnoopTime{
-    if(![[SnachItDB database] logtime:self.userid SnachId:[self.snachid intValue] SnachTime:DEFAULT_SNOOPTIME]){
-        [[SnachItDB database] updatetime:self.userid SnachId:[self.snachid intValue] SnachTime:DEFAULT_SNOOPTIME];
+    if(![[SnachItDB database] logtime:self.userid SnachId:[self.snachid intValue] SnachTime:(int)DEFAULT_SNOOPTIME]){
+        [[SnachItDB database] updatetime:self.userid SnachId:[self.snachid intValue] SnachTime:(int)DEFAULT_SNOOPTIME];
     }
 }
 

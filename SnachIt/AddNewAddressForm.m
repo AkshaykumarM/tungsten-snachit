@@ -72,8 +72,8 @@ CGFloat animatedDistance;
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
-    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
-    self.navigationItem.leftBarButtonItem = eng_btn;
+    UIBarButtonItem *nav_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = nav_btn;
     //set textfield look and fill
     [global setTextFieldInsets:self.fullNameTextField];
     [global setTextFieldInsets:self.streetAddressTextField];
