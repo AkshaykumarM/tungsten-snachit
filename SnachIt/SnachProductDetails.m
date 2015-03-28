@@ -100,7 +100,7 @@
 
     productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;
     productPrice.titleLabel.minimumScaleFactor=0.32;
-    [productPrice setTitle:[NSString stringWithFormat:@"$%@",product.productPrice] forState: UIControlStateNormal];
+    [productPrice setTitle:[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[product.productPrice doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle] forState: UIControlStateNormal];
     
     productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     
@@ -186,8 +186,9 @@
     
         if([userdetails.shipState isEqual:@"UT"])
             salesTax=(6.85/100)*[product.productPrice doubleValue];
-        else
-            salesTax=(tempst/100)*[product.productPrice doubleValue];
+        else{
+            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
+        }
     speed=[product.productShippingSpeed intValue];
     }
     @catch(NSException *e){
@@ -202,7 +203,7 @@
                                                                    toDate: currentdate
                                                                   options:0];
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
-    [df setDateFormat:@"dd/MM/yy"];
+    [df setDateFormat:@"MM/dd/yyyy"];
     
     
     order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];

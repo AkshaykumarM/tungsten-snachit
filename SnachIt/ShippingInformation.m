@@ -47,8 +47,9 @@
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-     [self loadData];
     i=0;
+     [self loadData];
+    
     
   }
 -(void)setViewLookAndFeel{
@@ -141,6 +142,8 @@
         cell.streetNameLbl.text = [NSString stringWithFormat:@"%@",info.street];
         
         cell.addressLbl.text = [NSString stringWithFormat:@"%@,%@ %@", info.city,info.state,[NSString stringWithFormat:@"%d",info.zip ]];
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:DEFAULT_SHIPPING] integerValue];
         int rowid=info.uniqueId;
         cell.tag=rowid;
         if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER){
@@ -186,7 +189,12 @@
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=indexPath.row;
+       
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+        
+        
     }
     }
 }

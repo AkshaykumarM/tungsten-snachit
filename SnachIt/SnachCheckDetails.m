@@ -107,13 +107,13 @@ UIActivityIndicatorView *activitySpinner;
 
 
 
--(float)getOrderTotal{
+-(double)getOrderTotal{
     if([userdetails.shipState isEqual:@"UT"])
     {
         order.salesTax=[NSString stringWithFormat:@"%f",(6.85/100)*[order.subTotal doubleValue]];
     }
     else{
-        order.salesTax=[NSString stringWithFormat:@"%f",([order.st doubleValue]/1000)*[order.subTotal doubleValue]];
+        order.salesTax=[NSString stringWithFormat:@"%f",([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue]];
     }
     return  [order.subTotal doubleValue]+[order.shippingCost doubleValue]+[order.salesTax doubleValue];
 }
@@ -135,7 +135,7 @@ UIActivityIndicatorView *activitySpinner;
         cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
         cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,[userdetails.paymentCardNumber substringFromIndex:[userdetails.paymentCardNumber length]-3]];
-        cell.orderTotal.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
+        cell.orderTotal.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[self getOrderTotal]] numberStyle:NSNumberFormatterCurrencyStyle];;
     
     
     
@@ -238,7 +238,6 @@ UIActivityIndicatorView *activitySpinner;
     }
        else{
            [self stopProcessing];
-           [global showAllertMsg:@"Opps! not able to snach.it, please fill your details correctly"];
        }
     
 }
@@ -272,6 +271,7 @@ UIActivityIndicatorView *activitySpinner;
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setObject:order.userId forKey:@"userId"];
+    NSLog(@"dictionary:%@",order.getOrderDetails);
     [dictionary setObject:order.getOrderDetails forKey:@"orderDetails"];
     [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
     [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];

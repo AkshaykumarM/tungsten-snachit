@@ -51,7 +51,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
 
-    totalLabel.text=[NSString stringWithFormat:@"$%.2f",[self getOrderTotal]];
+    totalLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[self getOrderTotal]] numberStyle:NSNumberFormatterCurrencyStyle];
     
     //hiding the backbutton from top bar
     
@@ -85,16 +85,17 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.subtotalLabel.text = [NSString stringWithFormat:@"$%.2f",[order.subTotal floatValue]];
+    cell.subtotalLabel.text = [NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.subTotal doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];;
     
     //checking whether shipping cost is zero if zero "Free shipping" msg will be shown
     if([order.shippingCost floatValue]<=0){
     cell.shippingAndhandlingLabel.text=order.freeshipping;
     }
     else{
-        cell.shippingAndhandlingLabel.text=[NSString stringWithFormat:@"$%.2f",[order.shippingCost floatValue]];
+        cell.shippingAndhandlingLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.shippingCost doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];;
     }
-    cell.salesTaxLabel.text=[NSString stringWithFormat:@"$%.2f",[order.salesTax floatValue]];
+    NSLog(@"Sales tax: %@ %@",order.salesTax ,[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.salesTax doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]);
+    cell.salesTaxLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.salesTax doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];
 
     //adding single tap gesture recognizer for
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shippingAndHandling)];
@@ -104,7 +105,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     return cell;
     
 }
--(float)getOrderTotal{
+-(double)getOrderTotal{
   
     return  [order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];;
 }

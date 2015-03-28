@@ -51,7 +51,7 @@
 -(void)viewDidAppear:(BOOL)animated{
    
     [super viewDidAppear:YES];
-    
+    i=0;
     [self initializeView];
     [self loadData];
 }
@@ -124,7 +124,7 @@
     
     //for autoselect functionality
     int rowid=info.uniqueId;
-   
+     cell.tag=rowid;
     if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER ){
         @try{
             if(i==0){
@@ -132,6 +132,7 @@
         
         self.checkedIndexPath=indexPath;
         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+                
                 i++;
             }
         }
@@ -172,12 +173,12 @@
     {
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
-        
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
         self.checkedIndexPath = indexPath;
         SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
         // initializing address details
         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
-           RECENTLY_ADDED_SHIPPING_INFO_TRACKER=(int)indexPath.row;
+    
 
     }
     

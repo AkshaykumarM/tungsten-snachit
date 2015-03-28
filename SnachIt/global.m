@@ -36,8 +36,8 @@ int i=0;//for screen tracking
 NSString *cardNumber=@"";
 NSString *cardExp=@"";
 NSString *cardCVV=@"";
-NSUInteger RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
-NSUInteger RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+int RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
 @implementation global
 float  RADIOUS=37.5f;//to make profile pic circular
 float BORDERWIDTH=5.0f;

@@ -291,6 +291,8 @@ CGFloat animatedDistance;
         // If the query was successfully executed then pop the view controller.
         if ( [info valueForKey:@"status"]!= 0) {
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
             // Pop the view controller.
             [self.view resignFirstResponder];
             [self.navigationController popViewControllerAnimated:YES];

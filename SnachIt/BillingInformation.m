@@ -133,10 +133,11 @@ else{
     NSString *tempNumber=info.cardnumber;
     cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
     
-    cell.tag=info.uniqueId;
-
-    int rowid=info.uniqueId;
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[def valueForKey:DEFAULT_BILLING] integerValue];
     
+    int rowid=info.uniqueId;
+    cell.tag=rowid;
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER){
         if(i==0){
             @try{
@@ -180,7 +181,9 @@ else{
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)indexPath.row;
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
     }
     }
 }

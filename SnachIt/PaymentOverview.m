@@ -115,10 +115,10 @@ NSString *const STPSEAGUE=@"backtoSTP";
     NSString *tempNumber=info.cardnumber;
     cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
     
-    cell.tag=info.uniqueId;
+    
    
     int rowid=info.uniqueId;
-    
+    cell.tag=rowid;
     //for auto selection
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ){
         @try{
@@ -168,7 +168,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
         // initializing address details
         userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName: info.name withPaymentStreetName:info.street withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:[NSString stringWithFormat:@"%d",info.zip] withPaymentPhoneNumber:info.phone];
 
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=indexPath.row;
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
     }
 
 }

@@ -132,10 +132,10 @@ int linkedinsharetracker;
 
 -(void)AskToViewDealNow{
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Yippee!"
-                                                    message:@"You got one more chance to snach this deal.Do you want to snach.it now?"
+                                                    message:@"You have one more chance to snach this offer."
                                                    delegate:self
-                                          cancelButtonTitle:@"Yes"
-                                          otherButtonTitles:@"No",nil];
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
     [alert show];
 
     

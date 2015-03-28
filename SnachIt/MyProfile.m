@@ -570,7 +570,7 @@ UIView* backView ;
             _productNameLbl.titleLabel.minimumScaleFactor=0.62;
             _productPriceLbl.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
             _productPriceLbl.titleLabel.minimumScaleFactor=0.67;
-            [_productPriceLbl setTitle:[NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
+            [_productPriceLbl setTitle:[NSString stringWithFormat:@"Retail%@",[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[prod.price doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]] forState:UIControlStateNormal];
             
             if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil)
             {

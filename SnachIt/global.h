@@ -37,8 +37,8 @@ extern float  RADIOUS;
 extern float BORDERWIDTH;
 extern int snooptTracking;
 extern NSString *ssousing;
-extern NSUInteger RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
-extern NSUInteger RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
+extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
+extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
 
 
 extern NSString *const DEFAULT_BACK_IMG;

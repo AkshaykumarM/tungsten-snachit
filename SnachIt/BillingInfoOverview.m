@@ -330,6 +330,8 @@ CGFloat animatedDistance;
             
             //this is to track recently added 
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
             // Pop the view controller.
             [self.view resignFirstResponder];
             [self.navigationController popToRootViewControllerAnimated:YES];

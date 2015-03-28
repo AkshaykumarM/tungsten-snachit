@@ -76,7 +76,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     cell.estDeliveryLbl.text =order.deliveryDate;
     cell.speedLbl.text=[NSString stringWithFormat:@"%@ day delivery",order.speed];
     if(![order.shippingCost floatValue]<=0.0f){
-    cell.priceLbl.text=[NSString stringWithFormat:@"$%.2f",[order.shippingCost floatValue]];
+    cell.priceLbl.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.shippingCost doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];;
     }else
         cell.priceLbl.text=[NSString stringWithFormat:@"%@",order.freeshipping];
     return cell;

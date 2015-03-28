@@ -445,7 +445,7 @@
     cell.productName.titleLabel.minimumScaleFactor=0.67;
     cell.productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
     cell.productPrice.titleLabel.minimumScaleFactor=0.67;
-    [cell.productPrice setTitle: [NSString stringWithFormat:@"Retail:$%@",prod.price] forState:UIControlStateNormal];
+    [cell.productPrice setTitle:[NSString stringWithFormat:@"Retail%@",[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[prod.price doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]] forState:UIControlStateNormal];
     
     //Snoop button view setup
     [cell.snoopBtn setTag:indexPath.row];

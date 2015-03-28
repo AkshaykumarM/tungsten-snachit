@@ -233,6 +233,7 @@
 		8776496D1AB81DED00FEEB05 /* OATokenManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 8776495A1AB81DED00FEEB05 /* OATokenManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		877649A11AB8342C00FEEB05 /* back.png in Resources */ = {isa = PBXBuildFile; fileRef = 877649A01AB8342C00FEEB05 /* back.png */; };
 		878644A81A8DDF130038EC46 /* Product.m in Sources */ = {isa = PBXBuildFile; fileRef = 878644A71A8DDF130038EC46 /* Product.m */; };
+		878B325C1AC66836008A4E8D /* snachit-app-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 878B325B1AC66836008A4E8D /* snachit-app-icon.png */; };
 		87C3E7C51A779FA6008A7830 /* SnachHistoryCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C3E7C41A779FA6008A7830 /* SnachHistoryCell.m */; };
 		87C408BD1AB9BA6300FB9C0D /* error.png in Resources */ = {isa = PBXBuildFile; fileRef = 87C408BC1AB9BA6300FB9C0D /* error.png */; };
 		87C651A81A7BD1FB00B3ED11 /* TextFieldValidator.m in Sources */ = {isa = PBXBuildFile; fileRef = 87C651A71A7BD1FB00B3ED11 /* TextFieldValidator.m */; };
@@ -622,6 +623,7 @@
 		877649A01AB8342C00FEEB05 /* back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = back.png; sourceTree = "<group>"; };
 		878644A61A8DDF130038EC46 /* Product.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Product.h; sourceTree = "<group>"; };
 		878644A71A8DDF130038EC46 /* Product.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Product.m; sourceTree = "<group>"; };
+		878B325B1AC66836008A4E8D /* snachit-app-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "snachit-app-icon.png"; sourceTree = "<group>"; };
 		87C3E7C31A779FA6008A7830 /* SnachHistoryCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnachHistoryCell.h; sourceTree = "<group>"; };
 		87C3E7C41A779FA6008A7830 /* SnachHistoryCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SnachHistoryCell.m; sourceTree = "<group>"; };
 		87C408BC1AB9BA6300FB9C0D /* error.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = error.png; sourceTree = "<group>"; };
@@ -1106,6 +1108,7 @@
 		874A32DD1A6CECC0004038D4 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				878B325B1AC66836008A4E8D /* snachit-app-icon.png */,
 				8702C0C51ABB3AB80095752A /* questionmark.png */,
 				87539EF41ABD897E00BB29EC /* forward1.png */,
 				8702C0C31ABB30BF0095752A /* gp.png */,
@@ -1602,6 +1605,7 @@
 				87C670EE1A78AF5A0035A1BB /* tweeter.png in Resources */,
 				8702C0BA1ABAA2150095752A /* OpenSans-SemiboldItalic.ttf in Resources */,
 				8730733D1AB6EA99007416F2 /* ProfileTabView~iphone.xib in Resources */,
+				878B325C1AC66836008A4E8D /* snachit-app-icon.png in Resources */,
 				873073321AB6EA99007416F2 /* whiteButtonHighlight.png in Resources */,
 				87355A711AAD7B9500DA79D6 /* 180x180.png in Resources */,
 				87355A481AAD647F00DA79D6 /* states-info.plist in Resources */,
