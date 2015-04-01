@@ -67,7 +67,7 @@
                     </connections>
                 </textField>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="Wfq-BA-GM7">
-                    <rect key="frame" x="195" y="15" width="210" height="210"/>
+                    <rect key="frame" x="203" y="30" width="195" height="195"/>
                     <constraints>
                         <constraint firstAttribute="width" secondItem="Wfq-BA-GM7" secondAttribute="height" multiplier="1:1" id="uFD-fD-hKg"/>
                     </constraints>
@@ -75,7 +75,7 @@
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="Wfq-BA-GM7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="15" id="8FG-1j-wct"/>
+                <constraint firstItem="Wfq-BA-GM7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="30" id="8FG-1j-wct"/>
                 <constraint firstItem="a4k-cT-0fl" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="8JM-jQ-si3"/>
                 <constraint firstAttribute="centerX" secondItem="Wfq-BA-GM7" secondAttribute="centerX" id="MQ5-YA-CRU"/>
                 <constraint firstItem="a4k-cT-0fl" firstAttribute="top" secondItem="KVm-Ze-I2h" secondAttribute="bottom" constant="2" id="UMU-ky-ZcZ"/>

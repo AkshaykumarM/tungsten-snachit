@@ -7,6 +7,7 @@
         <mutableArray key="1105886371.ttf">
             <string>CenturyGothic</string>
             <string>CenturyGothic</string>
+            <string>CenturyGothic</string>
         </mutableArray>
         <mutableArray key="OpenSans-Regular.ttf">
             <string>OpenSans</string>
@@ -55,9 +56,9 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="45" id="AgR-4S-9oy"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="28"/>
-                    <inset key="contentEdgeInsets" minX="2" minY="-4" maxX="0.0" maxY="2"/>
-                    <state key="normal" image="snoop.png">
+                    <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="30"/>
+                    <inset key="contentEdgeInsets" minX="0.0" minY="-2" maxX="0.0" maxY="0.0"/>
+                    <state key="normal" title="snach.it">
                         <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
@@ -144,7 +145,7 @@
                     </constraints>
                     <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="13"/>
                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="9" maxY="0.0"/>
-                    <state key="normal" title="Price">
+                    <state key="normal" title="Price ">
                         <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -321,7 +322,6 @@
     </objects>
     <resources>
         <image name="friends_count.png" width="41" height="44"/>
-        <image name="snoop.png" width="250" height="70"/>
         <image name="star-5-24.png" width="24" height="24"/>
     </resources>
 </document>

@@ -20,6 +20,7 @@
 #import "Product.h"
 #import "Common.h"
 #import "SnachItDB.h"
+#import "SnoopingUserDetails.h"
 
 @interface SnatchFeed(){
     NSMutableArray *Products;
@@ -231,6 +232,7 @@
     else{
         
         [self clearAllData];
+        
         [NSThread sleepForTimeInterval:2];
         SnachitStartScreen *startscreen = [[SnachitStartScreen alloc]initWithNibName:@"StartScreen" bundle:nil];
         [self presentViewController:startscreen animated:YES completion:nil];
@@ -345,6 +347,8 @@
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
         [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
     }
+    SnoopingUserDetails *sn=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:nil withPaymentCardNumber:nil withpaymentCardExpDate:nil withPaymentCardCvv:nil withPaymentFullName:nil withPaymentStreetName:nil withPaymentCity:nil withPaymentState:nil withPaymentZipCode:nil withPaymentPhoneNumber:nil];
+    sn=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
        NSLog(@"Cleared Database");
 }
 
@@ -396,7 +400,7 @@
                 if([[dictionaryForFriendsCountResponse valueForKey:@"success"] isEqual:@"true"])
                 {
                     NSLog(@"Friend count RESPONSE :%@",dictionaryForFriendsCountResponse);
-                    prod.friendCount=[dictionaryForFriendsCountResponse valueForKey:@"count"] ;
+                    prod.friendCount=[NSString stringWithFormat:@"%d",[[dictionaryForFriendsCountResponse valueForKey:@"count"] intValue]] ;
                     if([prod.friendCount intValue]>0){
                         [cell.friendCount setHidden:NO];
                         cell.friendCount.layer.cornerRadius = 9.0f;
@@ -445,7 +449,11 @@
     cell.productName.titleLabel.minimumScaleFactor=0.67;
     cell.productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
     cell.productPrice.titleLabel.minimumScaleFactor=0.67;
-    [cell.productPrice setTitle:[NSString stringWithFormat:@"Retail%@",[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[prod.price doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]] forState:UIControlStateNormal];
+     
+       NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+       [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+       [numberFormatter setCurrencyCode:@"USD"];
+       [cell.productPrice setTitle:[NSString stringWithFormat:@"Retail:%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
     
     //Snoop button view setup
     [cell.snoopBtn setTag:indexPath.row];

@@ -24,7 +24,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 @implementation OrderTotalOverview{
     SnoopedProduct *product;
     Order *order;
-    
+    NSNumberFormatter *numberFormatter;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,cellId,productDesc,totalLabel;
 
@@ -50,8 +50,10 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     
     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
-
-    totalLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[self getOrderTotal]] numberStyle:NSNumberFormatterCurrencyStyle];
+    numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+    [numberFormatter setCurrencyCode:@"USD"];
+    totalLabel.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self getOrderTotal]]]];
     
     //hiding the backbutton from top bar
     
@@ -85,17 +87,17 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
     
-    cell.subtotalLabel.text = [NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.subTotal doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];;
+    cell.subtotalLabel.text = [NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[order.subTotal doubleValue]]]];
     
     //checking whether shipping cost is zero if zero "Free shipping" msg will be shown
     if([order.shippingCost floatValue]<=0){
     cell.shippingAndhandlingLabel.text=order.freeshipping;
     }
     else{
-        cell.shippingAndhandlingLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.shippingCost doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];;
+        cell.shippingAndhandlingLabel.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[order.shippingCost doubleValue]]]];
     }
-    NSLog(@"Sales tax: %@ %@",order.salesTax ,[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.salesTax doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]);
-    cell.salesTaxLabel.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[order.salesTax doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle];
+   
+    cell.salesTaxLabel.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[order.salesTax doubleValue]]]];
 
     //adding single tap gesture recognizer for
     UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(shippingAndHandling)];

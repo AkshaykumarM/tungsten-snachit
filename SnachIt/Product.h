@@ -22,6 +22,7 @@ extern NSString * const PRODUCT_FOLLOW_STATUS;
 extern NSString * const PRODUCT_SALESTAX;
 extern NSString * const PRODUCT_SHIPPINGCOST;
 extern NSString * const PRODUCT_SHIPPINGSPEED;
+extern NSString * const PRODUCT_SNACH_STATUS;
 @interface Product : NSObject
 
 @property (strong, nonatomic) NSArray *productImages;
@@ -40,4 +41,5 @@ extern NSString * const PRODUCT_SHIPPINGSPEED;
 @property (strong, nonatomic) NSString *productDescription;
 @property (strong, nonatomic) NSString *followStatus ;
 @property (strong, nonatomic) NSString *friendCount ;
+@property (nonatomic,assign) bool status;
 @end

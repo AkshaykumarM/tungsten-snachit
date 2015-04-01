@@ -19,10 +19,10 @@
 		<string>Idaho</string>
 		<string>Illinois</string>
 		<string>Indiana</string>
+		<string>Iowa</string>
 		<string>Kansas</string>
 		<string>Kentucky</string>
 		<string>Louisiana</string>
-		<string>Lowa</string>
 		<string>Maine</string>
 		<string>Maryland</string>
 		<string>Massachusetts</string>
@@ -32,14 +32,14 @@
 		<string>Missouri</string>
 		<string>Montana</string>
 		<string>Nebraska</string>
-		<string>Neveda</string>
+		<string>Nevada</string>
 		<string>New Hampshire</string>
 		<string>New Jersey</string>
 		<string>New Mexico</string>
 		<string>New York</string>
-		<string>New Carolina</string>
+		<string>North Carolina</string>
 		<string>North Dakota</string>
-		<string>Okalhoma</string>
+		<string>Oklahoma</string>
 		<string>Oregon</string>
 		<string> Pennsylvania</string>
 		<string>Rhode Island</string>
@@ -72,10 +72,10 @@
 		<string>ID</string>
 		<string>IL</string>
 		<string>IN</string>
+		<string>IA</string>
 		<string>KS</string>
 		<string>KY</string>
 		<string>LA</string>
-		<string>IA</string>
 		<string>ME</string>
 		<string>MD</string>
 		<string>MA</string>

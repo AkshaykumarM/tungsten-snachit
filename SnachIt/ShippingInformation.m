@@ -37,6 +37,7 @@
     tb2.rowHeight = UITableViewAutomaticDimension;
     UITableView *tb1=(UITableView *)[self.view viewWithTag:1];
     tb1.estimatedRowHeight = 600; // for example. Set your average height
+    defaults=[NSUserDefaults standardUserDefaults];
    
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -124,9 +125,8 @@
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
-    
     if([defaults valueForKey:DEFAULT_BACK_IMG])
-        cell.backImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+     cell.backImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
 
     
     return cell;
@@ -227,19 +227,19 @@
 
 
 
--(void) getPhoto:(id) sender {
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    
-    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    
-    [self presentViewController:picker animated:YES completion:nil];
-}
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-     ShippingInfoCell *cell = (ShippingInfoCell*)[self.tableView1 cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [picker dismissViewControllerAnimated:YES completion:nil];
-    cell.backImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-}
+//-(void) getPhoto:(id) sender {
+//    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+//    picker.delegate = self;
+//    
+//    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
+//    
+//    [self presentViewController:picker animated:YES completion:nil];
+//}
+//- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+//     ShippingInfoCell *cell = (ShippingInfoCell*)[self.tableView1 cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+//    [picker dismissViewControllerAnimated:YES completion:nil];
+//    cell.backImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
+//}
 
 
 

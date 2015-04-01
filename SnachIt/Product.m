@@ -23,4 +23,5 @@ NSString * const PRODUCT_FOLLOW_STATUS=@"followStatus";
 NSString * const PRODUCT_SALESTAX=@"salesTax";
 NSString * const PRODUCT_SHIPPINGCOST=@"shippingCost";
 NSString * const PRODUCT_SHIPPINGSPEED=@"shippingSpeed";
+NSString * const PRODUCT_SNACH_STATUS=@"status";
 @end

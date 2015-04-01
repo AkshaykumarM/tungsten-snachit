@@ -184,7 +184,7 @@ CGFloat animatedDistance;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-   [[self.tableView superview] endEditing:YES];
+   [[self.tableViewsetting superview] endEditing:YES];
 }
 -(void)setViewLookAndFeel{
     // Set the gesture
@@ -268,7 +268,7 @@ CGFloat animatedDistance;
     [UIView commitAnimations];
 }
 -(void)setupAlerts{
-    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     [tableCell.nameTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid name"];
     [tableCell.emailTextField addRegx:REGEX_EMAIL withMsg:@"Please enter valid email"];
     [tableCell.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:@"Please enter valid phone no"];
@@ -358,7 +358,7 @@ CGFloat animatedDistance;
 
 }
 -(NSDictionary*)getProfileUpdateValues{
-    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setValue:user.userID forKey:@"customerId"];
@@ -373,7 +373,7 @@ CGFloat animatedDistance;
     
 }
 -(void)startProcessing{
-    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     backView = [[UIView alloc] initWithFrame:tableCell.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
     
@@ -403,19 +403,19 @@ CGFloat animatedDistance;
     [self presentViewController:picker animated:YES completion:nil];
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-     AccountSettingCell *cell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+     AccountSettingCell *cell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     [[picker presentingViewController ] dismissViewControllerAnimated:YES completion:nil];
     cell.defaultBackImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
 
 //this function will end editing by dissmissing keyboard if user touches outside the textfields
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-    [self.tableView endEditing:YES];
+    [self.tableViewsetting endEditing:YES];
 }
 
 - (IBAction)save:(id)sender {
     
-    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
     
     if([tableCell.nameTextField validate] & [tableCell.emailTextField validate]&[tableCell.phoneTextField validate]){
@@ -427,13 +427,13 @@ CGFloat animatedDistance;
             [defaults setValue:appAlerts forKey:APPALLERTS];
             [defaults setValue:emailAlerts forKey:EMAILALLERTS];
             [defaults setValue:smsAlerts forKey:SMSALLERTS];
-            [self.tableView reloadData];
+            [self.tableViewsetting reloadData];
             [global showAllertMsg:@"Profile updated successfully"];
             
-            [self stopProcessing];
+           
         }
         else{
-            [self stopProcessing];
+           
             [global showAllertMsg:@"Error occureed while updating profile"];
             
         }

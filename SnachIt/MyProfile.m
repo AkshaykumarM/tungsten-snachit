@@ -185,7 +185,7 @@ UIView* backView ;
     //setting user snoop time
     self.snoopTime.titleLabel.adjustsFontSizeToFitWidth=YES;
     self.snoopTime.titleLabel.minimumScaleFactor=0.44;
-    [self.snoopTime setTitle:[NSString stringWithFormat:@"%d",user.snoopTime] forState:UIControlStateNormal];
+    [self.snoopTime setTitle:[NSString stringWithFormat:@"%d",(user.snoopTime==0)?30:user.snoopTime] forState:UIControlStateNormal];
   
     
     //setting background img
@@ -361,8 +361,23 @@ UIView* backView ;
                                 
                                 [cell.scrollview addSubview:img];
                                 
-                                [img setImageWithURL:[NSURL URLWithString:snProducts.productImage] placeholderImage:nil];
-                                
+                                if(snProducts.snachStatus){
+                                [img setImageWithURL:[NSURL URLWithString:snProducts.productImage] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
+                                }
+                                else{
+                                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
+                                    NSData *imgData= [NSData dataWithContentsOfURL:[NSURL URLWithString:snProducts.productImage]];
+                                    if (imgData) {
+                                        
+                                        dispatch_sync(dispatch_get_main_queue(), ^(void) {
+                                            UIImage *image = [UIImage imageWithData:imgData];
+                                            if (image) {
+                                                
+                                                img.image = [self convertImageToGrayScale:image];
+                                            }
+                                        });
+                                    }});
+                                }
                                 [customTap setNumberOfTapsRequired:1];
                                 img.userInteractionEnabled = YES;
                 
@@ -416,7 +431,7 @@ UIView* backView ;
             UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,70, 70)];
             [img setContentMode:UIViewContentModeScaleAspectFit];
                 if(cell.tag==indexPath.row){
-                    [img setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
+                    [img setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
                     [cell.productImageConatainer addSubview:img];
                     
                 }
@@ -563,19 +578,40 @@ UIView* backView ;
             snoopedBrandName=prod.brandname;
             snoopedSnachId=prod.snachId;
             
-            [_productImg setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
+       
+            [_snoopBtn setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];//greyscale
             [_productNameLbl setTitle:[NSString stringWithFormat:@"%@ %@",prod.brandname,prod.productname] forState:UIControlStateNormal];
             _productNameLbl.titleLabel.numberOfLines = 1;
             _productNameLbl.titleLabel.adjustsFontSizeToFitWidth = YES;
             _productNameLbl.titleLabel.minimumScaleFactor=0.62;
             _productPriceLbl.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
             _productPriceLbl.titleLabel.minimumScaleFactor=0.67;
-            [_productPriceLbl setTitle:[NSString stringWithFormat:@"Retail%@",[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[prod.price doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle]] forState:UIControlStateNormal];
+            NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+            [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+            [numberFormatter setCurrencyCode:@"USD"];
             
-            if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil)
+            [_productPriceLbl setTitle:[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
+            
+            if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil && prod.status)
             {
                 [_snoopBtn setEnabled:YES];
                 [_followStatus setEnabled:YES];
+                [_productImg setImageWithURL:[NSURL URLWithString:prod.productImage] placeholderImage:nil];
+                [_snoopBtn setBackgroundColor:[UIColor colorWithRed:0.62 green:0.10 blue:0.47 alpha:1.0]];//purple color
+            }
+            else{
+                dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
+                    NSData *imgData= [NSData dataWithContentsOfURL:[NSURL URLWithString:prod.productImage]];
+                    if (imgData) {
+
+                        dispatch_sync(dispatch_get_main_queue(), ^(void) {
+                            UIImage *image =[UIImage imageWithData:imgData];
+                            if (image) {
+                                
+                                _productImg.image = [self convertImageToGrayScale:image];
+                            }
+                        });
+                    }});
             }
             NSError *error;
             dictionaryForEmails=[Common getDictionaryForFriendCount:snoopedProductId SnachId:snoopedSnachId EmailId:user.emailID];
@@ -825,7 +861,7 @@ case 2:
                                Products *snached= [[Products alloc] init];
                                snached.snachId=[tempSnachDic objectForKey:PRODUCTS_SNACHID];
                                snached.productImage=[tempSnachDic objectForKey:PRODUCTS_IMAGE];
-                               snached.snachStatus=[tempSnachDic objectForKey:PRODUCTS_SNACHSTATUS];
+                               snached.snachStatus=[[tempSnachDic objectForKey:PRODUCTS_SNACHSTATUS] intValue];
                                [snachs addObject:snached];
                            }
                       }
@@ -866,6 +902,7 @@ case 2:
                             followed.productId=[tempFollowDic objectForKey:PRODUCTS_ID];
                             followed.snachId=[tempFollowDic objectForKey:PRODUCTS_SNACHID];
                             followed.productImage=[tempFollowDic objectForKey:PRODUCTS_IMAGE];
+                            followed.snachStatus=1;
                             [brandProducts addObject:followed];
                         }
                     }
@@ -1014,8 +1051,8 @@ case 2:
                     prod.snachId =[prodDic objectForKey:PRODUCT_SNACH_ID];
                     prod.productDescription =[prodDic objectForKey:PRODUCT_DESCRIPTION];
                     prod.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
-                    
-                singleProduct=[[NSArray alloc] initWithObjects:prod, nil];
+                    prod.status= [[prodDic objectForKey:PRODUCT_SNACH_STATUS] intValue];
+                    singleProduct=[[NSArray alloc] initWithObjects:prod, nil];
                 
             }
             

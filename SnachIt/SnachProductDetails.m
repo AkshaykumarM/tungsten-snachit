@@ -100,7 +100,10 @@
 
     productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;
     productPrice.titleLabel.minimumScaleFactor=0.32;
-    [productPrice setTitle:[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[product.productPrice doubleValue]] numberStyle:NSNumberFormatterCurrencyStyle] forState: UIControlStateNormal];
+    NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+    [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+    [numberFormatter setCurrencyCode:@"USD"];
+    [productPrice setTitle:[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[product.productPrice doubleValue]]]] forState: UIControlStateNormal];
     
     productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     

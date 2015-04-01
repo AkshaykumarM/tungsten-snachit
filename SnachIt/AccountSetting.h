@@ -13,12 +13,12 @@
 
 
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
 
 
 -(int)updateUserProfile;
 -(NSDictionary*)getProfileUpdateValues;
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet UITableView *tableViewsetting;
 - (IBAction)save:(id)sender;
 
 @end

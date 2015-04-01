@@ -135,10 +135,11 @@ UIActivityIndicatorView *activitySpinner;
         cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
         cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,[userdetails.paymentCardNumber substringFromIndex:[userdetails.paymentCardNumber length]-3]];
-        cell.orderTotal.text=[NSNumberFormatter localizedStringFromNumber:[[NSNumber alloc]initWithDouble:[self getOrderTotal]] numberStyle:NSNumberFormatterCurrencyStyle];;
-    
-    
-    
+        NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+        [numberFormatter setCurrencyCode:@"USD"];
+        cell.orderTotal.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self getOrderTotal]]]];
+
             
         //[cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
         //[cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
@@ -181,7 +182,7 @@ UIActivityIndicatorView *activitySpinner;
 }
 -(void)exapndShippingOverview
 {
-    NSLog(@"%@",SHIPPING_OVERVIEW_SEAGUE);
+   
     [self performSegueWithIdentifier:SHIPPING_OVERVIEW_SEAGUE sender:self];
     
 }
@@ -271,7 +272,7 @@ UIActivityIndicatorView *activitySpinner;
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setObject:order.userId forKey:@"userId"];
-    NSLog(@"dictionary:%@",order.getOrderDetails);
+   
     [dictionary setObject:order.getOrderDetails forKey:@"orderDetails"];
     [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
     [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];

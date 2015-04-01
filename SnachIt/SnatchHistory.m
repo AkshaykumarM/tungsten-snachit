@@ -198,19 +198,18 @@ UIRefreshControl *refreshControl;
     {
         case 0:
             subCellId=HISTORY_ALL;
-            NSLog(@"%@",subCellId);
-            [_tableView reloadData];
-            
-            break;
-        case 1:
-              subCellId=HISTORY_DELIVERED;
-            NSLog(@"%@",subCellId);
             [_tableView reloadData];
             
             break;
         case 2:
+              subCellId=HISTORY_DELIVERED;
+    
+            [_tableView reloadData];
+            
+            break;
+        case 1:
             subCellId=HISTORY_INFLIGHT;
-            NSLog(@"%@",subCellId);
+        
             [_tableView reloadData];
             
             break;

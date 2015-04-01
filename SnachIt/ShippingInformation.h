@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ShippingInformation : UIViewController<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
+@interface ShippingInformation : UIViewController<UINavigationControllerDelegate>
 
 
 

@@ -295,6 +295,7 @@ CGFloat animatedDistance;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+    @try{
     if (textField == self.cardNumber) {
         
         // Only the 16 digits + 3 spaces
@@ -328,6 +329,9 @@ CGFloat animatedDistance;
         }
         return YES;
 
+    }
+    }@catch(NSException *e){
+        
     }
     
     return YES;

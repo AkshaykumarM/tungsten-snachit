@@ -358,6 +358,7 @@ CGFloat animatedDistance;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
+    @try{
     BillingInfoScanCell  *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if (textField == cell.cardNumberTextField) {
         
@@ -392,8 +393,10 @@ CGFloat animatedDistance;
         }
         return YES;
     }
+}@catch(NSException *e){
+    
+}
 
-   
     return YES;
 }
 
