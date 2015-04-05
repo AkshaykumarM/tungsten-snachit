@@ -10,9 +10,7 @@
 #import <UIKit/UIKit.h>
 extern NSString const *ec2maschineIP;
 //extern NSString const *tempmaschineIP;
-extern NSString * const APPALLERTS;
-extern NSString * const EMAILALLERTS;
-extern NSString * const SMSALLERTS;
+
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
 extern NSUInteger const DEFAULT_SNOOPTIME;
@@ -56,4 +54,5 @@ extern NSString *const DEFAULT_BACK_IMG;
 +(NSString*)getCardType:(NSString*)number;
 +(void)showAllertMsg:(NSString*)msg;
 +(void)setTextFieldInsets:(UITextField*)textfield;
++(NSString*)processString :(NSString*)yourString;
 @end

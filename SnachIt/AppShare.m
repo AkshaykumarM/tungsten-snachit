@@ -52,7 +52,7 @@ int linkedinsharetracker;
     
     // Set the gesture
     
-    appiconURL=@"http://www.ecellmit.com/snachit/snach_logo.png";
+    appiconURL=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/media/media/";
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     [self setupProfilePic];
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
@@ -71,7 +71,7 @@ int linkedinsharetracker;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-    NSLog(@"view did appear");
+   
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -101,17 +101,17 @@ int linkedinsharetracker;
         //  dismiss the Tweet Sheet
         dispatch_async(dispatch_get_main_queue(), ^{
             [self dismissViewControllerAnimated:NO completion:^{
-                NSLog(@"Tweet Sheet has been dismissed.");
+              
             }];
         });
     };
 
         [fbsheet setInitialText:sharingMsg];
         [fbsheet addURL:[NSURL URLWithString:sharingURL]];
-    [fbsheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:appiconURL]]]];
+    [fbsheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@snachit-app-icon.png",appiconURL]]]]];
     
     [self presentViewController:fbsheet animated:NO completion:^{
-        NSLog(@"Tweet sheet has been presented.");
+        
     }];
     
 }
@@ -187,14 +187,14 @@ int linkedinsharetracker;
     //  Set the initial body of the Tweet
     [tweetSheet setInitialText: sharingMsg];
     [tweetSheet addURL:[NSURL URLWithString:sharingURL]];
-    [tweetSheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:appiconURL]]]];
+    [tweetSheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@1024x512.png",appiconURL]]]]];
     //  Adds an image to the Tweet.  For demo purposes, assume we have an
     //  image named 'larry.png' that we wish to attach
 
     
     //  Presents the Tweet Sheet to the user
     [self presentViewController:tweetSheet animated:NO completion:^{
-        NSLog(@"Tweet sheet has been presented.");
+       
     }];
     
    
@@ -211,7 +211,7 @@ int linkedinsharetracker;
     profileTabView=[[ProfileTabView alloc] init];
     profileTabView.parentVC=self;
     profileTabView.view.frame=CGRectMake(0, 30, backView.frame.size.width, backView.frame.size.height-60);
-    profileTabView.sharingMsg=[NSString stringWithFormat:@"Snach.it %@ %@ %@",sharingMsg,appiconURL,sharingURL];
+    profileTabView.sharingMsg=[NSString stringWithFormat:@"Snach.it %@ %@646x350.png %@",sharingMsg,appiconURL,sharingURL];
     profileTabView.userid=user.userID;
     profileTabView.snachid=product.snachId;
     //place device check here
@@ -264,7 +264,8 @@ int linkedinsharetracker;
                     id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
                     [shareBuilder setURLToShare:[NSURL URLWithString:@"snach.it"]];
                     [shareBuilder setPrefillText:sharingURL];
-                    [shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:appiconURL]];
+                    [shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@726x500.png",appiconURL]]];
+                    
                     [shareBuilder open];
                     
                     if (error) {

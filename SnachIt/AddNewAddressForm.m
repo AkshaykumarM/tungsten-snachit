@@ -24,7 +24,7 @@
     SnoopedProduct *product;
     CGFloat viewSize;
     CGFloat viewCenter;
-
+    UIToolbar* toolbar;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -42,12 +42,14 @@ CGFloat animatedDistance;
     picker.delegate = self;
     picker.backgroundColor=[UIColor whiteColor];
     self.stateTextField.inputView = picker;
-    
+   
     NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"states-info" ofType:@"plist"]];
    
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
     self.statesAbv = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"Abb"]];
 }
+
+
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
     [self initializeView];
@@ -55,10 +57,29 @@ CGFloat animatedDistance;
     viewCenter=self.view.center.x-50;
     [self setupAlerts];
     CURRENTDB=SnachItDBFile;
+    
+}
+-(void)doneClicked:(id)sender{
+    [self.view endEditing:YES];
 }
 -(void)initializeView{
+    
      self.navigationController.navigationBar.topItem.title = @"ship to";
     product=[SnoopedProduct sharedInstance];
+    toolbar = [[UIToolbar alloc] init];
+    toolbar.frame=CGRectMake(0,0,self.view.frame.size.width,44);
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
+
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleDone target:self
+                                                                  action:@selector(doneClicked:)];
+    toolbar.barTintColor=[UIColor colorWithRed:0.8 green:0.816 blue:0.839 alpha:1];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
+    
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
@@ -81,12 +102,16 @@ CGFloat animatedDistance;
     [global setTextFieldInsets:self.stateTextField];
     [global setTextFieldInsets:self.zipTextField];
     [global setTextFieldInsets:self.phoneTextField];
-
+    
     self.zipTextField.keyboardType=UIKeyboardTypeNumberPad;
+    
     self.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     self.streetAddressTextField.keyboardType=UIKeyboardTypeAlphabet;
     self.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
     self.fullNameTextField.keyboardType=UIKeyboardTypeAlphabet;
+    self.zipTextField.inputAccessoryView=toolbar;
+    self.phoneTextField.inputAccessoryView=toolbar;
+    self.stateTextField.inputAccessoryView=toolbar;
        
 }
 -(void)back:(id)sender{
@@ -111,6 +136,9 @@ CGFloat animatedDistance;
     if ([info objectForKey:@"status"] != 0) {
         
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+
         // Pop the view controller.
          [self performSegueWithIdentifier:@"addressaddedseague" sender:self];
     }
@@ -123,12 +151,18 @@ CGFloat animatedDistance;
     
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if(textField){
+-(BOOL)textFieldShouldReturn:(UITextField*)textField
+{
+    // Try to find next responder
+    UIResponder* nextResponder = [textField.superview viewWithTag:textField.tag + 1];
+    if (nextResponder) {
+        // Found next responder, so set it.
+        [nextResponder becomeFirstResponder];
+    } else {
+        // Not found, so remove keyboard.
         [textField resignFirstResponder];
     }
-    return NO;
+    return NO; // We do not want UITextField to insert line-breaks.
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{

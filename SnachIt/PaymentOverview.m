@@ -35,7 +35,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [super viewDidLoad];
 
     defaults=[NSUserDefaults standardUserDefaults];
-   
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -70,6 +70,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     self.navigationItem.leftBarButtonItem = eng_btn;
     
 }
+
 -(void)back:(id)sender{
     [self performSegueWithIdentifier:@"backtoSTP" sender:nil];
     
@@ -120,6 +121,9 @@ NSString *const STPSEAGUE=@"backtoSTP";
     int rowid=info.uniqueId;
     cell.tag=rowid;
     //for auto selection
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[def valueForKey:DEFAULT_BILLING] intValue];
+    
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ){
         @try{
             if(i==0){
@@ -163,6 +167,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     {
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+       [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
         checkedIndexPath=indexPath;
         SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
         // initializing address details
@@ -176,7 +181,8 @@ NSString *const STPSEAGUE=@"backtoSTP";
     
     if (cell.isSelected) {
         cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
-    }
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+            }
     else {
         cell.accessoryView = nil;
     }

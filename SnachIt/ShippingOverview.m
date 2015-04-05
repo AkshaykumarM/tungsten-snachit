@@ -121,7 +121,9 @@
     
     cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %d",info.city,info.state,info.zip];
     
-    
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+    RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:DEFAULT_SHIPPING] intValue];
+
     //for autoselect functionality
     int rowid=info.uniqueId;
      cell.tag=rowid;
@@ -174,6 +176,10 @@
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+
         self.checkedIndexPath = indexPath;
         SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
         // initializing address details
@@ -188,6 +194,7 @@
   
         if (cell.isSelected) {
             cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+            [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
         }
         else {
             cell.accessoryView = nil;

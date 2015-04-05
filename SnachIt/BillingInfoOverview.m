@@ -29,7 +29,7 @@
     CGFloat viewSize;
     NSDateComponents *currentDateComponents;
     NSMutableArray *monthsArray,*yearsArray;
-
+    UIToolbar* toolbar;
 
 }
 
@@ -62,7 +62,7 @@ CGFloat animatedDistance;
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
-    
+    self.automaticallyAdjustsScrollViewInsets = NO;
 }
 
 
@@ -77,6 +77,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     CURRENTDB=SnachItDBFile;
     [self setupAlerts];
+     [self detectCardType];
 }
 -(void)initializePickers{
     statePicker = [[UIPickerView alloc] init];
@@ -108,17 +109,39 @@ CGFloat animatedDistance;
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
     self.statesAbv = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"Abb"]];
     statePicker.tag=1;
+    toolbar = [[UIToolbar alloc] init];
+    toolbar.frame=CGRectMake(0,0,self.view.frame.size.width,44);
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleDone target:self
+                                                                  action:@selector(doneClicked:)];
+    toolbar.barTintColor=[UIColor colorWithRed:0.8 green:0.816 blue:0.839 alpha:1];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
     
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if(textField){
-        [textField resignFirstResponder];
-        
-    }
-    return NO;
+
+-(void)doneClicked:(id)sender{
+    [self.view endEditing:YES];
 }
+
+-(BOOL)textFieldShouldReturn:(UITextField*)textField{
+    // Try to find next responder
+    UIResponder* nextResponder = [textField.superview viewWithTag:textField.tag + 1];
+    if (nextResponder) {
+        // Found next responder, so set it.
+        [nextResponder becomeFirstResponder];
+    } else {
+        // Not found, so remove keyboard.
+        [textField resignFirstResponder];
+    }
+    return NO; // We do not want UITextField to insert line-breaks.
+}
+
 
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -144,13 +167,19 @@ CGFloat animatedDistance;
     
     [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
     [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingChanged];
+    [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingDidEndOnExit];
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     cell.stateTextField.inputView=statePicker;
-   
+    cell.stateTextField.inputAccessoryView = toolbar;
+    
     cell.expDateTextField.inputView=datePicker;
+    cell.expDateTextField.inputAccessoryView = toolbar;
     cell.expDateTextField.inputView.backgroundColor= [UIColor whiteColor];
-     
+    
+    cell.phoneTextField.inputAccessoryView=toolbar;
+    cell.postalCodeTextField.inputAccessoryView=toolbar;
+    
     [global setTextFieldInsets:cell.cardNumberTextField];
     [global setTextFieldInsets:cell.cardHolderNameTextField];
     [global setTextFieldInsets:cell.securityCodeText];
@@ -162,15 +191,18 @@ CGFloat animatedDistance;
     [global setTextFieldInsets:cell.postalCodeTextField];
     
     
+    cell.cardNumberTextField.inputAccessoryView=toolbar;
     cell.cardNumberTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.expDateTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.securityCodeText.keyboardType=UIKeyboardTypeNumberPad;
+    cell.securityCodeText.inputAccessoryView=toolbar;
     cell.postalCodeTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     cell.addressTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.cardHolderNameTextField.keyboardType=UIKeyboardTypeAlphabet;
-    [cell.cardNumberTextField setText:cardNumber];
+    [cell.cardNumberTextField setText:[global processString:cardNumber]];
+    
     [cell.expDateTextField setText:cardExp];
     [cell.securityCodeText setText:cardCVV];
     
@@ -223,32 +255,6 @@ CGFloat animatedDistance;
     }
 }
 
--(NSString*)processString :(NSString*)yourString
-{
-    if(yourString == nil){
-        return @"";
-    }
-    int stringLength = (int)[yourString length];
-    // the string you want to process
-    int len = 4;  // the length
-    NSMutableString *str = [NSMutableString string];
-    int i = 0;
-    for (; i < stringLength; i+=len) {
-        @try{
-        NSRange range = NSMakeRange(i, len);
-        [str appendString:[yourString substringWithRange:range]];
-        if(i!=stringLength -4){
-            [str appendString:@" "]; //If required stringshould be in format XXXX-XXXX-XXXX-XXX then just replace [str appendString:@"-"]
-        }}
-        @catch(NSException *e){}
-    }
-    if (i < [str length]-1) {  // add remain part
-        [str appendString:[yourString substringFromIndex:i]];
-    }
-    // str now is what your want
-    
-    return str;
-}
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
     CGRect textFieldRect =
@@ -452,11 +458,11 @@ CGFloat animatedDistance;
     else{
         if([pickerView selectedRowInComponent:0]+1<10){
             cell.expDateTextField.text=[NSString stringWithFormat:@"0%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
-            [cell.expDateTextField resignFirstResponder];
+            
         }
         else{
             cell.expDateTextField.text=[NSString stringWithFormat:@"%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
-            [cell.expDateTextField resignFirstResponder];
+           
         }
         
     }

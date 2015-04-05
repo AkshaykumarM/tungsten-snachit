@@ -38,8 +38,8 @@ UIActivityIndicatorView *activitySpinner;
     double price;
     SnoopedProduct *product;
     SnoopingUserDetails *userdetails;
-   
     Order *order;
+    UserProfile *user;
 }
 @synthesize productImg,brandImg,productDescription,description,productPrice,productName,cellId,prodPrice;
 
@@ -50,7 +50,7 @@ UIActivityIndicatorView *activitySpinner;
     
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
 
-    // Set the Label text with the selected recipe
+    user=[UserProfile sharedInstance];
     userdetails=[SnoopingUserDetails sharedInstance];
     product=[SnoopedProduct sharedInstance];
     order=[Order sharedInstance];
@@ -58,7 +58,7 @@ UIActivityIndicatorView *activitySpinner;
     prodPrice=order.orderTotal;
     tempQuntity=[order.orderQuantity intValue];
     CURRENTDB=SnoopTimeDBFile;
-
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -84,6 +84,7 @@ UIActivityIndicatorView *activitySpinner;
     [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSnach:)];
+    [self initializeOrder];
 }
 
 -(void)cancelSnach:(id)sender{
@@ -327,4 +328,37 @@ UIActivityIndicatorView *activitySpinner;
 }
 
 
+-(void)initializeOrder{
+    double shippingcost;
+    double salesTax;
+    double tempst;
+    int speed;
+    @try{
+        tempst=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
+        shippingcost=[product.productShippingCost doubleValue];
+        
+        if([userdetails.shipState isEqual:@"UT"])
+            salesTax=(6.85/100)*[product.productPrice doubleValue];
+        else{
+            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
+        }
+        speed=[product.productShippingSpeed intValue];
+    }
+    @catch(NSException *e){
+        shippingcost=0;
+        salesTax=0;
+        speed=0;
+    }
+    NSDateComponents *dateComponents = [NSDateComponents new];
+    dateComponents.day = speed;
+    NSDate *currentdate=[NSDate date];
+    NSDate *deliverydate = [[NSCalendar currentCalendar]dateByAddingComponents:dateComponents
+                                                                        toDate: currentdate
+                                                                       options:0];
+    NSDateFormatter *df = [[NSDateFormatter alloc] init];
+    [df setDateFormat:@"MM/dd/yyyy"];
+    
+    
+    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
+}
 @end

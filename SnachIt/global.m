@@ -10,11 +10,8 @@
 #import "RegexValidator.h"
 
 //NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
- NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
- NSString * const APPALLERTS=@"appAllerts";
- NSString * const EMAILALLERTS=@"emailAllerts";
- NSString * const SMSALLERTS=@"smsAllerts";
- NSString *USERID;                                   //this will be the global userid
+NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
+NSString *USERID;                                   //this will be the global userid
  bool isApplicationLaunchedFromNotification=FALSE;
  bool isAllreadyTried=FALSE;
  NSString * const SSOUSING=@"SSOUsing";
@@ -148,4 +145,31 @@ float BORDERWIDTH=5.0f;
     textfield.leftViewMode = UITextFieldViewModeAlways;
     
 }
++(NSString*)processString :(NSString*)yourString
+{
+    if(yourString == nil){
+        return @"";
+    }
+    int stringLength = (int)[yourString length];
+    // the string you want to process
+    int len = 4;  // the length
+    NSMutableString *str = [NSMutableString string];
+    int i = 0;
+    for (; i < stringLength; i+=len) {
+        @try{
+            NSRange range = NSMakeRange(i, len);
+            [str appendString:[yourString substringWithRange:range]];
+            if(i!=stringLength -4){
+                [str appendString:@" "]; //If required stringshould be in format XXXX-XXXX-XXXX-XXX then just replace [str appendString:@"-"]
+            }}
+        @catch(NSException *e){}
+    }
+    if (i < [str length]-1) {  // add remain part
+        [str appendString:[yourString substringFromIndex:i]];
+    }
+    // str now is what your want
+    
+    return str;
+}
+
 @end

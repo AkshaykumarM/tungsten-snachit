@@ -24,6 +24,7 @@
     UIPickerView *statepicker;
     CGFloat viewSize;
     CGFloat viewCenter;
+    UIToolbar* toolbar ;
 }
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
@@ -47,6 +48,20 @@ CGFloat animatedDistance;
     
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
     self.statesAbv = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"Abb"]];
+    toolbar = [[UIToolbar alloc] init];
+    toolbar.frame=CGRectMake(0,0,self.view.frame.size.width,44);
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleDone target:self
+                                                                  action:@selector(doneClicked:)];
+    toolbar.barTintColor=[UIColor colorWithRed:0.8 green:0.816 blue:0.839 alpha:1];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
+    
+   
    }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
@@ -54,6 +69,9 @@ CGFloat animatedDistance;
     viewCenter=self.view.center.x-50;
     [self setupAlerts];
  
+}
+-(void)doneClicked:(id)sender{
+    [self.view endEditing:YES];
 }
 
 -(void)setViewLookAndFeel{
@@ -75,12 +93,18 @@ CGFloat animatedDistance;
     user=[UserProfile sharedInstance];
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if(textField){
+-(BOOL)textFieldShouldReturn:(UITextField*)textField
+{
+    // Try to find next responder
+    UIResponder* nextResponder = [textField.superview viewWithTag:textField.tag + 1];
+    if (nextResponder) {
+        // Found next responder, so set it.
+        [nextResponder becomeFirstResponder];
+    } else {
+        // Not found, so remove keyboard.
         [textField resignFirstResponder];
     }
-    return NO;
+    return NO; // We do not want UITextField to insert line-breaks.
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -109,6 +133,7 @@ CGFloat animatedDistance;
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     cell.stateTextField.inputView = statepicker;
+    cell.stateTextField.inputAccessoryView = toolbar;
     
     [global setTextFieldInsets:cell.firstNameTextField];
     [global setTextFieldInsets:cell.lastNameTextField];
@@ -124,6 +149,7 @@ CGFloat animatedDistance;
     cell.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.firstNameTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.lastNameTextField.keyboardType=UIKeyboardTypeAlphabet;
+    
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
         cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];

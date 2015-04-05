@@ -39,6 +39,7 @@
     UIActivityIndicatorView *activitySpinner;
     UIView *backView;
     int viewWidth;
+    UIToolbar* toolbar;
 }
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
@@ -53,8 +54,24 @@ CGFloat animatedDistance;
 
     [self setViewLookAndFeel];
     
+    toolbar = [[UIToolbar alloc] init];
+    toolbar.frame=CGRectMake(0,0,self.view.frame.size.width,44);
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleDone target:self
+                                                                  action:@selector(doneClicked:)];
+    toolbar.barTintColor=[UIColor colorWithRed:0.8 green:0.816 blue:0.839 alpha:1];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
     // Load the file content and read the data into arrays
 }
+-(void)doneClicked:(id)sender{
+    [self.view endEditing:YES];
+}
+
 -(void)viewWillAppear:(BOOL)animated{
     user =[UserProfile sharedInstance];
     
@@ -112,6 +129,7 @@ CGFloat animatedDistance;
     [global setTextFieldInsets:cell.emailTextField];
     [global setTextFieldInsets:cell.nameTextField];
     [global setTextFieldInsets:cell.phoneTextField];
+    cell.phoneTextField.inputAccessoryView=toolbar;
     //setting background img
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
@@ -131,7 +149,7 @@ CGFloat animatedDistance;
     appAllertSwitch.isRounded = NO;
     
    
-    if([[defaults stringForKey:APPALLERTS] isEqual:@"True"]){
+    if(user.isappAlertsOn==1){
         appAllertSwitch.on=NO; appAlerts=@"True";}
     else{
         appAllertSwitch.on=YES;appAlerts=@"False";}
@@ -147,7 +165,7 @@ CGFloat animatedDistance;
     emailAllertSwitch.inactiveColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
     emailAllertSwitch.isRounded = NO;
     
-    if([[defaults stringForKey:EMAILALLERTS] isEqual:@"True"]){
+    if(user.isemailAlertsOn==1){
         emailAllertSwitch.on=NO; emailAlerts=@"True";emailAllertSwitch.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
     }
     else{
@@ -162,7 +180,7 @@ CGFloat animatedDistance;
     smsAllertSwitch.inactiveColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
     smsAllertSwitch.isRounded = NO;
     
-    if([[defaults stringForKey:SMSALLERTS] isEqual:@"True"]){
+    if(user.issmsAlertsOn==1){
         smsAllertSwitch.on=NO; smsAlerts=@"True";}
     else{
         smsAllertSwitch.on=YES;smsAlerts=@"False";}
@@ -201,12 +219,18 @@ CGFloat animatedDistance;
     self.navigationItem.leftBarButtonItem = eng_btn;
 }
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if(textField){
+-(BOOL)textFieldShouldReturn:(UITextField*)textField
+{
+    // Try to find next responder
+    UIResponder* nextResponder = [textField.superview viewWithTag:textField.tag + 1];
+    if (nextResponder) {
+        // Found next responder, so set it.
+        [nextResponder becomeFirstResponder];
+    } else {
+        // Not found, so remove keyboard.
         [textField resignFirstResponder];
     }
-    return NO;
+    return NO; // We do not want UITextField to insert line-breaks.
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
@@ -291,7 +315,7 @@ CGFloat animatedDistance;
         NSLog(@"UPDATE PROFILE RESPONSE:%@",response);
         if([[response objectForKey:@"success"] isEqual:@"true"]){
             SnachItLogin *login=[[SnachItLogin alloc] init];
-            [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"] withDateOfBirth:[response valueForKey:@"DateOfBirth"] withJoiningDate:[response valueForKey:@"JoiningDate"] withSnoopTime:[[response valueForKey:@"SnoopTime"] intValue]];
+            [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"]  withJoiningDate:[response valueForKey:@"JoiningDate"] withSnoopTime:[[response valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[response valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[response valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[response valueForKey:@"email_alerts"] intValue]];
             status=1;
         }
         else
@@ -366,9 +390,9 @@ CGFloat animatedDistance;
     [dictionary setValue:tableCell.emailTextField.text forKey:@"emailId"];
     [dictionary setValue:tableCell.phoneTextField.text forKey:@"phoneNumber"];
     [dictionary setValue:tableCell.phoneTextField.text forKey:@"phoneNumber"];
-    [dictionary setValue:appAlerts forKey:@"appAlerts"];
-    [dictionary setValue:emailAlerts forKey:@"emailAlerts"];
-    [dictionary setValue:smsAlerts forKey:@"SMSAlerts"];
+    [dictionary setValue:[appAlerts isEqual:@"True"]?@"1":@"0" forKey:@"appAlerts"];
+    [dictionary setValue:[emailAlerts isEqual:@"True"]?@"1":@"0" forKey:@"emailAlerts"];
+    [dictionary setValue:[smsAlerts isEqual:@"True"]?@"1":@"0" forKey:@"SMSAlerts"];
     return dictionary;
     
 }
@@ -423,10 +447,10 @@ CGFloat animatedDistance;
         int status=[self updateUserProfile];
         
         if(status==1){
-            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-            [defaults setValue:appAlerts forKey:APPALLERTS];
-            [defaults setValue:emailAlerts forKey:EMAILALLERTS];
-            [defaults setValue:smsAlerts forKey:SMSALLERTS];
+//            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+//            [defaults setValue:appAlerts forKey:appAlerts];
+//            [defaults setValue:emailAlerts forKey:emailAlerts];
+//            [defaults setValue:smsAlerts forKey:smsAlerts];
             [self.tableViewsetting reloadData];
             [global showAllertMsg:@"Profile updated successfully"];
             

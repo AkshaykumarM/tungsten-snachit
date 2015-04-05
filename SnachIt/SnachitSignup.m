@@ -54,6 +54,7 @@ CGFloat animatedDistance;
     UIColor *color = [UIColor whiteColor];
     self.emailTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
     self.passwordTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password" attributes:@{NSForegroundColorAttributeName: color}];
+    self.emailTextField.keyboardType=UIKeyboardTypeEmailAddress;
    }
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
     
@@ -133,8 +134,9 @@ CGFloat animatedDistance;
         NSString *password= self.passwordTextField.text;
       
         NSLog(@"APNS TOKEN WHILE SNACH.IT SIGNUP: %@",APNSTOKEN);
-        if([self IsEmailValid:username] && [password length]>=6)
+        if([self IsEmailValid:username])
         {
+            if([password length]>=6){
             NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSTOKEN SignUpVia:@"SnachIt" DOB:@""];
          
             if(status==1 ){
@@ -146,10 +148,14 @@ CGFloat animatedDistance;
                                  initWithNibName:@"LoginScreen" bundle:nil];
                 [self presentViewController:startscreen animated:YES completion:nil];
             }
+            }
+            else{
+                [global showAllertMsg:@"Password must be atleast of 6 charactors."];
+            }
             
         }
         else{
-            [global showAllertMsg:@"Enter valid email id and password"];
+            [global showAllertMsg:@"Enter valid email id."];
         }
         
     }else{

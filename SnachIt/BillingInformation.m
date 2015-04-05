@@ -134,7 +134,7 @@ else{
     cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
     
     NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[def valueForKey:DEFAULT_BILLING] integerValue];
+    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)[[def valueForKey:DEFAULT_BILLING] integerValue];
     
     int rowid=info.uniqueId;
     cell.tag=rowid;
@@ -181,7 +181,8 @@ else{
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)cell.tag;
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
         [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
     }
@@ -193,6 +194,7 @@ else{
     if(tableView!=self.tableView1){
         if (cell.isSelected) {
             cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+            [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
         }
         else {
             cell.accessoryView = nil;

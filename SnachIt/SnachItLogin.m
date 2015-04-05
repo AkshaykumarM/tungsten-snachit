@@ -1,4 +1,4 @@
-//
+
 //  SnachItLogin.m
 //  SnatchIt
 //
@@ -35,7 +35,6 @@ UIView *backView;
 @synthesize emailTfield=_emailTfield;
 @synthesize passwordTfield=_passwordTfield;
 
-@synthesize mySpinner=_mySpinner;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
 static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
@@ -78,7 +77,7 @@ CGFloat animatedDistance;
     UIColor *color = [UIColor whiteColor];
     self.emailTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
     self.passwordTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password" attributes:@{NSForegroundColorAttributeName: color}];
-   
+    self.emailTfield.keyboardType=UIKeyboardTypeEmailAddress;
     
     
     }
@@ -280,7 +279,7 @@ CGFloat animatedDistance;
         {
             //[global showAllertMsg:@"Sign in success"];
             NSDictionary *userprofile=[response objectForKey:@"userProfile"];
-            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]  withDateOfBirth:[userprofile valueForKey:@"DateOfBirth"] withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue]];
+            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue]];
             NSLog(@"UserProfile:%@",userprofile);
             NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
             [defaults setObject:ssoUsing forKey:SSOUSING];
@@ -553,10 +552,10 @@ CGFloat animatedDistance;
     
 }
 
--(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime{
+-(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts{
     
     UserProfile *profile=[[UserProfile
-                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withDateOfBirth:dateOfBirth withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:@""] withSnoopTime:snoopTime];
+                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:@""] withSnoopTime:snoopTime withAppAlerts:appAlerts withEmailAlerts:emailAlerts withSMSAlerts:SMSAlerts];
     
     
 }

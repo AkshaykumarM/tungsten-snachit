@@ -23,7 +23,7 @@ NSString * twProfilePic;
     return sharedInstance;
 }
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withDateOfBirth:(NSString*)dateOfBirth withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL *)sharingURL withSnoopTime:(int)snoopTime
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL*)sharingURL withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withEmailAlerts:(int)emailAlerts withSMSAlerts:(int)smsAlerts
 {
     self = [super init];
     self.userID=userId;
@@ -34,10 +34,12 @@ NSString * twProfilePic;
     self.firstName=firstName;
     self.lastName=lastName;
     self.fullName=fullName;
-    self.dateOfBirth=dateOfBirth;
     self.joiningDate=joiningDate;
     self.sharingURL=sharingURL;
     self.snoopTime=snoopTime;
+    self.isappAlertsOn=appAlerts;
+    self.isemailAlertsOn=emailAlerts;
+    self.issmsAlertsOn=smsAlerts;
     return self;
 }
 

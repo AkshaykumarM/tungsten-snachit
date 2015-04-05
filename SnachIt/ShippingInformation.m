@@ -151,6 +151,7 @@
             if(i==0){
             [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
             self.checkedIndexPath=indexPath;
+            
                 i++;
             }}
             @catch(NSException *e){
@@ -189,7 +190,7 @@
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
         self.checkedIndexPath = indexPath;
-       
+       [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
         [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
@@ -205,6 +206,7 @@
       if(tableView!=self.tableView1){
     if (cell.isSelected) {
         cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
     }
     else {
         cell.accessoryView = nil;

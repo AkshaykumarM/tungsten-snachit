@@ -223,7 +223,7 @@ UIView* backView ;
         [refreshControl addTarget:self action:@selector(getLatestFriendsSnachs) forControlEvents:UIControlEventValueChanged];
         if(count<=0)
         {
-            messageLabel.text = @"No Friends Found!";
+            messageLabel.text = @"No friends found!";
             messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -239,7 +239,7 @@ UIView* backView ;
         
         if(count<=0)
         {
-            messageLabel.text = @"No Brand Followed Yet!";
+            messageLabel.text = @"No brand followed yet!";
             messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -266,7 +266,7 @@ UIView* backView ;
         
         if(count<=0)
         {
-            messageLabel.text = @"No Snachs Yet!";
+            messageLabel.text = @"No snachs yet!";
              messageLabel.textColor=[UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
             self.tableView.backgroundView = messageLabel;
             self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
@@ -330,7 +330,7 @@ UIView* backView ;
         int snachedProductCount=(int)[snachedProducts count];
         if(snachedProductCount==0){
             
-            cell.noSnachsYet.text=@"No Snachs Yet";
+            cell.noSnachsYet.text=@"No snachs yet";
             NSArray* subviews = [[NSArray alloc] initWithArray: cell.scrollview.subviews];
             for (UIView* view in subviews) {
                 if ([view isKindOfClass:[UIImageView class]]) {
@@ -458,6 +458,7 @@ UIView* backView ;
             }
 
         }
+            [cell.followStatus  setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];
         cell.productImageConatainer.contentSize = CGSizeMake(scrollWidth+xOffset,80);
             
        
@@ -1096,7 +1097,9 @@ case 2:
 
 -(void)unfollowBrand:(UITapGestureRecognizer*)tapRecognizer{
     UnfollowButton *tap = (UnfollowButton *)tapRecognizer;
-  Brand *brand=[followedBrand objectAtIndex:tap.indexPath.row];
+    UIButton *button= (UIButton*)tap.view;
+    button.backgroundColor =[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1];
+    Brand *brand=[followedBrand objectAtIndex:tap.indexPath.row];
    
     if([Common updateFollowStatus:brand.brandId FollowStatus:@"0" ForUserId:user.userID]==1)
         {

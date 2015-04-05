@@ -87,11 +87,11 @@ UIRefreshControl *refreshControl;
     if(count<=0){
         UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
         
-        messageLabel.text = @"No snachs history Available!";
-        messageLabel.textColor = [UIColor blackColor];
+        messageLabel.text = @"No snachs history available!";
+        messageLabel.textColor = [UIColor colorWithRed:0.89 green:0.89 blue:0.89 alpha:1];
         messageLabel.numberOfLines = 0;
         messageLabel.textAlignment = NSTextAlignmentCenter;
-        messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
+        messageLabel.font = [UIFont fontWithName:@"OpenSans" size:20];
         [messageLabel sizeToFit];
         
         self.tableView.backgroundView = messageLabel;

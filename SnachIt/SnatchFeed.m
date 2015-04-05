@@ -428,20 +428,31 @@
         }
     
     NSInteger productImages=[prod.productImages count];
-    for(int index=0; index < productImages; index++)
-    {
+    if(productImages>0){
+        for(int index=0; index < productImages; index++)
+        {
         CGFloat  xOffset = index*viewSize+10;
         UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize-10, cell.productImagesContainer.frame.size.height)];
         
-        [img setImageWithURL:[NSURL URLWithString:prod.productImages[index]] placeholderImage:nil];
+        [img setImageWithURL:[NSURL URLWithString:prod.productImages[index]] placeholderImage:[UIImage imageNamed:@"placeholder.png"]];
         img.userInteractionEnabled = YES;
         [img setContentMode:UIViewContentModeScaleAspectFit];
         
         [cell.productImagesContainer addSubview:img];
-        
-        
+        }
+        cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages+10,cell.productImagesContainer.frame.size.height);
     }
-    cell.productImagesContainer.contentSize = CGSizeMake(viewSize*productImages+10,cell.productImagesContainer.frame.size.height);
+    else{
+        CGFloat  xOffset = 0;
+        UIImageView *img = [[UIImageView alloc] initWithFrame:CGRectMake(xOffset,10,viewSize-10, cell.productImagesContainer.frame.size.height)];
+        
+        img.image=[UIImage imageNamed:@"placeholder.png"];
+        img.userInteractionEnabled = YES;
+        [img setContentMode:UIViewContentModeScaleAspectFit];
+        [cell.productImagesContainer addSubview:img];
+        cell.productImagesContainer.contentSize = CGSizeMake(viewSize+10,cell.productImagesContainer.frame.size.height);
+    }
+    
     
     
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];

@@ -27,7 +27,7 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     UIPickerView *statePicker,*datePicker;
     NSDateComponents *currentDateComponents;
     CGFloat viewSize;
-  
+    UIToolbar* toolbar;
     NSMutableArray *monthsArray,*yearsArray;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
@@ -46,7 +46,18 @@ CGFloat animatedDistance;
   
     // Set the Label text with the selected recipe
     [self initializePickers];
-
+    toolbar = [[UIToolbar alloc] init];
+    toolbar.frame=CGRectMake(0,0,self.view.frame.size.width,44);
+    toolbar.barStyle = UIBarStyleBlackTranslucent;
+    UIBarButtonItem *flexibleSpaceLeft = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil];
+    
+    
+    UIBarButtonItem* doneButton = [[UIBarButtonItem alloc] initWithTitle:@"Done"
+                                                                   style:UIBarButtonItemStyleDone target:self
+                                                                  action:@selector(doneClicked:)];
+    toolbar.barTintColor=[UIColor colorWithRed:0.8 green:0.816 blue:0.839 alpha:1];
+    
+    [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -54,6 +65,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     CURRENTDB=SnachItDBFile;
     [self setupAlerts];
+    [self detectCardType];
 }
 -(void)viewWillAppear:(BOOL)animated{
    
@@ -89,6 +101,7 @@ CGFloat animatedDistance;
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
     self.statesAbv = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"Abb"]];
     statePicker.tag=1;
+  
 }
 
 -(void)initializeView{
@@ -122,8 +135,14 @@ CGFloat animatedDistance;
     [global setTextFieldInsets:self.phoneTextField];
     
     //setting keyboardtypes
+    self.cardNumber.inputAccessoryView=toolbar;
     self.cardNumber.keyboardType=UIKeyboardTypeNumberPad;
     self.expDateTxtField.keyboardType=UIKeyboardTypeNumberPad;
+    self.expDateTxtField.inputAccessoryView=toolbar;
+    self.cvvTextField.inputAccessoryView=toolbar;
+    self.stateTextField.inputAccessoryView=toolbar;
+    self.phoneTextField.inputAccessoryView=toolbar;
+    self.zipTextField.inputAccessoryView=toolbar;
     self.cvvTextField.keyboardType=UIKeyboardTypeNumberPad;
     self.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     self.zipTextField.keyboardType=UIKeyboardTypeNumberPad;
@@ -136,7 +155,7 @@ CGFloat animatedDistance;
     self.stateTextField.inputView=statePicker;
     self.expDateTxtField.inputView=datePicker;
     self.expDateTxtField.inputView.backgroundColor=[UIColor whiteColor];
-    [self.cardNumber setText:cardNumber];
+    [self.cardNumber setText:[global processString:cardNumber]];
     [self.expDateTxtField setText:cardExp];
     [self.cvvTextField setText:cardCVV];
     //adding action to camera icon
@@ -145,6 +164,10 @@ CGFloat animatedDistance;
     [self.cameraBtn setUserInteractionEnabled:YES];
     [self.cameraBtn  addGestureRecognizer:singleTap];
     
+    
+}
+-(void)doneClicked:(id)sender{
+    [self.view endEditing:YES];
 }
 
 -(void)back:(id)sender{
@@ -191,12 +214,15 @@ CGFloat animatedDistance;
         
         NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text];
         // Execute the query.
-    
+       
+
         
         // If the query was successfully executed then pop the view controller.
         if ([info objectForKey:@"status"] != 0) {
          
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
             // Pop the view controller.
             [self performSegueWithIdentifier:BACKTOPAYMENT_OVERVIEW_SEAGUE sender:self];
 
@@ -211,12 +237,18 @@ CGFloat animatedDistance;
 
 
 
--(BOOL)textFieldShouldReturn:(UITextField *)textField{
-    
-    if(textField){
+-(BOOL)textFieldShouldReturn:(UITextField*)textField
+{
+    // Try to find next responder
+    UIResponder* nextResponder = [textField.superview viewWithTag:textField.tag + 1];
+    if (nextResponder) {
+        // Found next responder, so set it.
+        [nextResponder becomeFirstResponder];
+    } else {
+        // Not found, so remove keyboard.
         [textField resignFirstResponder];
     }
-    return NO;
+    return NO; // We do not want UITextField to insert line-breaks.
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
