@@ -16,6 +16,7 @@ extern NSString *screenName;
 extern NSUInteger const DEFAULT_SNOOPTIME;
 extern int i;
 extern NSString *USERID;
+extern NSString *SNACHID;
 extern bool isAllreadyTried;
 extern NSString *cardNumber;
 extern NSString *cardExp;
@@ -29,6 +30,8 @@ extern NSString * const DEFAULT_SHIPPING;
 extern NSString * const SnachItDBFile;
 extern NSString * const SnoopTimeDBFile;
 extern NSString *CURRENTDB;
+extern NSString * const checkInternetConnection;
+
 
 extern bool isApplicationLaunchedFromNotification;
 extern float  RADIOUS;
@@ -37,7 +40,7 @@ extern int snooptTracking;
 extern NSString *ssousing;
 extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
 extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
-
+extern NSString *screenName;
 
 extern NSString *const DEFAULT_BACK_IMG;
 
@@ -55,4 +58,5 @@ extern NSString *const DEFAULT_BACK_IMG;
 +(void)showAllertMsg:(NSString*)msg;
 +(void)setTextFieldInsets:(UITextField*)textfield;
 +(NSString*)processString :(NSString*)yourString;
++(BOOL)isConnected;//for checking internet connection
 @end

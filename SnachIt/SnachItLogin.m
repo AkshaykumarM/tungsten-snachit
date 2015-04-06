@@ -68,7 +68,7 @@ CGFloat animatedDistance;
    
 }
 -(void)viewWillAppear:(BOOL)animated{
-    NSLog(@"view Will appear");
+   
 }
 
 -(void)setViewLookAndFeel{
@@ -158,6 +158,7 @@ CGFloat animatedDistance;
 }
 - (IBAction)fbBtn:(id)sender {
     [self startProcessing];
+    if([global isConnected]){
             ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
@@ -231,12 +232,18 @@ CGFloat animatedDistance;
          
          }];
     }
+    }
+    else{
+        [self stopProcessing];
+    }
+   
 }
 
 - (IBAction)signInBtn:(id)sender {
    //start spinner
     
     [self startProcessing];
+    
     ssousing=@"SnachIt";
     if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
             if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
@@ -253,7 +260,8 @@ CGFloat animatedDistance;
     else{
         [global showAllertForEnterValidCredentials];
     }
-    [self stopProcessing];
+    
+   [self stopProcessing];
     
 }
 
@@ -261,6 +269,8 @@ CGFloat animatedDistance;
 
     NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",ec2maschineIP,username,password];
       NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    int status=0;
+     if([global isConnected]){
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     NSURLResponse *response = nil;
     NSError *error = nil;
@@ -268,7 +278,7 @@ CGFloat animatedDistance;
     NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
     //json parse
     NSLog(@"\nRequest URL: %@",url);
-  int status=0;
+  
     
     if (jasonData) {
        
@@ -299,6 +309,8 @@ CGFloat animatedDistance;
     else{
         [global showAllertMsg:@"Server not responding"];
     }
+     }
+   
     return status;
 }
 -(void)startProcessing{
@@ -433,9 +445,12 @@ CGFloat animatedDistance;
 
 - (IBAction)gPlusBtn:(id)sender {
     [self startProcessing];
+    if([global isConnected]){
     [self googleSignIn];
-  
-    
+    }
+    else{
+    [self stopProcessing];
+    }
 }
 
 -(void)googleSignIn{
@@ -458,6 +473,7 @@ CGFloat animatedDistance;
 // ---- its call a web service to login with google+ info
 
 - (IBAction)twBtn:(id)sender {
+    if([global isConnected]){
     CATransition* transition = [CATransition animation];
     transition.duration = 1;
     transition.type = kCATransitionMoveIn;
@@ -467,7 +483,8 @@ CGFloat animatedDistance;
                               initWithNibName:@"TwitterView" bundle:nil];;
     [self.view.window.layer addAnimation:transition forKey:nil];
     [self presentViewController:vc animated:NO completion:nil];
-
+    }
+  
 }
 
 - (IBAction)signUpBtn:(id)sender {
@@ -598,7 +615,12 @@ CGFloat animatedDistance;
         }
     }
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+   
+}
 
 
 @end

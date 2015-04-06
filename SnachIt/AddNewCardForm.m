@@ -43,7 +43,7 @@ CGFloat animatedDistance;
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";
-  
+    screenName=@"adc";
     // Set the Label text with the selected recipe
     [self initializePickers];
     toolbar = [[UIToolbar alloc] init];
@@ -521,5 +521,12 @@ CGFloat animatedDistance;
     self.stateTextField.isMandatory=YES;
     self.zipTextField.isMandatory=YES;
     self.phoneTextField.isMandatory=YES;
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+   
 }
 @end

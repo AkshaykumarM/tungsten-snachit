@@ -40,7 +40,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     view.backgroundColor=[UIColor whiteColor];
     [self.window.rootViewController.view addSubview:view];
     [[UINavigationBar appearance] setTitleTextAttributes: [NSDictionary dictionaryWithObjectsAndKeys:
-                                                           [UIColor purpleColor] , UITextAttributeTextColor,
+                                                           [UIColor colorWithRed:0.616 green:0.102 blue:0.471 alpha:1] , UITextAttributeTextColor,
                                                            [UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1] ,UITextAttributeTextShadowColor,
                                                            [NSValue valueWithUIOffset:UIOffsetMake(0, 0)],
                                                            UITextAttributeTextShadowOffset,
@@ -54,7 +54,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     [[UINavigationBar appearance] setTintColor:[UIColor colorWithRed:0.608 green:0.133 blue:0.471 alpha:1]];
 
     
-    [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor purpleColor] } forState:UIControlStateSelected];
+    [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.616 green:0.102 blue:0.471 alpha:1] } forState:UIControlStateSelected];
     
     // color disabled text ---> grey
     [[UISegmentedControl appearance] setTitleTextAttributes:@{ NSForegroundColorAttributeName : [UIColor colorWithRed:0.557 green:0.557 blue:0.557 alpha:1] } forState:UIControlStateNormal];
@@ -258,8 +258,17 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
 - (void)applicationWillTerminate:(UIApplication *)application {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    
-    NSLog(@"Terminating app");
+    CURRENTDB=SnoopTimeDBFile;
+    @try{
+        if(screenName!=nil){
+    if(![[SnachItDB database] logtime:USERID SnachId:[SNACHID intValue] SnachTime:0])
+    {
+        [[SnachItDB database]updatetime:USERID SnachId:[SNACHID intValue] SnachTime:0];
+    }
+        }
+    }
+    @catch(NSException *e){}
+   
 }
 
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
@@ -270,8 +279,9 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 }
 
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+{
+    return (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown && interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {

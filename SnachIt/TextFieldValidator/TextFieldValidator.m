@@ -28,8 +28,8 @@
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     CGContextSetRGBFillColor(ctx, color[0], color[1], color[2], 1);
     CGContextSetShadowWithColor(ctx, CGSizeMake(0, 0), 7.0, [UIColor blackColor].CGColor);
-	CGPoint points[3] = { CGPointMake(15, 5), CGPointMake(25, 25),
-		CGPointMake(5,25)};
+    CGPoint points[3] = { CGPointMake(15, 5), CGPointMake(25, 25),
+        CGPointMake(5,25)};
     CGContextAddLines(ctx, points, 3);
     CGContextClosePath(ctx);
     CGContextFillPath(ctx);
@@ -46,7 +46,6 @@
     [img.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-%f-[img(%f)]",imgframe.origin.y,imgframe.size.height] options:NSLayoutFormatDirectionLeadingToTrailing  metrics:nil views:dict]];
     
     UIFont *font=[UIFont fontWithName:FontName size:FontSize];
-    @try{
     CGSize size=[self.strMsg boundingRectWithSize:CGSizeMake(fieldFrame.size.width-(PaddingInErrorPopUp*2), 1000) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:font} context:nil].size;
     size=CGSizeMake(ceilf(size.width), ceilf(size.height));
     
@@ -62,7 +61,7 @@
     dict=NSDictionaryOfVariableBindings(view);
     [view.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-%f-[view(%f)]",fieldFrame.origin.x+(fieldFrame.size.width-(size.width+(PaddingInErrorPopUp*2))),size.width+(PaddingInErrorPopUp*2)] options:NSLayoutFormatDirectionLeadingToTrailing  metrics:nil views:dict]];
     [view.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-%f-[view(%f)]",imgframe.origin.y+imgframe.size.height,size.height+(PaddingInErrorPopUp*2)] options:NSLayoutFormatDirectionLeadingToTrailing  metrics:nil views:dict]];
-
+    
     UILabel *lbl=[[UILabel alloc] initWithFrame:CGRectZero];
     lbl.font=font;
     lbl.numberOfLines=0;
@@ -75,10 +74,6 @@
     dict=NSDictionaryOfVariableBindings(lbl);
     [lbl.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"H:|-%f-[lbl(%f)]",(float)PaddingInErrorPopUp,size.width] options:NSLayoutFormatDirectionLeadingToTrailing  metrics:nil views:dict]];
     [lbl.superview addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:[NSString stringWithFormat:@"V:|-%f-[lbl(%f)]",(float)PaddingInErrorPopUp,size.height] options:NSLayoutFormatDirectionLeadingToTrailing  metrics:nil views:dict]];
-    }
-    @catch(NSException *e){
-        
-    }
 }
 
 - (BOOL)pointInside:(CGPoint)point withEvent:(UIEvent *)event {
@@ -175,23 +170,13 @@
 - (id)initWithFrame:(CGRect)frame{
     self = [super initWithFrame:frame];
     if (self) {
-        [self setup];    
+        
     }
     return self;
 }
 
 -(id)initWithCoder:(NSCoder *)aDecoder{
     self=[super initWithCoder:aDecoder];
-    [self setup];
-    return self;
-}
-
--(void)setDelegate:(id<UITextFieldDelegate>)deleg{
-    supportObj.delegate=deleg;
-    super.delegate=supportObj;
-}
-
--(void)setup{
     arrRegx=[[NSMutableArray alloc] init];
     validateOnCharacterChanged=YES;
     isMandatory=YES;
@@ -203,6 +188,12 @@
     supportObj.validateOnResign=validateOnResign;
     NSNotificationCenter *notify=[NSNotificationCenter defaultCenter];
     [notify addObserver:self selector:@selector(didHideKeyboard) name:UIKeyboardWillHideNotification object:nil];
+    return self;
+}
+
+-(void)setDelegate:(id<UITextFieldDelegate>)deleg{
+    supportObj.delegate=deleg;
+    super.delegate=supportObj;
 }
 
 -(void)setValidateOnCharacterChanged:(BOOL)validate{
@@ -277,9 +268,16 @@
     UIButton *btnError=[[UIButton alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
     [btnError addTarget:self action:@selector(tapOnError) forControlEvents:UIControlEventTouchUpInside];
     [btnError setBackgroundImage:[UIImage imageNamed:IconImageName] forState:UIControlStateNormal];
+    
     self.rightView=btnError;
     self.rightViewMode=UITextFieldViewModeAlways;
     strMsg=[msg copy];
+}
+- (CGRect) rightViewRectForBounds:(CGRect)bounds {
+    
+    CGRect textRect = [super rightViewRectForBounds:bounds];
+    textRect.origin.x -= 8;
+    return textRect;
 }
 
 -(void)showErrorWithMsg:(NSString *)msg{

@@ -27,6 +27,7 @@
 		8702C0C21ABB302F0095752A /* snachitlogo.png in Resources */ = {isa = PBXBuildFile; fileRef = 8702C0C11ABB302F0095752A /* snachitlogo.png */; };
 		8702C0C41ABB30BF0095752A /* gp.png in Resources */ = {isa = PBXBuildFile; fileRef = 8702C0C31ABB30BF0095752A /* gp.png */; };
 		8702C0C61ABB3AB80095752A /* questionmark.png in Resources */ = {isa = PBXBuildFile; fileRef = 8702C0C51ABB3AB80095752A /* questionmark.png */; };
+		871E98651AD29C7A00D5A7BF /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 871E98641AD29C7A00D5A7BF /* Reachability.m */; };
 		871F7EE01A7209F400808AB4 /* UserProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EDF1A7209F400808AB4 /* UserProfile.m */; };
 		871F7EE31A72565500808AB4 /* SnoopedProduct.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EE21A72565500808AB4 /* SnoopedProduct.m */; };
 		871F7EE61A7285CF00808AB4 /* PaymentOverviewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 871F7EE51A7285CF00808AB4 /* PaymentOverviewCell.m */; };
@@ -308,6 +309,8 @@
 		8702C0C11ABB302F0095752A /* snachitlogo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = snachitlogo.png; sourceTree = "<group>"; };
 		8702C0C31ABB30BF0095752A /* gp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = gp.png; sourceTree = "<group>"; };
 		8702C0C51ABB3AB80095752A /* questionmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = questionmark.png; sourceTree = "<group>"; };
+		871E98631AD29C7A00D5A7BF /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		871E98641AD29C7A00D5A7BF /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		871F7EDE1A7209F400808AB4 /* UserProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserProfile.h; sourceTree = "<group>"; };
 		871F7EDF1A7209F400808AB4 /* UserProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UserProfile.m; sourceTree = "<group>"; };
 		871F7EE11A72565500808AB4 /* SnoopedProduct.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnoopedProduct.h; sourceTree = "<group>"; };
@@ -976,6 +979,8 @@
 		874A32C31A6CEC26004038D4 /* viewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				871E98631AD29C7A00D5A7BF /* Reachability.h */,
+				871E98641AD29C7A00D5A7BF /* Reachability.m */,
 				87355A471AAD647F00DA79D6 /* states-info.plist */,
 				87D7FAA41A7A2D73008A5819 /* CardIO */,
 				874A32CA1A6CEC77004038D4 /* SWRevealViewController */,
@@ -1674,6 +1679,7 @@
 				8776496A1AB81DED00FEEB05 /* OARequestParameter.m in Sources */,
 				87D173F21A8522B50028A2E4 /* TwitterEmailIdView.m in Sources */,
 				87D9D2A01A8A4D5D0082AA4C /* BillingInfoScanCell.m in Sources */,
+				871E98651AD29C7A00D5A7BF /* Reachability.m in Sources */,
 				877649611AB81DED00FEEB05 /* sha1.c in Sources */,
 				874F280E1ABC0F410090D8A3 /* SnachItDB.m in Sources */,
 				874A33CA1A6CF62B004038D4 /* SevenSwitch.swift in Sources */,

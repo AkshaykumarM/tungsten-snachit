@@ -42,7 +42,7 @@ CGFloat animatedDistance;
     picker.delegate = self;
     picker.backgroundColor=[UIColor whiteColor];
     self.stateTextField.inputView = picker;
-   
+    screenName=@"ada";
     NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"states-info" ofType:@"plist"]];
    
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
@@ -267,7 +267,12 @@ CGFloat animatedDistance;
     self.zipTextField.isMandatory=YES;
     self.phoneTextField.isMandatory=YES;
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+  
+}
 
 
 @end

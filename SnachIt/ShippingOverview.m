@@ -42,14 +42,14 @@
 {
     [super viewDidLoad];
     
-   
     
     
+    screenName=@"so";
     user =[UserProfile sharedInstance];
     defaults=[NSUserDefaults standardUserDefaults];
 }
 -(void)viewDidAppear:(BOOL)animated{
-   
+    
     [super viewDidAppear:YES];
     i=0;
     [self initializeView];
@@ -57,11 +57,11 @@
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
-  
+    
 }
 
 -(void)initializeView{
-     self.navigationController.navigationBar.topItem.title = @"ship to";
+    self.navigationController.navigationBar.topItem.title = @"ship to";
     
     
     product=[SnoopedProduct sharedInstance];
@@ -69,8 +69,8 @@
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-
-     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    
+    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -109,12 +109,12 @@
 
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     // Dequeue the cell.
-
+    
     ShippingOverviewAddressCell *cell = [tableView dequeueReusableCellWithIdentifier:@"addressCell" forIndexPath:indexPath];
-   SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
-   cell.accessoryView=nil;
+    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
+    cell.accessoryView=nil;
     // Set the loaded data to the appropriate cell labels.
-
+    
     cell.nameLbl.text =  [NSString stringWithFormat:@"%@",info.name];
     
     cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", info.street];
@@ -123,17 +123,17 @@
     
     NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
     RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:DEFAULT_SHIPPING] intValue];
-
+    
     //for autoselect functionality
     int rowid=info.uniqueId;
-     cell.tag=rowid;
+    cell.tag=rowid;
     if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER ){
         @try{
             if(i==0){
-          [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
-        
-        self.checkedIndexPath=indexPath;
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+                [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+                
+                self.checkedIndexPath=indexPath;
+                userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
                 
                 i++;
             }
@@ -143,8 +143,8 @@
         }
     }
     else{
-    cell.selectionStyle=UITableViewCellSelectionStyleNone;
-    cell.accessoryView=nil;
+        cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        cell.accessoryView=nil;
     }
     
     return cell;
@@ -164,12 +164,12 @@
                                         cellForRowAtIndexPath:self.checkedIndexPath];
         uncheckCell.accessoryView=nil;
         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
-
+        
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
         self.checkedIndexPath = nil;
-         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
     }
     else
     {
@@ -179,26 +179,26 @@
         [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
         [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
-
+        
         self.checkedIndexPath = indexPath;
         SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
         // initializing address details
         userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
-    
-
+        
+        
     }
     
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-  
-        if (cell.isSelected) {
-            cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
-            [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
-        }
-        else {
-            cell.accessoryView = nil;
-        }
+    
+    if (cell.isSelected) {
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+    }
+    else {
+        cell.accessoryView = nil;
+    }
     
 }
 - (IBAction)addNewAddressbtn:(id)sender {
@@ -210,12 +210,12 @@
 - (IBAction)doneBtn:(id)sender {
     
     [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
-
+    
 }
 
 -(void)loadData{
     // Form the query.
-     CURRENTDB=SnachItDBFile;
+    CURRENTDB=SnachItDBFile;
     snachItPaymentInfo = [SnachItDB database].snachItAddressInfo;
     
     // Reload the table view.
@@ -225,7 +225,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-   
+    
     self.productImg=nil;
     self.brandImg=nil;
     productPriceBtn=nil;

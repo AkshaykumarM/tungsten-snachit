@@ -8,10 +8,12 @@
 
 #import "global.h"
 #import "RegexValidator.h"
-
+#import "Reachability.h"
 //NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
 NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
-NSString *USERID;                                   //this will be the global userid
+ NSString *USERID;//this will be the global userid
+NSString *SNACHID;//this will be the global snachid
+
  bool isApplicationLaunchedFromNotification=FALSE;
  bool isAllreadyTried=FALSE;
  NSString * const SSOUSING=@"SSOUsing";
@@ -24,11 +26,12 @@ NSString *USERID;                                   //this will be the global us
  NSUInteger const DEFAULT_SNOOPTIME=30;
 NSString * const SnachItDBFile=@"snachit.sql";
 NSString * const SnoopTimeDBFile=@"snoopTimes.sql";
-
+NSString * const checkInternetConnection=@"You are not connected to internet, Please check connection.";
 NSString *CURRENTDB;
 NSString *screenName;
 NSString *ssousing;
 NSString *APNSTOKEN;
+NSString *screenName=nil;
 int snooptTracking;
 int i=0;//for screen tracking
 NSString *cardNumber=@"";
@@ -104,6 +107,7 @@ float BORDERWIDTH=5.0f;
     [alert show];
 }
 
+
 +(NSString*)getCardType:(NSString*)number{
     NSString *type;
     NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
@@ -170,6 +174,17 @@ float BORDERWIDTH=5.0f;
     // str now is what your want
     
     return str;
+}
+
++(BOOL)isConnected
+{
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    if(networkStatus == NotReachable)
+    {
+        [self showAllertMsg:checkInternetConnection];
+    }
+    return networkStatus != NotReachable;
 }
 
 @end

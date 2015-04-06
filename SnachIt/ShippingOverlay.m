@@ -11,6 +11,7 @@
 #import "OrderTotalOverview.h"
 #import "SnoopedProduct.h"
 #import "Order.h"
+#import "global.h"
 NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 @interface ShippingOverlay()
 @property (nonatomic,strong) NSArray *cellId;
@@ -26,6 +27,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    screenName=@"sol";
     cellId = [NSArray arrayWithObjects: @"shippingCell",@"estDeliveryCell",@"speedCell", @"priceCell",nil];
     
     order=[Order sharedInstance];
@@ -36,6 +38,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 }
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"snach details";
+    @try{
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
@@ -43,16 +46,18 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
 
     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
-
+   
     //hiding the backbutton from top bar
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+        
     UIBarButtonItem *nav_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+        
     self.navigationItem.leftBarButtonItem = nav_btn;
-    
+     }@catch(NSException *e){}
 }
 -(void)back:(id)sender{
     [self performSegueWithIdentifier:BACKTOORDEROVERVIEW sender:nil];
@@ -72,7 +77,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     NSString *simpleTableIdentifier = [self.cellId objectAtIndex:indexPath.row];
     
     shippingOverlayCell *cell = (shippingOverlayCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
-    
+    @try{
     cell.estDeliveryLbl.text =order.deliveryDate;
     cell.speedLbl.text=[NSString stringWithFormat:@"%@ day delivery",order.speed];
     NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
@@ -82,6 +87,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
         cell.priceLbl.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[order.shippingCost doubleValue]]]];
     }else
         cell.priceLbl.text=[NSString stringWithFormat:@"%@",order.freeshipping];
+    }@catch(NSException *e){}
     return cell;
     
 }
@@ -110,5 +116,12 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     productNameLbl=nil;
     // Release any retained subviews of the main view.
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    for(UIView *subview in [self.tableView subviews]) {
+        [subview removeFromSuperview];
+    }
+}
 @end

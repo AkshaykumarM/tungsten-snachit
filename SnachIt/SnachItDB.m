@@ -47,7 +47,7 @@ static SnachItDB *_database;
             NSLog(@"Failed to open database!");
         }
         if (sqlite3_open([databasePath UTF8String], &_database) == SQLITE_OK){
-             NSLog(@"Success to open database! %@",CURRENTDB);
+            
         }
     }
     return self;
@@ -140,11 +140,11 @@ static SnachItDB *_database;
     [self bindString:userid column:3 statement:statement];
     
     if (sqlite3_step(statement) == SQLITE_DONE) {
-        NSLog(@"Data updated");
+       // NSLog(@"Data updated");
         status=true;
     }
     else {
-        NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
+       // NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
         status=false;
     }
     sqlite3_finalize(statement);
@@ -264,10 +264,10 @@ static SnachItDB *_database;
     [self bindString:phone column:10 statement:statement];
     [self bindString:[df stringFromDate:currentdatetime] column:11 statement:statement];
     if (sqlite3_step(statement) == SQLITE_DONE) {
-        NSLog(@"Data Inserted");
+       // NSLog(@"Data Inserted");
         status=true;
     } else {
-        NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
+        //NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
         status=false;
     }
     sqlite3_finalize(statement);
@@ -300,10 +300,10 @@ static SnachItDB *_database;
     [self bindString:phone column:6 statement:statement];
     [self bindString:[df stringFromDate:currentdatetime] column:7 statement:statement];
     if (sqlite3_step(statement) == SQLITE_DONE) {
-        NSLog(@"Data Inserted");
+        //NSLog(@"Data Inserted");
         status=true;
     } else {
-        NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
+       // NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
         status=false;
     }
     sqlite3_finalize(statement);
@@ -386,13 +386,11 @@ static SnachItDB *_database;
 {
     if (value) {
         if (sqlite3_bind_text(statement, (int)column, [value UTF8String], -1, SQLITE_TRANSIENT) != SQLITE_OK) {
-            NSLog(@"bind column %ld to %@ failed: %s", (long)column, value, sqlite3_errmsg(_database));
             sqlite3_finalize(statement);
             return NO;
         }
     } else {
         if (sqlite3_bind_null(statement, (int)column) != SQLITE_OK) {
-            NSLog(@"bind column %ld to null failed: %s", (long)column, sqlite3_errmsg(_database));
             sqlite3_finalize(statement);
             return NO;
         }

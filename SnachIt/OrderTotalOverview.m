@@ -12,6 +12,7 @@
 #import "ShippingOverlay.h"
 #import "SnoopedProduct.h"
 #import "Order.h"
+#import "global.h"
 NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
 NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 
@@ -34,7 +35,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     cellId = [NSArray arrayWithObjects: @"orderTotalCell",@"subtotalCell", @"shippingCell", @"salesTaxCell",nil];
     // Set the Label text with the selected recipe
     order=[Order sharedInstance];
-    
+    screenName=@"oto";
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -43,6 +44,8 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"order total";
+    
+    @try{
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
@@ -64,7 +67,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *nav_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = nav_btn;
-    
+     }@catch(NSException *e){}
 }
 -(void)back:(id)sender{
     [self performSegueWithIdentifier:BACKSTPSEAGUE sender:nil];
@@ -108,8 +111,12 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
 }
 -(double)getOrderTotal{
-  
-    return  [order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];;
+    double total=0;
+    @try{
+    total=[order.subTotal floatValue]+[order.shippingCost floatValue]+[order.salesTax floatValue];
+    }@catch(NSException *e){}
+    
+    return  total;
 }
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath

@@ -56,6 +56,7 @@ UIRefreshControl *refreshControl;
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
+    screenName=nil;
     [self getMYLatestSnachs];
 }
 
@@ -285,5 +286,14 @@ UIRefreshControl *refreshControl;
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
     return latestFriendSnachs;
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    for(UIView *subview in [self.tableView subviews]) {
+        [subview removeFromSuperview];
+    }
 }
 @end

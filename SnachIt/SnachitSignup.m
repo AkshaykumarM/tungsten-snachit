@@ -166,6 +166,7 @@ CGFloat animatedDistance;
 
 - (IBAction)fbBtn:(id)sender {
             [self startProcessing];
+     if([global isConnected]){
     ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
     if (FBSession.activeSession.state == FBSessionStateOpen
@@ -242,6 +243,10 @@ CGFloat animatedDistance;
              
          }];
     }
+     }
+     else{
+         [self stopProcessing];
+     }
 
 }
 
@@ -352,6 +357,7 @@ CGFloat animatedDistance;
 
 
 - (IBAction)twBtn:(id)sender {
+    if([global isConnected]){
     CATransition* transition = [CATransition animation];
     transition.duration = 1;
     transition.type = kCATransitionMoveIn;
@@ -361,11 +367,17 @@ CGFloat animatedDistance;
                                  initWithNibName:@"TwitterView" bundle:nil];;
     [self.view.window.layer addAnimation:transition forKey:nil];
     [self presentViewController:vc animated:NO completion:nil];
+    }
 }
 
 - (IBAction)gplusBtn:(id)sender {
     [self startProcessing];
+     if([global isConnected]){
     [self googleSignIn];
+     }
+     else{
+    [self stopProcessing];
+     }
 }
 
 -(void)googleSignIn{
@@ -385,7 +397,7 @@ CGFloat animatedDistance;
     [signIn authenticate];
 }
 - (IBAction)loginHereBtn:(id)sender {
-    
+
     CATransition* transition = [CATransition animation];
     transition.duration = 0.35;
     transition.type = kCATransitionPush;
@@ -407,6 +419,7 @@ CGFloat animatedDistance;
     
         url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",ec2maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
     NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+     if([global isConnected]){
     NSLog(@"Request URL: %@",url);
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     
@@ -437,6 +450,10 @@ CGFloat animatedDistance;
         [global showAllertMsg:@"Server not responding"];
         status=0;
     }
+     }
+     else{
+         status=0;
+     }
     return status;
     
 }
@@ -490,5 +507,10 @@ CGFloat animatedDistance;
     [activitySpinner stopAnimating];
     [backView removeFromSuperview];
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+  
+}
 @end

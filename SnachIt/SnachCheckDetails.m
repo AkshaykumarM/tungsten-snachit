@@ -49,7 +49,7 @@ UIActivityIndicatorView *activitySpinner;
     [super viewDidLoad];
     
     cellId = [NSArray arrayWithObjects: @"orderQuntityCell", @"shiptocell", @"paymentCell", @"orderTotalCell",nil];
-
+    screenName=@"scd";
     user=[UserProfile sharedInstance];
     userdetails=[SnoopingUserDetails sharedInstance];
     product=[SnoopedProduct sharedInstance];
@@ -65,26 +65,27 @@ UIActivityIndicatorView *activitySpinner;
     [self setViewLookAndFeel];
     
     
-       
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
     
 }
 -(void)initializeView{
-
-    self.navigationController.navigationBar.topItem.title = @"confirm snach";
-    productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
-    brandImg.image=[UIImage imageWithData:product.brandImageData];
-    productImg.image=[UIImage imageWithData:product.productImageData];
-    [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
-    productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
-
-    //hiding the backbutton from top bar
-    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
-    
-    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSnach:)];
-    [self initializeOrder];
+    @try{
+        self.navigationController.navigationBar.topItem.title = @"confirm snach";
+        productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+        brandImg.image=[UIImage imageWithData:product.brandImageData];
+        productImg.image=[UIImage imageWithData:product.productImageData];
+        [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
+        productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+        
+        //hiding the backbutton from top bar
+        [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+        
+        self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSnach:)];
+        [self initializeOrder];
+    }@catch(NSException *e){}
 }
 
 -(void)cancelSnach:(id)sender{
@@ -95,7 +96,7 @@ UIActivityIndicatorView *activitySpinner;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 0) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-       
+        
         if(![[SnachItDB database] logtime:USERID SnachId:[product.snachId intValue] SnachTime:0])
         {
             [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
@@ -130,34 +131,34 @@ UIActivityIndicatorView *activitySpinner;
     NSString *simpleTableIdentifier = [self.cellId objectAtIndex:indexPath.row];
     
     SnachConfirmCell *cell = (SnachConfirmCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
-    
+    @try{
         cell.orderQuantity.text = [NSString stringWithFormat:@"%li",(long)tempQuntity];
         if(userdetails.shipFullName!=nil)
-        cell.shiptoName.text=userdetails.shipFullName;
+            cell.shiptoName.text=userdetails.shipFullName;
         if(userdetails.paymentCardName!=nil)
-        cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,[userdetails.paymentCardNumber substringFromIndex:[userdetails.paymentCardNumber length]-3]];
+            cell.paymentCard.text=[NSString stringWithFormat:@"%@-%@",userdetails.paymentCardName,[userdetails.paymentCardNumber substringFromIndex:[userdetails.paymentCardNumber length]-3]];
         NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
         [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
         [numberFormatter setCurrencyCode:@"USD"];
         cell.orderTotal.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self getOrderTotal]]]];
-
-            
+        
+        
         //[cell.orderAdd addTarget:self action:@selector(addQuntity) forControlEvents:UIControlEventTouchUpInside];
         //[cell.orderSubstract addTarget:self action:@selector(subQuntity) forControlEvents:UIControlEventTouchUpInside];
         [cell.expandShipto addTarget:self action:@selector(exapndShippingOverview) forControlEvents:UIControlEventTouchUpInside];
         [cell.expandPayment addTarget:self action:@selector(exapndPaymentOverview) forControlEvents:UIControlEventTouchUpInside];
-   
+        
         [cell.expandOrderTotal addTarget:self action:@selector(exapndOrderTotalOverview) forControlEvents:UIControlEventTouchUpInside];
+    }@catch(NSException *e){}
     
-
     return cell;
     
-   }
+}
 
 
 -(void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-   //hiding the last cell separator
+    //hiding the last cell separator
     if (cell && indexPath.row == 3 && indexPath.section == 0) {
         
         cell.separatorInset = UIEdgeInsetsMake(0.f, cell.bounds.size.width, 0.f, 0.0f);
@@ -166,24 +167,24 @@ UIActivityIndicatorView *activitySpinner;
 //this function add the product qunatity
 -(void)addQuntity
 {
-     tempQuntity++;
+    tempQuntity++;
     [self calculateTotal];
     [_tableView reloadData];
-  
+    
 }
 
 //this function substract the product qunatity
 -(void)subQuntity
 {
     if(tempQuntity>1){
-    tempQuntity--;
-     [self calculateTotal];
-    [_tableView reloadData];
+        tempQuntity--;
+        [self calculateTotal];
+        [_tableView reloadData];
     }
 }
 -(void)exapndShippingOverview
 {
-   
+    
     [self performSegueWithIdentifier:SHIPPING_OVERVIEW_SEAGUE sender:self];
     
 }
@@ -199,7 +200,7 @@ UIActivityIndicatorView *activitySpinner;
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-
+    
     
     if ([segue.identifier isEqualToString:STP_SEGUE]) {
         
@@ -207,16 +208,16 @@ UIActivityIndicatorView *activitySpinner;
         destViewController.fullName = self.fullName;
         destViewController.streetAddress=self.streetAddress;
         destViewController.cityStateZip =self.cityStateZip;
-        }
-
-
+    }
+    
+    
 }
 -(void)setViewLookAndFeel{
     UISwipeGestureRecognizer *swipe = [[UISwipeGestureRecognizer alloc] initWithTarget:self
                                                                                 action:@selector(snachIt:)];
     swipe.direction = UISwipeGestureRecognizerDirectionRight;
-        if(userdetails.shipFullName==nil || userdetails.paymentFullName==nil){
-       
+    if(userdetails.shipFullName==nil || userdetails.paymentFullName==nil){
+        
         [self.swipeToPay setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];
         [self.swipeToPay removeGestureRecognizer:swipe];
     }
@@ -231,16 +232,24 @@ UIActivityIndicatorView *activitySpinner;
 }
 
 - (void)snachIt:(id)sender {
+    
     [self startProcessing];
-       if([self snachProduct]==1){
-           [self stopProcessing];
-           [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
-    [self performSegueWithIdentifier:STP_SEGUE sender:self];
-           
+    if([global isConnected]){
+        @try{
+            if([self snachProduct]==1){
+                [self stopProcessing];
+                [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+                [self performSegueWithIdentifier:STP_SEGUE sender:self];
+                
+            }
+            else{
+                [self stopProcessing];
+            }
+        }@catch(NSException *e){}
     }
-       else{
-           [self stopProcessing];
-       }
+    else{
+        [self stopProcessing];
+    }
     
 }
 
@@ -273,7 +282,7 @@ UIActivityIndicatorView *activitySpinner;
     
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setObject:order.userId forKey:@"userId"];
-   
+    
     [dictionary setObject:order.getOrderDetails forKey:@"orderDetails"];
     [dictionary setObject:userdetails.getUserShippingDetails forKey:@"shippingAddress"];
     [dictionary setObject:userdetails.getUserBillingDetails forKey:@"billingAddress"];
@@ -291,26 +300,26 @@ UIActivityIndicatorView *activitySpinner;
     NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getOrderDetails] options:NSJSONWritingPrettyPrinted error:&error];
     NSData *responseData=[global makePostRequest:orderJson requestURL:@"getPlacedOrderByCustomer/" ];
     if (responseData) {
-                NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
+        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
         
-                if([[response objectForKey:@"success"] isEqual:@"true"])
-                    status=1;
-                else
-                {
-                    @try{
-                    [global showAllertMsg:[response objectForKey:@"error_message"]];
-                    status=0;
-                    }
-                    @catch(NSException *e){
-                        NSLog(@"Error %@",e);
-                    }
-                }
+        if([[response objectForKey:@"success"] isEqual:@"true"])
+            status=1;
+        else
+        {
+            @try{
+                [global showAllertMsg:[response objectForKey:@"error_message"]];
+                status=0;
             }
-
-      return status;
+            @catch(NSException *e){
+                NSLog(@"Error %@",e);
+            }
+        }
+    }
+    
+    return status;
 }
 -(void)startProcessing{
-   
+    
     backView = [[UIView alloc] initWithFrame:self.mainview.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
     [self.tableView addSubview:backView];
@@ -338,9 +347,9 @@ UIActivityIndicatorView *activitySpinner;
         shippingcost=[product.productShippingCost doubleValue];
         
         if([userdetails.shipState isEqual:@"UT"])
-            salesTax=(6.85/100)*[product.productPrice doubleValue];
+            salesTax=(6.75/100)*[product.productPrice doubleValue];
         else{
-            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
+            salesTax=(0/100)*[product.productPrice doubleValue];
         }
         speed=[product.productShippingSpeed intValue];
     }
@@ -360,5 +369,14 @@ UIActivityIndicatorView *activitySpinner;
     
     
     order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    for(UIView *subview in [self.tableView subviews]) {
+        [subview removeFromSuperview];
+    }
 }
 @end

@@ -35,7 +35,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [super viewDidLoad];
 
     defaults=[NSUserDefaults standardUserDefaults];
-    
+    screenName=@"po";
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -52,6 +52,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
 
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"payment";
+    @try{
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
@@ -59,6 +60,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     
      productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    }@catch(NSException *e){}
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -165,6 +167,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
     }
     else
     {
+        
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
         cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
@@ -210,5 +213,10 @@ NSString *const STPSEAGUE=@"backtoSTP";
     // Reload the table view.
     [self.paymentTableView reloadData];
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    
+}
 @end

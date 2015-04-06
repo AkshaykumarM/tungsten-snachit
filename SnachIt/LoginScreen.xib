@@ -28,7 +28,7 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="password" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="c3I-fd-WIA">
-                    <rect key="frame" x="0.0" y="289" width="320" height="55"/>
+                    <rect key="frame" x="0.0" y="286" width="320" height="50"/>
                     <color key="backgroundColor" red="0.88235294119999996" green="0.64313725489999995" blue="0.78823529410000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <color key="textColor" red="0.38823529410000002" green="0.27450980390000002" blue="0.3411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="15"/>
@@ -37,21 +37,6 @@
                         <outlet property="delegate" destination="-1" id="ZzO-oV-kMz"/>
                     </connections>
                 </textField>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tfm-dQ-cFT">
-                    <rect key="frame" x="0.0" y="513" width="320" height="55"/>
-                    <color key="backgroundColor" red="0.66274509800000003" green="0.023529411760000001" blue="0.4549019608" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="55" id="NT6-xV-rgg"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="18"/>
-                    <state key="normal" title="LOG IN">
-                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </state>
-                    <connections>
-                        <action selector="signInBtn:" destination="-1" eventType="touchUpInside" id="1rW-kS-0fB"/>
-                    </connections>
-                </button>
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="t2X-CO-7Gz">
                     <rect key="frame" x="40" y="428" width="102" height="1"/>
                     <color key="backgroundColor" red="0.50196078431372548" green="0.50196078431372548" blue="0.50196078431372548" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -119,7 +104,7 @@
                     </constraints>
                     <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="14"/>
                     <state key="normal" title="Need an account?">
-                        <color key="titleColor" red="0.70588235290000001" green="0.1960784314" blue="0.52549019610000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="titleColor" red="0.61568627450980395" green="0.10196078431372549" blue="0.47058823529411764" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
@@ -127,7 +112,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" tag="13" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bc4-l6-IMg">
-                    <rect key="frame" x="290" y="306" width="22" height="22"/>
+                    <rect key="frame" x="290" y="300" width="22" height="22"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="22" id="HGh-P8-8VC"/>
                         <constraint firstAttribute="width" constant="22" id="glG-ea-KBB"/>
@@ -140,10 +125,10 @@
                     </connections>
                 </button>
                 <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="email" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="il0-Kp-hT8">
-                    <rect key="frame" x="0.0" y="232" width="320" height="55"/>
+                    <rect key="frame" x="0.0" y="234" width="320" height="50"/>
                     <color key="backgroundColor" red="0.88235294119999996" green="0.64313725489999995" blue="0.78823529410000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="55" id="ZqR-Ui-Z2K"/>
+                        <constraint firstAttribute="height" constant="50" id="ZqR-Ui-Z2K"/>
                     </constraints>
                     <color key="textColor" red="0.38823529410000002" green="0.27450980390000002" blue="0.3411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="15"/>
@@ -153,10 +138,10 @@
                     </connections>
                 </textField>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZp-gf-JNZ">
-                    <rect key="frame" x="0.0" y="0.0" width="320" height="231"/>
+                    <rect key="frame" x="0.0" y="0.0" width="320" height="233"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="fwh-XZ-oyo">
-                            <rect key="frame" x="90" y="46" width="140" height="140"/>
+                            <rect key="frame" x="90" y="47" width="140" height="140"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="lessThanOrEqual" constant="140" id="1CI-Hw-qdO"/>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="140" id="Mze-aa-SMV"/>
@@ -173,6 +158,21 @@
                         <constraint firstAttribute="centerY" secondItem="fwh-XZ-oyo" secondAttribute="centerY" id="kaB-vc-6Ys"/>
                     </constraints>
                 </view>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tfm-dQ-cFT">
+                    <rect key="frame" x="0.0" y="513" width="320" height="55"/>
+                    <color key="backgroundColor" red="0.61568627450980395" green="0.10196078431372549" blue="0.47058823529411764" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="55" id="NT6-xV-rgg"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="18"/>
+                    <state key="normal" title="LOG IN">
+                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                    </state>
+                    <connections>
+                        <action selector="signInBtn:" destination="-1" eventType="touchUpInside" id="1rW-kS-0fB"/>
+                    </connections>
+                </button>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>

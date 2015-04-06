@@ -51,22 +51,26 @@
     [self initializeView];
      user=[UserProfile sharedInstance];
     userdetails=[SnoopingUserDetails sharedInstance];
-    
+    screenName=@"spd";
     // Set the Label text with the selected recipe
+    
     userId=user.userID;
     snachId=[product.snachId intValue];
+    SNACHID=product.snachId;
+    USERID=user.userID;
+    @try{
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0f
                                              target:self
                                            selector:@selector(subtractTime)
                                            userInfo:nil
                                             repeats:YES];
-   
+    [[NSRunLoop mainRunLoop] addTimer:timer forMode:NSRunLoopCommonModes];
     
     seconds=[[SnachItDB database] getSnachTime:[product.snachId intValue] UserId:user.userID SnoopTime:user.snoopTime];
     counter.titleLabel.adjustsFontSizeToFitWidth=YES;
     counter.titleLabel.minimumScaleFactor=0.44;
    [counter setTitle: [NSString stringWithFormat:@"%lu",(unsigned long)seconds] forState: UIControlStateNormal];
-    
+     }@catch(NSException *e){}
     
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -75,7 +79,7 @@
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-
+    @try{
     if([[SnachItDB database] getSnachTime:[product.snachId intValue] UserId:user.userID SnoopTime:user.snoopTime]>0){
     [self initializeOrder];
     }
@@ -83,9 +87,10 @@
         [self.navigationController popViewControllerAnimated:YES];
         [global showAllertMsg:@"Your snoop time for this deal is over.You can't snach this now."];
     }
+         }@catch(NSException *e){}
 }
 -(void)initializeView{
-   
+    @try{
     product=[SnoopedProduct sharedInstance];
     productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
   
@@ -107,11 +112,13 @@
     
     productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
     
+     }@catch(NSException *e){}
    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
 
 - (void)subtractTime {
     // 1
+    @try{
     seconds--;
     [counter setTitle: [NSString stringWithFormat:@"%li",(long)seconds] forState: UIControlStateNormal];
 
@@ -124,6 +131,7 @@
         }
         [self performSegueWithIdentifier:@"timeup" sender:self];
     }
+    }@catch(NSException *e){}
 }
 
 - (IBAction)snachit:(id)sender {
@@ -188,9 +196,9 @@
     shippingcost=[product.productShippingCost doubleValue];
     
         if([userdetails.shipState isEqual:@"UT"])
-            salesTax=(6.85/100)*[product.productPrice doubleValue];
+            salesTax=(6.75/100)*[product.productPrice doubleValue];
         else{
-            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
+            salesTax=(0/100)*[product.productPrice doubleValue];
         }
     speed=[product.productShippingSpeed intValue];
     }
@@ -211,4 +219,10 @@
     
     order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
 }
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    }
 @end

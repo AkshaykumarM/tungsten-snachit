@@ -22,6 +22,7 @@ int cloaseStatus;
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";
+    
     }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -75,5 +76,10 @@ int cloaseStatus;
     cardCVV=@"";
     [self dismissViewControllerAnimated:true completion:nil];
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    
+}
 @end

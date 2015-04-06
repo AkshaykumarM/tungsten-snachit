@@ -215,8 +215,9 @@
 }
 -(void)viewDidDisappear:(BOOL)animated{
     [super viewDidDisappear:YES];
+    
       RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.checkedIndexPath.row;
-}
+   }
 -(void)loadData{
     // Form the query.
      CURRENTDB=SnachItDBFile;
@@ -266,4 +267,5 @@
     
     [self performSegueWithIdentifier:@"addaddressSegue" sender:nil];
 }
+
 @end

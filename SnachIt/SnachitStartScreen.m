@@ -57,4 +57,11 @@ NSString *const LOGINSEGUE=@"logInSegue";
                                  initWithNibName:@"SignUpScreen" bundle:nil];
     [self presentViewController:startscreen animated:NO completion:nil];
 }
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    
+}
 @end

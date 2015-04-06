@@ -464,4 +464,10 @@ CGFloat animatedDistance;
     }
     [self stopProcessing];
 }
+
+-(void)viewDidDisappear:(BOOL)animated{
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+}
 @end

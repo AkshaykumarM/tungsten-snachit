@@ -25,7 +25,7 @@
 @interface SnatchFeed(){
     NSMutableArray *Products;
 }
-@property(nonatomic,strong) NSArray *productslist;
+
 
 
 @end
@@ -110,17 +110,18 @@
     SWRevealViewController *sw=self.revealViewController;
     sw.rearViewRevealWidth=self.view.frame.size.width-60.0f;
     self.refreshControl = [[UIRefreshControl alloc] init];
-    self.refreshControl.backgroundColor = [UIColor purpleColor];
+    self.refreshControl.backgroundColor = [UIColor colorWithRed:0.616 green:0.102 blue:0.471 alpha:1];
     self.refreshControl.tintColor = [UIColor whiteColor];
     [self.refreshControl addTarget:self
                             action:@selector(getLatestProducts)
                     forControlEvents:UIControlEventValueChanged];
-
+    screenName=nil;
     
 }
 - (void)getLatestProducts
 {
     USERID=user.userID;
+    if([global isConnected]){
     @try{
     [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-all-running-snachs/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
                if (!error) {
@@ -165,6 +166,8 @@
     @catch(NSException *e){
         NSLog(@"Exception: %@",e);
     }
+    }
+    
 }
 
 
@@ -277,8 +280,10 @@
     // Dispose of any resources that can be recreated.
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    int count=[Products count];
+{int count=0;
+    @try{
+    count=[Products count];
+    
     UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
     messageLabel.textColor = [UIColor blackColor];
     messageLabel.numberOfLines = 0;
@@ -296,6 +301,7 @@
     else{
         self.tableView.backgroundView=nil;
     }
+    }@catch(NSException *e){}
     return count;
 }
 
@@ -333,6 +339,7 @@
 
 
 -(void)clearAllData{
+    @try{
     NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
     NSDictionary * dict = [defs dictionaryRepresentation];
     for (id key in dict) {
@@ -350,6 +357,7 @@
     SnoopingUserDetails *sn=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:nil withPaymentCardNumber:nil withpaymentCardExpDate:nil withPaymentCardCvv:nil withPaymentFullName:nil withPaymentStreetName:nil withPaymentCity:nil withPaymentState:nil withPaymentZipCode:nil withPaymentPhoneNumber:nil];
     sn=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
        NSLog(@"Cleared Database");
+    }@catch(NSException *e){}
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -369,6 +377,7 @@
     
     Product *prod = [Products objectAtIndex:indexPath.row];
    if(prod.snooptime>0){
+       
       cell.tag = indexPath.row;
     //setting up product image carousel
     cell.productImagesContainer.scrollEnabled = YES;
@@ -392,6 +401,7 @@
         
         
         error = [[NSError alloc] init];
+        @try{
         if(prod.friendCount==nil)
         [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             if(!error)
@@ -419,6 +429,7 @@
                 NSLog(@"Response:%@",data);
             }
         }];
+        }@catch(NSException *e){}
     }
     NSArray* subviews = [[NSArray alloc] initWithArray: cell.productImagesContainer.subviews];
         for (UIView* view in subviews) {
@@ -426,7 +437,7 @@
                 [view removeFromSuperview];
             }
         }
-    
+       @try{
     NSInteger productImages=[prod.productImages count];
     if(productImages>0){
         for(int index=0; index < productImages; index++)
@@ -452,9 +463,10 @@
         [cell.productImagesContainer addSubview:img];
         cell.productImagesContainer.contentSize = CGSizeMake(viewSize+10,cell.productImagesContainer.frame.size.height);
     }
+       }
+       @catch(NSException *e){}
     
-    
-    
+       @try{
     [cell.productName setTitle:[NSString stringWithFormat:@"%@ %@", prod.brandname, prod.productname] forState:UIControlStateNormal];
     cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
     cell.productName.titleLabel.minimumScaleFactor=0.67;
@@ -465,8 +477,10 @@
        [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
        [numberFormatter setCurrencyCode:@"USD"];
        [cell.productPrice setTitle:[NSString stringWithFormat:@"Retail:%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
+       }@catch(NSException *e){}
     
     //Snoop button view setup
+       @try{
     [cell.snoopBtn setTag:indexPath.row];
     
     ImageTapped *snoopTapped = [[ImageTapped alloc]
@@ -490,10 +504,11 @@
     snoopTapped.brandImageURL=[NSURL URLWithString:prod.brandimage];
     [cell.snoopBtn addGestureRecognizer:snoopTapped];
     
-    
+       }@catch(NSException *e){}
     
     
     //Follow brand button view setup
+       @try{
     FollowStatusRecognizer *follow = [[FollowStatusRecognizer alloc]
                                       initWithTarget:self
                                       action:@selector(followButtonClicked:) ];
@@ -510,7 +525,7 @@
         [cell.followStatus setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
     
     [cell.followStatus addGestureRecognizer:follow];
-    
+       }@catch(NSException *e){}
      return cell;
     }
     else{
@@ -522,7 +537,7 @@
 
 //on snoop button clicked
 -(void)snoopButtonClicked:(UITapGestureRecognizer *)tapRecognizer {
-    
+    @try{
     ImageTapped *tap = (ImageTapped *)tapRecognizer;
     snoopedProductId=tap.productId;
     snoopedBrandId=tap.brandId;
@@ -538,11 +553,16 @@
     snoopedSalesTax=tap.productSalesTax;
     snoopedSpeed=tap.productSpeed;
     [self performSegueWithIdentifier:@"snoop" sender:self];
+        }@catch(NSException *e){}
 }
 
 -(void)followButtonClicked:(UITapGestureRecognizer*)tapRecongnizer
 {
-    
+    if([global isConnected]){
+        
+        @try{
+            
+   
     FollowStatusRecognizer *tap = (FollowStatusRecognizer*)tapRecongnizer;
     UIButton *button= (UIButton*)tapRecongnizer.view;
     Product *prod = [Products objectAtIndex:tap.index];
@@ -571,6 +591,8 @@
             tap.followStatus=0;
             }
     }
+            }@catch(NSException *e){}
+    }
     
 }
 
@@ -578,6 +600,8 @@
 
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if([global isConnected]){
+        @try{
     if ([segue.identifier isEqualToString:@"snoop"]) {
         
         SnoopedProduct *product=[[SnoopedProduct
@@ -587,19 +611,15 @@
         
         snooptTracking=0;
     }
+            }@catch(NSException *e){}
+    }
     
 }
 
 -(void)viewDidUnload{
     
     [super viewDidUnload];
-    [super viewDidUnload];
-    if (self.isViewLoaded && !self.view.window) {
-        self.view = nil;
-    }
-
-    self.productslist=nil;
-    self.profilePic =nil;
+   
 }
 
 
@@ -682,7 +702,7 @@
 
 -(void)setupProfilePic{
     /*Upper left profile pic work starts here*/
-    
+    @try{
     //here i am setting the frame of profile pic and assigning it to a button
     CGRect frameimg = CGRectMake(0, 0, 40, 40);
     topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
@@ -714,7 +734,12 @@
         [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
             [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
         }];}
-    
+    }@catch(NSException *e){}
 }
-
+-(void)viewDidDisappear:(BOOL)animated{
+  
+    
+    self.profilePic =nil;
+    [Products removeAllObjects];
+}
 @end

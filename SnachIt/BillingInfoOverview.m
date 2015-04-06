@@ -30,7 +30,7 @@
     NSDateComponents *currentDateComponents;
     NSMutableArray *monthsArray,*yearsArray;
     UIToolbar* toolbar;
-
+    
 }
 
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -42,7 +42,7 @@ CGFloat animatedDistance;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-     
+    
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";
@@ -54,11 +54,11 @@ CGFloat animatedDistance;
 }
 
 -(void)setViewLookAndFeel{
-     self.navigationController.navigationBar.topItem.title = @"billing information";
+    self.navigationController.navigationBar.topItem.title = @"billing information";
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(backBtn) forControlEvents:UIControlEventTouchUpInside];
-        [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
@@ -77,7 +77,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     CURRENTDB=SnachItDBFile;
     [self setupAlerts];
-     [self detectCardType];
+    [self detectCardType];
 }
 -(void)initializePickers{
     statePicker = [[UIPickerView alloc] init];
@@ -206,7 +206,7 @@ CGFloat animatedDistance;
     [cell.expDateTextField setText:cardExp];
     [cell.securityCodeText setText:cardCVV];
     
-  
+    
     //setting background img
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     if([defaults valueForKey:DEFAULT_BACK_IMG])
@@ -220,15 +220,15 @@ CGFloat animatedDistance;
 }
 
 -(void)detectCardType{
-   
+    
     BillingInfoScanCell *tableCell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     NSString *number=[tableCell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""];
-
+    
     NSPredicate* visa = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", VISA];
-     NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
-     NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
-     NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
-     NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
+    NSPredicate* mastercard = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", MASTERCARD];
+    NSPredicate* dinnersclub = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DINNERSCLUB];
+    NSPredicate* discover = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", DISCOVER];
+    NSPredicate* amex = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", AMEX];
     
     if ([visa evaluateWithObject:number])
     {
@@ -291,7 +291,7 @@ CGFloat animatedDistance;
     CGRect viewFrame = self.view.frame;
     viewFrame.origin.y -= animatedDistance;
     
-   
+    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationBeginsFromCurrentState:YES];
     [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
@@ -305,7 +305,7 @@ CGFloat animatedDistance;
     
     CGRect viewFrame = self.view.frame;
     viewFrame.origin.y += animatedDistance;
-       [UIView beginAnimations:nil context:NULL];
+    [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationBeginsFromCurrentState:YES];
     [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
     
@@ -325,16 +325,16 @@ CGFloat animatedDistance;
     BillingInfoScanCell *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if([cell.cardNumberTextField validate]&[cell.expDateTextField validate]&[cell.securityCodeText validate]&[cell.cardHolderNameTextField validate] &[cell.addressTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.stateTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
         
-         // Execute the query.
+        // Execute the query.
         NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text];
-                            
         
-    
+        
+        
         
         // If the query was successfully executed then pop the view controller.
         if ([info valueForKey:@"status"]!= 0) {
             
-            //this is to track recently added 
+            //this is to track recently added
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
@@ -348,7 +348,7 @@ CGFloat animatedDistance;
         }
     }
     
-
+    
 }
 
 
@@ -365,44 +365,44 @@ CGFloat animatedDistance;
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
     @try{
-    BillingInfoScanCell  *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    if (textField == cell.cardNumberTextField) {
-        
-        // Only the 16 digits + 3 spaces
-        if (range.location == 19) {
-            return NO;
-        }
-        
-        // Backspace
-        if ([string length] == 0)
+        BillingInfoScanCell  *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+        if (textField == cell.cardNumberTextField) {
+            
+            // Only the 16 digits + 3 spaces
+            if (range.location == 19) {
+                return NO;
+            }
+            
+            // Backspace
+            if ([string length] == 0)
+                return YES;
+            
+            if ((range.location == 4) || (range.location == 9) || (range.location == 14))
+            {
+                
+                
+                textField.text   = [NSString stringWithFormat:@"%@ ",textField.text];
+            }
+            
             return YES;
-        
-        if ((range.location == 4) || (range.location == 9) || (range.location == 14))
-        {
-            
-            
-            textField.text   = [NSString stringWithFormat:@"%@ ",textField.text];
         }
         
-        return YES;
+        if(textField==cell.securityCodeText){
+            if (range.location == 4) {
+                return NO;
+            }
+            return YES;
+        }
+        if (textField==cell.phoneTextField) {
+            if (range.location == 10) {
+                return NO;
+            }
+            return YES;
+        }
+    }@catch(NSException *e){
+        
     }
     
-    if(textField==cell.securityCodeText){
-        if (range.location == 4) {
-            return NO;
-        }
-        return YES;
-    }
-    if (textField==cell.phoneTextField) {
-        if (range.location == 10) {
-            return NO;
-        }
-        return YES;
-    }
-}@catch(NSException *e){
-    
-}
-
     return YES;
 }
 
@@ -423,7 +423,7 @@ CGFloat animatedDistance;
         }
         return rowsInComponent;
     }
-
+    
 }
 
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView {
@@ -431,7 +431,7 @@ CGFloat animatedDistance;
         return  1;
     else
         return 2;
-
+    
 }
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
@@ -444,37 +444,37 @@ CGFloat animatedDistance;
 -(void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     BillingInfoScanCell *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if(pickerView.tag==1){
-    
-    cell.stateTextField.text = self.statesAbv[row];
-    
-}
-    else{
-    if ([pickerView selectedRowInComponent:0]+1<=[currentDateComponents month] && [[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]] intValue]==[currentDateComponents year])
-    {
-        [pickerView selectRow:[currentDateComponents month] inComponent:0 animated:YES];
         
+        cell.stateTextField.text = self.statesAbv[row];
         
     }
     else{
-        if([pickerView selectedRowInComponent:0]+1<10){
-            cell.expDateTextField.text=[NSString stringWithFormat:@"0%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
+        if ([pickerView selectedRowInComponent:0]+1<=[currentDateComponents month] && [[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]] intValue]==[currentDateComponents year])
+        {
+            [pickerView selectRow:[currentDateComponents month] inComponent:0 animated:YES];
+            
             
         }
         else{
-            cell.expDateTextField.text=[NSString stringWithFormat:@"%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
-           
+            if([pickerView selectedRowInComponent:0]+1<10){
+                cell.expDateTextField.text=[NSString stringWithFormat:@"0%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
+                
+            }
+            else{
+                cell.expDateTextField.text=[NSString stringWithFormat:@"%d/%@",[pickerView selectedRowInComponent:0]+1,[yearsArray objectAtIndex:[pickerView selectedRowInComponent:1]]];
+                
+            }
+            
+        }
+        
+        if (component==1)
+        {
+            
+            [pickerView reloadComponent:0];
         }
         
     }
     
-    if (component==1)
-    {
-        
-        [pickerView reloadComponent:0];
-    }
-    
-}
-
 }
 
 - (UIView *)pickerView:(UIPickerView *)pickerView viewForRow:(NSInteger)row forComponent:(NSInteger)component reusingView:(UIView *)view
@@ -486,9 +486,9 @@ CGFloat animatedDistance;
         statenamelbl.backgroundColor = [UIColor clearColor];
         statenamelbl.textAlignment=NSTextAlignmentCenter;
         statenamelbl.font=[UIFont systemFontOfSize:22];
-
+        
         UIView *tmpView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, viewSize, 32)] ;
-      
+        
         [tmpView insertSubview:statenamelbl atIndex:0];
         
         [tmpView setUserInteractionEnabled:NO];
@@ -511,7 +511,7 @@ CGFloat animatedDistance;
         return label;
         
     }
-
+    
 }
 
 /*ends here*/

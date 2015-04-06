@@ -49,7 +49,7 @@ int linkedinsharetracker;
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
-    
+    screenName=nil;
     // Set the gesture
     
     appiconURL=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/media/media/";
@@ -71,7 +71,10 @@ int linkedinsharetracker;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-   
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -82,7 +85,7 @@ int linkedinsharetracker;
 
 - (IBAction)fbBtn:(id)sender {
     // Put together the dialog parameters
-   
+   if([global isConnected]){
         
         SLComposeViewController *fbsheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     
@@ -113,7 +116,7 @@ int linkedinsharetracker;
     [self presentViewController:fbsheet animated:NO completion:^{
         
     }];
-    
+   }
 }
 
 
@@ -156,7 +159,7 @@ int linkedinsharetracker;
 
 
 - (IBAction)twBtn:(id)sender {
-   
+   if([global isConnected]){
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
     // Sets the completion handler.  Note that we don't know which thread the
@@ -197,12 +200,12 @@ int linkedinsharetracker;
        
     }];
     
-   
+   }
     
 }
 
 - (IBAction)linkedInBtn:(id)sender {
-    
+    if([global isConnected]){
     backView = [[UIView alloc] initWithFrame:self.view.frame];
     backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
     [self.view addSubview:backView];
@@ -218,7 +221,7 @@ int linkedinsharetracker;
     
     //profileTabView.view.center=self.view.center;
     [backView addSubview:profileTabView.view];
-
+    }
   }
 -(void) removeLinkedInview
 {
@@ -324,7 +327,7 @@ int linkedinsharetracker;
 
 
 - (IBAction)gPBtn:(id)sender {
-    
+    if([global isConnected]){
     GPPSignIn *signIn = [GPPSignIn sharedInstance];
     signIn.shouldFetchGooglePlusUser = YES;
     signIn.clientID = kClientId;
@@ -332,6 +335,7 @@ int linkedinsharetracker;
     signIn.delegate = self;
     
     [signIn authenticate];
+    }
 }
 
 
