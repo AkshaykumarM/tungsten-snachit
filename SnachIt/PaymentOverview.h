@@ -12,7 +12,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
 @property (weak, nonatomic) IBOutlet UITextView *productDesc;
-- (IBAction)doneBtn:(id)sender;
+//- (IBAction)doneBtn:(id)sender;
 
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;

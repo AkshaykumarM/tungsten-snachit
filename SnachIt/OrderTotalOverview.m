@@ -47,7 +47,7 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
     @try{
     product=[SnoopedProduct sharedInstance];
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
@@ -129,9 +129,9 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 }
 
 
-- (IBAction)doneBtn:(id)sender {
-    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:self];
-}
+//- (IBAction)doneBtn:(id)sender {
+//    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:self];
+//}
 
 -(void)shippingAndHandling{
     [self performSegueWithIdentifier:SHIPPINGANDHANDLING sender:self];
@@ -140,12 +140,23 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 {
     [super viewDidUnload];
    
-    self.productImg=nil;
-    self.brandImg=nil;
-    productPriceBtn=nil;
-    productNameLbl=nil;
+    
     // Release any retained subviews of the main view.
 }
 
-
+-(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productDesc=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+}
 @end

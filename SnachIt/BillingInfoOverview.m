@@ -326,7 +326,7 @@ CGFloat animatedDistance;
     if([cell.cardNumberTextField validate]&[cell.expDateTextField validate]&[cell.securityCodeText validate]&[cell.cardHolderNameTextField validate] &[cell.addressTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.stateTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
         
         // Execute the query.
-        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text];
+        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text UserId:user.userID];
         
         
         

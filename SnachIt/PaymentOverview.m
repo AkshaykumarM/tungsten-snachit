@@ -54,7 +54,7 @@ NSString *const STPSEAGUE=@"backtoSTP";
      self.navigationController.navigationBar.topItem.title = @"payment";
     @try{
     product=[SnoopedProduct sharedInstance];
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
@@ -81,10 +81,10 @@ NSString *const STPSEAGUE=@"backtoSTP";
     [self performSegueWithIdentifier:@"addNewCardSeague" sender:self];
     
 }
-- (IBAction)doneBtn:(id)sender {
-    [self performSegueWithIdentifier:STPSEAGUE sender:self];
-    
-}
+//- (IBAction)doneBtn:(id)sender {
+//    [self performSegueWithIdentifier:STPSEAGUE sender:self];
+//    
+//}
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     return 1;
 }
@@ -208,15 +208,24 @@ NSString *const STPSEAGUE=@"backtoSTP";
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
+    snachItPaymentInfo = [[SnachItDB database] snachItPaymentInfo:USERID];
     
     // Reload the table view.
     [self.paymentTableView reloadData];
 }
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productDesc=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-    
 }
 @end

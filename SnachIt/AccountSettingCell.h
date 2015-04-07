@@ -19,7 +19,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *appAlertsTopBar;
 @property (weak, nonatomic) IBOutlet UIImageView *emailAlertsTopBar;
 @property (weak, nonatomic) IBOutlet UIImageView *smsAlertsTopBar;
-@property (weak, nonatomic) IBOutlet UIButton *saveBtn;
 
 
 @end

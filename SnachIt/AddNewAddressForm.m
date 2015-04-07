@@ -12,7 +12,7 @@
 #import "SnoopedProduct.h"
 #import "global.h"
 #import "RegexValidator.h"
-
+#import "UserProfile.h"
 
 @interface AddNewAddressForm()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
@@ -25,6 +25,7 @@
     CGFloat viewSize;
     CGFloat viewCenter;
     UIToolbar* toolbar;
+    UserProfile *user;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -43,6 +44,7 @@ CGFloat animatedDistance;
     picker.backgroundColor=[UIColor whiteColor];
     self.stateTextField.inputView = picker;
     screenName=@"ada";
+    user=[UserProfile sharedInstance];
     NSDictionary *dictionary = [NSDictionary dictionaryWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"states-info" ofType:@"plist"]];
    
     self.states = [[NSArray alloc] initWithArray:[dictionary objectForKey:@"icons"]];
@@ -80,7 +82,7 @@ CGFloat animatedDistance;
     
     [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
     
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
@@ -126,7 +128,7 @@ CGFloat animatedDistance;
     if([self.fullNameTextField validate] &[self.streetAddressTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
         
         
-        NSDictionary *info=[[SnachItDB database] addAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text];
+        NSDictionary *info=[[SnachItDB database] addAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
     
     // Execute the query.
        
@@ -268,11 +270,19 @@ CGFloat animatedDistance;
     self.phoneTextField.isMandatory=YES;
 }
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productDesc=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-  
 }
-
 
 @end

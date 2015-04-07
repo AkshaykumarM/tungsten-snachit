@@ -479,16 +479,16 @@ CGFloat animatedDistance;
 }
 
 
-- (IBAction)loginBtn:(id)sender {
-    CATransition* transition = [CATransition animation];
-    transition.duration = 0.35;
-    transition.type = kCATransitionPush;
-    transition.subtype = kCATransitionFromRight;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    SnachItLogin *startscreen = [[SnachItLogin alloc]
-                                 initWithNibName:@"LoginScreen" bundle:nil];
-    [self presentViewController:startscreen animated:NO completion:nil];
-}
+//- (IBAction)loginBtn:(id)sender {
+//    CATransition* transition = [CATransition animation];
+//    transition.duration = 0.35;
+//    transition.type = kCATransitionPush;
+//    transition.subtype = kCATransitionFromRight;
+//    [self.view.window.layer addAnimation:transition forKey:nil];
+//    SnachItLogin *startscreen = [[SnachItLogin alloc]
+//                                 initWithNibName:@"LoginScreen" bundle:nil];
+//    [self presentViewController:startscreen animated:NO completion:nil];
+//}
 
 -(void)startProcessing{
     

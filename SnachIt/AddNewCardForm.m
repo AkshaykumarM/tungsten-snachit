@@ -12,7 +12,7 @@
 #import "SnachItDB.h"
 #import "global.h"
 #import "RegexValidator.h"
-
+#import "UserProfile.h"
 
 NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
@@ -29,6 +29,7 @@ NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
     CGFloat viewSize;
     UIToolbar* toolbar;
     NSMutableArray *monthsArray,*yearsArray;
+    UserProfile *user;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc;
 static const CGFloat KEYBOARD_ANIMATION_DURATION = 0.3;
@@ -64,8 +65,10 @@ CGFloat animatedDistance;
     [self initializeView];
     viewSize=self.view.frame.size.width;
     CURRENTDB=SnachItDBFile;
+    user=[UserProfile sharedInstance];
     [self setupAlerts];
     [self detectCardType];
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
    
@@ -107,7 +110,7 @@ CGFloat animatedDistance;
 -(void)initializeView{
     self.navigationController.navigationBar.topItem.title = @"snach details";
     product=[SnoopedProduct sharedInstance];
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
@@ -212,7 +215,7 @@ CGFloat animatedDistance;
     if([self.cardNumber validate]&[self.expDateTxtField validate]&[self.cvvTextField validate]&[self.fullNameTextField validate] &[self.streetTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
      
         
-        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text];
+        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
         // Execute the query.
        
 
@@ -524,9 +527,18 @@ CGFloat animatedDistance;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productDesc=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-   
 }
 @end

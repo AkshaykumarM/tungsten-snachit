@@ -74,7 +74,7 @@ UIActivityIndicatorView *activitySpinner;
 -(void)initializeView{
     @try{
         self.navigationController.navigationBar.topItem.title = @"confirm snach";
-        productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+        productName.text = [NSString stringWithFormat:@"%@",product.productName ];
         brandImg.image=[UIImage imageWithData:product.brandImageData];
         productImg.image=[UIImage imageWithData:product.productImageData];
         [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
@@ -112,10 +112,10 @@ UIActivityIndicatorView *activitySpinner;
 -(double)getOrderTotal{
     if([userdetails.shipState isEqual:@"UT"])
     {
-        order.salesTax=[NSString stringWithFormat:@"%f",(6.85/100)*[order.subTotal doubleValue]];
+        order.salesTax=[NSString stringWithFormat:@"%f",(6.75/100)*[order.subTotal doubleValue]];
     }
     else{
-        order.salesTax=[NSString stringWithFormat:@"%f",([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue]];
+        order.salesTax=[NSString stringWithFormat:@"%f",(0/100)*[product.productPrice doubleValue]];
     }
     return  [order.subTotal doubleValue]+[order.shippingCost doubleValue]+[order.salesTax doubleValue];
 }
@@ -238,7 +238,15 @@ UIActivityIndicatorView *activitySpinner;
         @try{
             if([self snachProduct]==1){
                 [self stopProcessing];
+                
                 [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+                product.productImageData=nil;
+                product.brandImageData=nil;
+                product.brandId=nil;
+                product.brandImageURL=nil;
+                product.brandName=nil;
+                product.snachId=nil;
+                product.productId=nil;product.productImageURL=nil;product.productName=nil;product.productSalesTax=nil;product.productShippingSpeed=nil;product.productShippingSpeed=nil;
                 [self performSegueWithIdentifier:STP_SEGUE sender:self];
                 
             }
@@ -372,10 +380,17 @@ UIActivityIndicatorView *activitySpinner;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDescription=nil;
+    productDescription=nil;
+    productName=nil;
+    productPrice=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productName=nil;
+    self.productPrice=nil;
+    self.brandImg=nil;
     for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
-    for(UIView *subview in [self.tableView subviews]) {
         [subview removeFromSuperview];
     }
 }

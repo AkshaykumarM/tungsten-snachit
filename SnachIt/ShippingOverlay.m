@@ -40,7 +40,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
      self.navigationController.navigationBar.topItem.title = @"snach details";
     @try{
     product=[SnoopedProduct sharedInstance];
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
@@ -101,9 +101,9 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     }
 }
 
-- (IBAction)doneBtn:(id)sender {
-    [self performSegueWithIdentifier:BACKTOORDEROVERVIEW sender:self];
-}
+//- (IBAction)doneBtn:(id)sender {
+//    [self performSegueWithIdentifier:BACKTOORDEROVERVIEW sender:self];
+//}
 
 
 - (void)viewDidUnload
@@ -116,7 +116,18 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     productNameLbl=nil;
     // Release any retained subviews of the main view.
 }
+
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productPriceBtn=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }

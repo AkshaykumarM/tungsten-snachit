@@ -19,5 +19,5 @@
 
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
 @end

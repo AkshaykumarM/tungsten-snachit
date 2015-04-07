@@ -92,7 +92,7 @@
 -(void)initializeView{
     @try{
     product=[SnoopedProduct sharedInstance];
-    productName.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productName.text = [NSString stringWithFormat:@"%@",product.productName ];
   
     [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:product.brandImageURL] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         brandimag.image=[UIImage imageWithData:data];
@@ -221,8 +221,20 @@
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
+    self.productImageData=nil;
+    self.productimage=nil;
+    productDescription=nil;
+    productName=nil;
+    productPrice=nil;
+    productimage=nil;
+    brandimag=nil;
+    self.productPrice=nil;
+    self.productDescription=nil;
+    self.brandImageData=nil;
+    self.productName=nil;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-    }
+    
+}
 @end

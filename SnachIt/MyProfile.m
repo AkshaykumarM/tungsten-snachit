@@ -125,14 +125,13 @@ UIRefreshControl *refreshControl;
 UIView* backView ;
 - (void)viewDidLoad {
     [super viewDidLoad];
+   
     
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     self.profilePic.layer.cornerRadius= RADIOUS;
     self.profilePic.clipsToBounds = YES;
     self.profilePic.layer.borderWidth = BORDERWIDTH;
     self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
-    [self.backButton setTarget:self.revealViewController];
-    [self.backButton setAction:@selector(revealToggle:)];
+  
     cellId=FRIEND_CELL;
     subCellId=HISTORY_ALL;
     
@@ -154,6 +153,14 @@ UIView* backView ;
     refreshControl= [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(getLatestFriendsSnachs) forControlEvents:UIControlEventValueChanged];
     [self.tableView addSubview:refreshControl];
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -595,7 +602,8 @@ UIView* backView ;
             [numberFormatter setCurrencyCode:@"USD"];
             
             [_productPriceLbl setTitle:[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
-            
+            if(prod.status==0 || prod.status==1)
+                 [_followStatus setEnabled:YES];
             if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil && prod.status)
             {
                 [_snoopBtn setEnabled:YES];
@@ -1068,28 +1076,32 @@ UIView* backView ;
 }
 
 - (IBAction)followBrand:(id)sender {
-    Product *prod=[singleProduct objectAtIndex:0];
     
-    if([prod.followStatus intValue] ==1){
-        
-        if([Common updateFollowStatus:prod.brandId FollowStatus:[NSString stringWithFormat:@"%@",prod.followStatus ] ForUserId:user.userID]==1)
-        {
-            
-            [_followStatus setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
-            prod.followStatus=@"0";
-        }
-    }
-    
-    else{
-        
-        
-        if([Common updateFollowStatus:prod.brandId FollowStatus:[NSString stringWithFormat:@"%@",prod.followStatus] ForUserId:user.userID]==1)
-        {
-            [_followStatus setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
-            prod.followStatus=@"1";
-            
-        }
-    }
+             
+             Product *prod=[singleProduct objectAtIndex:0];
+             
+             if([prod.followStatus intValue] ==1){
+                 
+                 if([Common updateFollowStatus:prod.brandId FollowStatus:[NSString stringWithFormat:@"%@",prod.followStatus ] ForUserId:user.userID]==1)
+                 {
+                     
+                     [_followStatus setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
+                     prod.followStatus=@"0";
+                 }
+             }
+             
+             else{
+                 
+                 
+                 if([Common updateFollowStatus:prod.brandId FollowStatus:[NSString stringWithFormat:@"%@",prod.followStatus] ForUserId:user.userID]==1)
+                 {
+                     [_followStatus setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
+                     prod.followStatus=@"1";
+                     
+                 }
+             }
+
+       
     
 }
 

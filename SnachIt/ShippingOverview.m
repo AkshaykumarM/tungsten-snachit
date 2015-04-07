@@ -65,14 +65,13 @@
     
     
     product=[SnoopedProduct sharedInstance];
-    productNameLbl.text = [NSString stringWithFormat:@"%@ %@",product.brandName,product.productName ];
+    productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     
     productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
-    //hiding the backbutton from top bar
-    //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
+    
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
@@ -207,16 +206,16 @@
 }
 
 
-- (IBAction)doneBtn:(id)sender {
-    
-    [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
-    
-}
+//- (IBAction)doneBtn:(id)sender {
+//    
+//    [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
+//    
+//}
 
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [SnachItDB database].snachItAddressInfo;
+    snachItPaymentInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
     
     // Reload the table view.
     [self.addressTableView reloadData];
@@ -233,4 +232,19 @@
     // Release any retained subviews of the main view.
 }
 
+-(void)viewDidDisappear:(BOOL)animated{
+    self.productImg=nil;
+    self.productDesc=nil;
+    productDesc=nil;
+    productNameLbl=nil;
+    productDesc=nil;
+    productImg=nil;
+    brandImg=nil;
+    self.productNameLbl=nil;
+    self.productPriceBtn=nil;
+    self.brandImg=nil;
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
+}
 @end

@@ -33,7 +33,7 @@
 - (IBAction)followBrand:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIButton *followStatus;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
 @property (weak, nonatomic) IBOutlet UIButton *snoopTime;
 
 -(void)unfollowBrand:(id)sender;

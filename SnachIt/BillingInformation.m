@@ -266,7 +266,7 @@ else{
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [SnachItDB database].snachItPaymentInfo;
+    snachItPaymentInfo = [[SnachItDB database] snachItPaymentInfo:user.userID];
 
     UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
     [tbl reloadData];

@@ -153,10 +153,10 @@ static SnachItDB *_database;
 }
 
 
-- (NSArray *)snachItAddressInfo {
+- (NSArray *)snachItAddressInfo:(NSString*)userid {
     
     NSMutableArray *retval = [[[NSMutableArray alloc] init] autorelease];
-    NSString *query = @"SELECT id, fullName, street, city, state,zip,phone FROM address order by date_added DESC";
+    NSString *query = [NSString stringWithFormat:@"SELECT id, fullName, street, city, state,zip,phone FROM address where userid=%@ order by date_added DESC",userid];
     sqlite3_stmt *statement;
     if (sqlite3_prepare_v2(_database, [query UTF8String], -1, &statement, nil) == SQLITE_OK) {
         while (sqlite3_step(statement) == SQLITE_ROW) {
@@ -190,10 +190,10 @@ static SnachItDB *_database;
     
 }
 
-- (NSArray *)snachItPaymentInfo {
+- (NSArray *)snachItPaymentInfo:(NSString*)userid {
     
     NSMutableArray *retval = [[[NSMutableArray alloc] init] autorelease];
-    NSString *query = @"SELECT * FROM payment order by date_added DESC";
+    NSString *query = [NSString stringWithFormat:@"SELECT * FROM payment where userid=%@ order by date_added DESC",userid];
     sqlite3_stmt *statement;
     if (sqlite3_prepare_v2(_database, [query UTF8String], -1, &statement, nil) == SQLITE_OK) {
         while (sqlite3_step(statement) == SQLITE_ROW) {
@@ -237,14 +237,14 @@ static SnachItDB *_database;
     return retval;
 }
 
--(NSDictionary*)addPayment:(NSString *)cardName CardNumber:(NSString *)cardNumber CardExpDate:(NSString *)expdate CardCVV:(NSString *)cvv Name:(NSString *)name Street:(NSString *)street City:(NSString *)city State:(NSString *)state Zip:(NSString *)zip Phone:(NSString *)phone{
+-(NSDictionary*)addPayment:(NSString *)cardName CardNumber:(NSString *)cardNumber CardExpDate:(NSString *)expdate CardCVV:(NSString *)cvv Name:(NSString *)name Street:(NSString *)street City:(NSString *)city State:(NSString *)state Zip:(NSString *)zip Phone:(NSString *)phone UserId:(NSString*)userid{
     
     NSMutableDictionary *info=[[NSMutableDictionary alloc] init];
     BOOL status=false;
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
     NSDate *currentdatetime = [[NSDate alloc] init];
     [df setDateFormat:@"dd-MM-yyyy hh:mm:ss"];
-    const char *query = "insert into payment(cardnumber,cardname,expdate,cvv,fullName,street,city,state,zip,phone,date_added) values(?,?,?,?,?,?,?,?,?,?,?)";
+    const char *query = "insert into payment(cardnumber,cardname,expdate,cvv,fullName,street,city,state,zip,phone,date_added,userid) values(?,?,?,?,?,?,?,?,?,?,?,?)";
     
     sqlite3_stmt *statement = NULL;
     
@@ -263,6 +263,7 @@ static SnachItDB *_database;
     [self bindString:zip column:9 statement:statement];
     [self bindString:phone column:10 statement:statement];
     [self bindString:[df stringFromDate:currentdatetime] column:11 statement:statement];
+    [self bindString:userid column:12 statement:statement];
     if (sqlite3_step(statement) == SQLITE_DONE) {
        // NSLog(@"Data Inserted");
         status=true;
@@ -279,13 +280,13 @@ static SnachItDB *_database;
 
 
 
--(NSDictionary*)addAddress:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone{
+-(NSDictionary*)addAddress:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone UserId:(NSString*)userid{
     NSMutableDictionary *info=[[NSMutableDictionary alloc] init];
     BOOL status=false;
     NSDateFormatter *df = [[NSDateFormatter alloc] init];
     NSDate *currentdatetime = [[NSDate alloc] init];
     [df setDateFormat:@"dd-MM-yyyy hh:mm:ss"];
-     const char *query = "insert into address(fullName,street,city,state,zip,phone,date_added) values(?,?,?,?,?,?,?)";
+     const char *query = "insert into address(fullName,street,city,state,zip,phone,date_added,userid) values(?,?,?,?,?,?,?,?)";
     sqlite3_stmt *statement = NULL;
     
     if (sqlite3_prepare_v2(_database, query, -1, &statement, NULL) != SQLITE_OK) {
@@ -299,6 +300,7 @@ static SnachItDB *_database;
     [self bindString:zip column:5 statement:statement];
     [self bindString:phone column:6 statement:statement];
     [self bindString:[df stringFromDate:currentdatetime] column:7 statement:statement];
+    [self bindString:userid column:8 statement:statement];
     if (sqlite3_step(statement) == SQLITE_DONE) {
         //NSLog(@"Data Inserted");
         status=true;

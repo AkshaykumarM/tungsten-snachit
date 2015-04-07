@@ -143,11 +143,11 @@
                     <rect key="frame" x="0.0" y="0.0" width="320" height="233"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="ORD-1H-vRs">
-                            <rect key="frame" x="83" y="39" width="155" height="155"/>
+                            <rect key="frame" x="90" y="47" width="140" height="140"/>
                             <constraints>
-                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="155" id="NS6-Xw-c37"/>
+                                <constraint firstAttribute="width" relation="lessThanOrEqual" constant="140" id="NS6-Xw-c37"/>
                                 <constraint firstAttribute="width" secondItem="ORD-1H-vRs" secondAttribute="height" multiplier="1:1" id="bMJ-eg-6lH"/>
-                                <constraint firstAttribute="height" relation="lessThanOrEqual" constant="155" id="ozZ-GK-gPU"/>
+                                <constraint firstAttribute="height" relation="lessThanOrEqual" constant="140" id="ozZ-GK-gPU"/>
                             </constraints>
                         </imageView>
                     </subviews>

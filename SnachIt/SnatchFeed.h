@@ -13,7 +13,6 @@
 @interface SnatchFeed : UITableViewController
 
 
-@property (strong, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
 
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 

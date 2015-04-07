@@ -18,6 +18,6 @@
 
 
 @property (weak, nonatomic) IBOutlet UIScrollView *productImageConatainer;
-@property (weak, nonatomic) IBOutlet UILabel *noSnachYetForbrand;
+
 
 @end

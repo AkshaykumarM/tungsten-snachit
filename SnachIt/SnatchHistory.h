@@ -9,11 +9,11 @@
 #import <UIKit/UIKit.h>
 
 @interface SnatchHistory : UIViewController
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *sidebarButton;
+
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *snachHistorySegmentControl;
 - (IBAction)snachHistorySegmentChanged:(id)sender;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *backButton;
+
 -(NSDictionary*)makeHistoryRequest:(NSData *)response;
 @end

@@ -221,7 +221,7 @@
 -(void)loadData{
     // Form the query.
      CURRENTDB=SnachItDBFile;
-    snachItAddressInfo = [SnachItDB database].snachItAddressInfo;
+    snachItAddressInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
     
     // Reload the table view.
      UITableView *tbl = (UITableView *)[self.view viewWithTag:5];

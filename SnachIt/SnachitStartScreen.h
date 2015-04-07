@@ -15,5 +15,5 @@
 - (IBAction)signUpBtn:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *signUpBtn;
 
-@property (weak, nonatomic) IBOutlet UIImageView *background;
+
 @end

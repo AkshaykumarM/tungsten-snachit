@@ -13,7 +13,7 @@
 - (IBAction)viewOtherDeals:(id)sender;
 
 - (IBAction)shareAppBtn:(id)sender;
-@property (weak, nonatomic) IBOutlet UIBarButtonItem *profilePicBarButton;
+
 
 
 @end

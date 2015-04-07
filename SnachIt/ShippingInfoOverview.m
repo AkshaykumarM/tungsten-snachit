@@ -68,6 +68,7 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     viewCenter=self.view.center.x-50;
     [self setupAlerts];
+    
  
 }
 -(void)doneClicked:(id)sender{
@@ -134,6 +135,8 @@ CGFloat animatedDistance;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     cell.stateTextField.inputView = statepicker;
     cell.stateTextField.inputAccessoryView = toolbar;
+    cell.phoneTextField.inputAccessoryView=toolbar;
+    cell.postalCodeTextField.inputAccessoryView=toolbar;
     
     [global setTextFieldInsets:cell.firstNameTextField];
     [global setTextFieldInsets:cell.lastNameTextField];
@@ -225,19 +228,6 @@ CGFloat animatedDistance;
     [self.navigationController popViewControllerAnimated:YES];
 }
 
--(void) getPhoto:(id) sender {
-    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    
-    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
-    
-    [self presentViewController:picker animated:YES completion:nil];
-}
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [picker dismissViewControllerAnimated:YES completion:nil];
-    cell.defBackImg.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
-}
 
 
 //this function will end editing by dissmissing keyboard if user touches outside the textfields
@@ -311,7 +301,7 @@ CGFloat animatedDistance;
     if([cell.firstNameTextField validate] &[cell.lastNameTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.addressTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
     
         //saving address into database
-        NSDictionary *info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text];
+        NSDictionary *info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID];
 
             
         // If the query was successfully executed then pop the view controller.
@@ -328,7 +318,11 @@ CGFloat animatedDistance;
             NSLog(@"Could not execute the query.");
         }
     }
-        
-
+}
+-(void)viewDidDisappear:(BOOL)animated{
+ 
+    for(UIView *subview in [self.view subviews]) {
+        [subview removeFromSuperview];
+    }
 }
 @end

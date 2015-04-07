@@ -13,7 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
 @property (weak, nonatomic) IBOutlet UITextView *productDesc;
-@property (weak, nonatomic) IBOutlet UIButton *doneBtn;
+//@property (weak, nonatomic) IBOutlet UIButton *doneBtn;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;

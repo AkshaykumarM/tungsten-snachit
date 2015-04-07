@@ -32,21 +32,21 @@ UIRefreshControl *refreshControl;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    _sidebarButton.target = self.revealViewController;
-    _sidebarButton.action = @selector(revealToggle:);
-    
-    // Set the gesture
+    UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    // Load the file content and read the data into arrays
-    [self.backButton setTarget:self.revealViewController];
-    [self.backButton setAction:@selector(revealToggle:)];
-    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
+    self.navigationItem.leftBarButtonItem = eng_btn;
     
     refreshControl= [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(getMYLatestSnachs) forControlEvents:UIControlEventValueChanged];
-    refreshControl.backgroundColor = [UIColor purpleColor];
+    refreshControl.backgroundColor = [UIColor colorWithRed:0.616 green:0.102 blue:0.471 alpha:1];
     refreshControl.tintColor = [UIColor whiteColor];
     [self.tableView addSubview:refreshControl];
+    self.automaticallyAdjustsScrollViewInsets = NO;
 }
 -(void)viewWillAppear:(BOOL)animated{
   
@@ -183,7 +183,7 @@ UIRefreshControl *refreshControl;
        cell.deliveryDateLbl.text=@"";
     }
     else
-        cell.deliveryDateLbl.text=@"Delivery Date :";
+        cell.deliveryDateLbl.text=@"Delivery Date  :";
     
     cell.statusFlag.image=[UIImage imageNamed:statusImg];
     return cell;

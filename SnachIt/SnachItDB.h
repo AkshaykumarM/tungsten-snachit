@@ -15,12 +15,12 @@
 }
 
 + (SnachItDB*)database;
-- (NSArray *)snachItAddressInfo;
-- (NSArray *)snachItPaymentInfo;
+- (NSArray *)snachItAddressInfo:(NSString*)userid;
+- (NSArray *)snachItPaymentInfo:(NSString*)userid;
 - (AddressDetails *)snachItAddressDetails:(int)uniqueId;
 - (PaymentDetails *)snachItPaymentDetails:(int)uniqueId;
-- (NSDictionary*)addPayment:(NSString*)cardName CardNumber:(NSString*)cardNumber CardExpDate:(NSString*)expdate CardCVV:(NSString*)cvv Name:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone;
-- (NSDictionary*)addAddress:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone;
+- (NSDictionary*)addPayment:(NSString*)cardName CardNumber:(NSString*)cardNumber CardExpDate:(NSString*)expdate CardCVV:(NSString*)cvv Name:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone UserId:(NSString*)userid;
+- (NSDictionary*)addAddress:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone UserId:(NSString*)userid;
 -(void)copyDatabaseIntoDocumentsDirectory;
 -(int)getSnachTime:(int)snachid UserId:(NSString*)userId SnoopTime:(int)snooptime;
 -(BOOL)logtime:(NSString*)userid SnachId:(int)snachid SnachTime:(int)time;

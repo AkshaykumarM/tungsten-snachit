@@ -25,111 +25,60 @@
                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="loading_page.png" translatesAutoresizingMaskIntoConstraints="NO" id="pzR-t4-Vzx">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                 </imageView>
-                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r4l-QV-O9I">
-                    <rect key="frame" x="16" y="503" width="288" height="45"/>
-                    <color key="backgroundColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VcM-ax-ma4">
+                    <rect key="frame" x="0.0" y="458" width="320" height="110"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="r4l-QV-O9I">
+                            <rect key="frame" x="0.0" y="55" width="320" height="55"/>
+                            <color key="backgroundColor" red="0.23529411759999999" green="0.23529411759999999" blue="0.23529411759999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="19"/>
+                            <state key="normal" title="SIGN UP">
+                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="signUpBtn:" destination="-1" eventType="touchUpInside" id="MPN-dc-p7e"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k6r-Os-vbR">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
+                            <color key="backgroundColor" red="1" green="0.99607843137254903" blue="0.99607843137254903" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="19"/>
+                            <state key="normal" title="LOG IN">
+                                <color key="titleColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                            </state>
+                            <connections>
+                                <action selector="logInBtn:" destination="-1" eventType="touchUpInside" id="XsN-gD-y7e"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="55" id="1U3-LL-4lG"/>
+                        <constraint firstAttribute="height" constant="110" id="70t-Ga-Bnr"/>
+                        <constraint firstAttribute="trailing" secondItem="r4l-QV-O9I" secondAttribute="trailing" id="CKb-5K-Txf"/>
+                        <constraint firstAttribute="bottom" secondItem="r4l-QV-O9I" secondAttribute="bottom" id="HGY-WG-eKI"/>
+                        <constraint firstItem="r4l-QV-O9I" firstAttribute="top" secondItem="k6r-Os-vbR" secondAttribute="bottom" id="ZBD-fU-Jss"/>
+                        <constraint firstItem="k6r-Os-vbR" firstAttribute="top" secondItem="VcM-ax-ma4" secondAttribute="top" id="bmB-47-9pS"/>
+                        <constraint firstItem="r4l-QV-O9I" firstAttribute="leading" secondItem="VcM-ax-ma4" secondAttribute="leading" id="fkF-GW-gpm"/>
+                        <constraint firstItem="k6r-Os-vbR" firstAttribute="width" secondItem="r4l-QV-O9I" secondAttribute="width" id="tc5-Db-vZW"/>
+                        <constraint firstItem="k6r-Os-vbR" firstAttribute="height" secondItem="r4l-QV-O9I" secondAttribute="height" id="tfC-QR-BY3"/>
+                        <constraint firstAttribute="trailing" secondItem="k6r-Os-vbR" secondAttribute="trailing" id="xHb-WQ-iqN"/>
+                        <constraint firstItem="k6r-Os-vbR" firstAttribute="leading" secondItem="VcM-ax-ma4" secondAttribute="leading" id="xYx-YO-xIW"/>
                     </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="19"/>
-                    <state key="normal" title="SIGN UP">
-                        <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
-                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </state>
-                    <variation key="default">
-                        <mask key="constraints">
-                            <exclude reference="1U3-LL-4lG"/>
-                        </mask>
-                    </variation>
-                    <variation key="widthClass=compact">
-                        <mask key="constraints">
-                            <include reference="1U3-LL-4lG"/>
-                        </mask>
-                    </variation>
-                    <connections>
-                        <action selector="signUpBtn:" destination="-1" eventType="touchUpInside" id="MPN-dc-p7e"/>
-                    </connections>
-                </button>
-                <button opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="k6r-Os-vbR">
-                    <rect key="frame" x="16" y="456" width="288" height="45"/>
-                    <color key="backgroundColor" red="1" green="0.99607843137254903" blue="0.99607843137254903" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="55" id="AsO-XM-hfT"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="19"/>
-                    <state key="normal" title="LOG IN">
-                        <color key="titleColor" red="0.23529411764705882" green="0.23529411764705882" blue="0.23529411764705882" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                    </state>
-                    <variation key="default">
-                        <mask key="constraints">
-                            <exclude reference="AsO-XM-hfT"/>
-                        </mask>
-                    </variation>
-                    <variation key="widthClass=compact">
-                        <mask key="constraints">
-                            <include reference="AsO-XM-hfT"/>
-                        </mask>
-                    </variation>
-                    <connections>
-                        <action selector="logInBtn:" destination="-1" eventType="touchUpInside" id="XsN-gD-y7e"/>
-                    </connections>
-                </button>
+                </view>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="r4l-QV-O9I" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="2Yl-mH-Mka"/>
-                <constraint firstItem="pzR-t4-Vzx" firstAttribute="top" secondItem="cJa-pR-hLT" secondAttribute="top" id="906-eL-Ir6"/>
-                <constraint firstItem="pzR-t4-Vzx" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="DX2-rv-Nqh"/>
-                <constraint firstItem="pzR-t4-Vzx" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="Dal-OF-2h3"/>
-                <constraint firstAttribute="bottom" secondItem="pzR-t4-Vzx" secondAttribute="bottom" id="FdO-h7-Ik1"/>
-                <constraint firstAttribute="trailing" secondItem="pzR-t4-Vzx" secondAttribute="trailing" id="K2M-QA-4NR"/>
-                <constraint firstItem="r4l-QV-O9I" firstAttribute="top" secondItem="k6r-Os-vbR" secondAttribute="bottom" id="LRN-Sp-GFg"/>
-                <constraint firstAttribute="trailing" secondItem="pzR-t4-Vzx" secondAttribute="trailing" id="Wp1-g8-6ut"/>
-                <constraint firstAttribute="trailing" secondItem="r4l-QV-O9I" secondAttribute="trailing" id="YTp-pn-lrD"/>
-                <constraint firstItem="pzR-t4-Vzx" firstAttribute="top" secondItem="cJa-pR-hLT" secondAttribute="top" id="aUp-ed-Dz9"/>
-                <constraint firstItem="k6r-Os-vbR" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="cOb-UL-Nee"/>
-                <constraint firstAttribute="trailing" secondItem="k6r-Os-vbR" secondAttribute="trailing" id="qkf-vi-JUo"/>
-                <constraint firstAttribute="bottom" secondItem="pzR-t4-Vzx" secondAttribute="bottom" id="yPC-bS-3ZS"/>
-                <constraint firstAttribute="bottom" secondItem="r4l-QV-O9I" secondAttribute="bottom" id="z3i-dg-YNt"/>
+                <constraint firstItem="VcM-ax-ma4" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="Bb2-15-3fk"/>
+                <constraint firstAttribute="trailing" secondItem="pzR-t4-Vzx" secondAttribute="trailing" id="IaN-AU-MBm"/>
+                <constraint firstAttribute="trailing" secondItem="VcM-ax-ma4" secondAttribute="trailing" id="S9g-S4-kfz"/>
+                <constraint firstItem="pzR-t4-Vzx" firstAttribute="leading" secondItem="cJa-pR-hLT" secondAttribute="leading" id="WO3-EG-erM"/>
+                <constraint firstAttribute="bottom" secondItem="VcM-ax-ma4" secondAttribute="bottom" id="gMf-gN-VV4"/>
+                <constraint firstAttribute="bottom" secondItem="pzR-t4-Vzx" secondAttribute="bottom" id="oob-Zq-YDB"/>
+                <constraint firstItem="pzR-t4-Vzx" firstAttribute="top" secondItem="cJa-pR-hLT" secondAttribute="top" id="quB-A8-g5w"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <variation key="default">
-                <mask key="subviews">
-                    <exclude reference="r4l-QV-O9I"/>
-                    <exclude reference="k6r-Os-vbR"/>
-                </mask>
-                <mask key="constraints">
-                    <exclude reference="cOb-UL-Nee"/>
-                    <exclude reference="qkf-vi-JUo"/>
-                    <exclude reference="2Yl-mH-Mka"/>
-                    <exclude reference="LRN-Sp-GFg"/>
-                    <exclude reference="YTp-pn-lrD"/>
-                    <exclude reference="z3i-dg-YNt"/>
-                    <exclude reference="906-eL-Ir6"/>
-                    <exclude reference="DX2-rv-Nqh"/>
-                    <exclude reference="K2M-QA-4NR"/>
-                    <exclude reference="yPC-bS-3ZS"/>
-                </mask>
-            </variation>
-            <variation key="widthClass=compact">
-                <mask key="subviews">
-                    <include reference="r4l-QV-O9I"/>
-                    <include reference="k6r-Os-vbR"/>
-                </mask>
-                <mask key="constraints">
-                    <include reference="cOb-UL-Nee"/>
-                    <include reference="qkf-vi-JUo"/>
-                    <include reference="2Yl-mH-Mka"/>
-                    <include reference="LRN-Sp-GFg"/>
-                    <include reference="YTp-pn-lrD"/>
-                    <include reference="z3i-dg-YNt"/>
-                    <include reference="906-eL-Ir6"/>
-                    <include reference="DX2-rv-Nqh"/>
-                    <include reference="K2M-QA-4NR"/>
-                    <include reference="yPC-bS-3ZS"/>
-                </mask>
-            </variation>
             <point key="canvasLocation" x="770" y="1454"/>
         </view>
     </objects>

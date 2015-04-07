@@ -20,7 +20,7 @@
 
 - (IBAction)gplusBtn:(id)sender;
 
-- (IBAction)loginBtn:(id)sender;
+
 
 
 
