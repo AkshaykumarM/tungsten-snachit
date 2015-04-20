@@ -11,12 +11,12 @@
 #import <GoogleOpenSource/GoogleOpenSource.h>
 #import <GooglePlus/GooglePlus.h>
 #import "AppDelegate.h"
-#import "AFNetworking.h"
+#import "SVProgressHUD.h"
 #import "global.h"
 #import "TwitterViewController.h"
 #import "UserProfile.h"
 
-
+#define REGEX_EMAIL @"[A-Z0-9a-z._%+-]{3,}+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 
 NSString *const SIGNINSEGUE=@"signInSegue";
@@ -25,13 +25,12 @@ NSString *const USER_ID=@"userId";
 UIView *backView;
 @interface SnachItLogin()<GPPSignInDelegate>
 
-@property (nonatomic, strong)	NSDictionary	*contents;
-@property (nonatomic, strong)	id				currentPopTipViewTarget;
 
-@property (nonatomic, strong)	NSMutableArray	*visiblePopTipViews;
 @end
 
-@implementation SnachItLogin
+@implementation SnachItLogin{
+    UITextField *emailrecovery;
+}
 @synthesize emailTfield=_emailTfield;
 @synthesize passwordTfield=_passwordTfield;
 
@@ -47,28 +46,21 @@ CGFloat animatedDistance;
 {
     [self setViewLookAndFeel];
     [super viewDidLoad];
-    self.visiblePopTipViews = [NSMutableArray array];
-    
-    self.contents = [NSDictionary dictionaryWithObjectsAndKeys:
-                     // Rounded rect buttons
-                     @"Password must be atleast 6 characters", [NSNumber numberWithInt:13],
-                     nil];
-   
     
     // Array of (backgroundColor, textColor) pairs.
     // NSNull for either means leave as default.
     // A color scheme will be picked randomly per CMPopTipView.
-   }
+}
 
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
-  
+    
     screenName=@"signin";
     
-   
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
-   
+    [super viewWillAppear:YES];
 }
 
 -(void)setViewLookAndFeel{
@@ -80,7 +72,7 @@ CGFloat animatedDistance;
     self.emailTfield.keyboardType=UIKeyboardTypeEmailAddress;
     
     
-    }
+}
 
 
 -(BOOL)textFieldShouldReturn:(UITextField *)textField{
@@ -126,7 +118,7 @@ CGFloat animatedDistance;
     CGRect viewFrame = self.view.frame;
     viewFrame.origin.y -= animatedDistance;
     
-  
+    
     [UIView beginAnimations:nil context:NULL];
     [UIView setAnimationBeginsFromCurrentState:YES];
     [UIView setAnimationDuration:KEYBOARD_ANIMATION_DURATION];
@@ -159,158 +151,165 @@ CGFloat animatedDistance;
 - (IBAction)fbBtn:(id)sender {
     [self startProcessing];
     if([global isConnected]){
-            ssousing=@"FB";
-    // If the session state is any of the two "open" states when the button is clicked
-    if (FBSession.activeSession.state == FBSessionStateOpen
-        || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
-        
-        // Close the session and remove the access token from the cache
-        // The session state handler (in the app delegate) will be called automatically
-        [FBSession.activeSession closeAndClearTokenInformation];
-        
-        // If the session state is not any of the two "open" states when the button is clicked
-        [self stopProcessing];
-    } else {
-        // Open a session showing the user the login UI
-        // You must ALWAYS ask for public_profile permissions when opening a session
-     
-        
-        [FBSession openActiveSessionWithReadPermissions:@[@"public_profile",@"email"]
-                                           allowLoginUI:YES
-                                      completionHandler:
-         ^(FBSession *session, FBSessionState state, NSError *error) {
-             
-             // Retrieve the app delegate
-             AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
-             // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
-             [appDelegate sessionStateChanged:session state:state error:error];
-             if (!error && state == FBSessionStateOpen){
-                 NSLog(@"Session opened");
-                 if(FBSession.activeSession.isOpen)
-                 {
-                     [FBRequestConnection startForMeWithCompletionHandler:
-                      ^(FBRequestConnection *connection, id user, NSError *error)
-                      {
-                          NSString *firstName = [user valueForKey:@"first_name"] ;
-                          NSString *lastName = [user valueForKey:@"last_name"] ;
-                          NSString *fullName=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
-                          NSString *facebookId = [user valueForKey:@"id"];
-                          NSString *email = [user objectForKey:@"email"];
-                          NSString *profilePic = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
-                          NSString *phoneNo=@"";
-                          
-                          NSString *password=facebookId;
-                          
-                          if(email==nil){
-                              password=facebookId;
-                              email=facebookId;
-                          }
-                          SnachitSignup *signUp=[[SnachitSignup alloc]init];
-                          NSInteger status=[signUp getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:password Profilepic:profilePic PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
-                          if(status==1){
-                              int signinStatus=[self performSignIn:email Password:password SSOUsing:ssousing];
-                              if(signinStatus==1){
-                                  
-                                  NSLog(@"Signed up with facebook Successfully");
-                                  [self stopProcessing];
-                                  [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
-                              }else{
-                                  [global showAllertForAllreadySignedUp];
-                                  [self stopProcessing];
+        ssousing=@"FB";
+        // If the session state is any of the two "open" states when the button is clicked
+        if (FBSession.activeSession.state == FBSessionStateOpen
+            || FBSession.activeSession.state == FBSessionStateOpenTokenExtended) {
+            
+            // Close the session and remove the access token from the cache
+            // The session state handler (in the app delegate) will be called automatically
+            [FBSession.activeSession closeAndClearTokenInformation];
+            
+            // If the session state is not any of the two "open" states when the button is clicked
+            [self stopProcessing];
+        } else {
+            // Open a session showing the user the login UI
+            // You must ALWAYS ask for public_profile permissions when opening a session
+            
+            
+            [FBSession openActiveSessionWithReadPermissions:@[@"public_profile",@"email"]
+                                               allowLoginUI:YES
+                                          completionHandler:
+             ^(FBSession *session, FBSessionState state, NSError *error) {
+                 
+                 // Retrieve the app delegate
+                 AppDelegate* appDelegate = [UIApplication sharedApplication].delegate;
+                 // Call the app delegate's sessionStateChanged:state:error method to handle session state changes
+                 [appDelegate sessionStateChanged:session state:state error:error];
+                 if (!error && state == FBSessionStateOpen){
+                     NSLog(@"Session opened");
+                     if(FBSession.activeSession.isOpen)
+                     {
+                         [FBRequestConnection startForMeWithCompletionHandler:
+                          ^(FBRequestConnection *connection, id user, NSError *error)
+                          {
+                              NSString *firstName = [user valueForKey:@"first_name"] ;
+                              NSString *lastName = [user valueForKey:@"last_name"] ;
+                              NSString *fullName=[NSString stringWithFormat:@"%@ %@",firstName,lastName];
+                              NSString *facebookId = [user valueForKey:@"id"];
+                              NSString *email = [user objectForKey:@"email"];
+                              NSString *profilePic = [[NSString alloc] initWithFormat: @"http://graph.facebook.com/%@/picture?type=large", facebookId];
+                              NSString *phoneNo=@"";
+                              
+                              NSString *password=facebookId;
+                              
+                              if(email==nil){
+                                  password=facebookId;
+                                  email=facebookId;
                               }
-                          }
-                          else{
-                              [global showAllertForAllreadySignedUp];
-                              NSLog(@"Error occurred while sign up");
-                          }
-                      }];
+                              SnachitSignup *signUp=[[SnachitSignup alloc]init];
+                              NSInteger status=[signUp getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:password Profilepic:profilePic PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
+                              if(status==1){
+                                  int signinStatus=[self performSignIn:email Password:password SSOUsing:ssousing];
+                                  if(signinStatus==1){
+                                      
+                                      NSLog(@"Signed up with facebook Successfully");
+                                      [self stopProcessing];
+                                      [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+                                  }else{
+                                      [global showAllertForAllreadySignedUp];
+                                      [self stopProcessing];
+                                  }
+                              }
+                              else{
+                                  [global showAllertForAllreadySignedUp];
+                                  NSLog(@"Error occurred while sign up");
+                              }
+                          }];
+                     }
                  }
-             }
-             else{
-                 [self stopProcessing];
-             }
-         
-         }];
-    }
+                 else{
+                     [self stopProcessing];
+                 }
+                 
+             }];
+        }
     }
     else{
         [self stopProcessing];
     }
-   
+    
 }
 
 - (IBAction)signInBtn:(id)sender {
-   //start spinner
+    //start spinner
     
     [self startProcessing];
     
     ssousing=@"SnachIt";
     if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
-            if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
-       
+        if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
             
-                [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
-                
-                
-            }
-            else{
+            
+            [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+            
+            
+        }
+        else{
             [global showAllertForInvalidCredentials];
-            }
+        }
     }
     else{
         [global showAllertForEnterValidCredentials];
     }
     
-   [self stopProcessing];
+    [self stopProcessing];
     
 }
 
 -(int)performSignIn:(NSString*)username Password:(NSString*)password SSOUsing:(NSString*)ssoUsing{
-
-    NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",ec2maschineIP,username,password];
-      NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-    int status=0;
-     if([global isConnected]){
-    NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
-    NSURLResponse *response = nil;
-    NSError *error = nil;
-    //getting the data
-    NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    //json parse
-    NSLog(@"\nRequest URL: %@",url);
-  
     
-    if (jasonData) {
-       
-        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-        NSLog(@"\nResponse:%@ ",response);
-       
-        if([[response objectForKey:@"success"] isEqual:@"true"])
-        {
-            //[global showAllertMsg:@"Sign in success"];
-            NSDictionary *userprofile=[response objectForKey:@"userProfile"];
-            [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue]];
-            NSLog(@"UserProfile:%@",userprofile);
-            NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-            [defaults setObject:ssoUsing forKey:SSOUSING];
-            [defaults setObject:username forKey:USERNAME];
-            [defaults setObject:password forKey:PASSWORD];
-            [defaults setObject:@"1" forKey:LOGGEDIN];
-            isAllreadyTried=TRUE;
-            [defaults synchronize];
-            status=1;
-        }
-        else{
-            status=0;
+    NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",ec2maschineIP,username,password];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    int status=0;
+    if([global isConnected]){
+        NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+        NSURLResponse *response = nil;
+        NSError *error = nil;
+        //getting the data
+        NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        //json parse
+        NSLog(@"\nRequest URL: %@",url);
+        
+        
+        if (jasonData) {
+            
+            NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+            NSLog(@"\nResponse:%@ ",response);
+            
+            if([[response objectForKey:@"success"] isEqual:@"true"])
+            {
+                
+                NSDictionary *userprofile=[response objectForKey:@"userProfile"];
+                @try{
+                    
+                    [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue] withBackgroundURL:[NSURL URLWithString:[userprofile valueForKey:@"headerImgURL"]]];
+                }
+                @catch(NSException *e){
+                    [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue] withBackgroundURL:[NSURL URLWithString:@""]];
+                    
+                }
+                NSLog(@"UserProfile:%@",userprofile);
+                NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                [defaults setObject:ssoUsing forKey:SSOUSING];
+                [defaults setObject:username forKey:USERNAME];
+                [defaults setObject:password forKey:PASSWORD];
+                [defaults setObject:@"1" forKey:LOGGEDIN];
+                isAllreadyTried=TRUE;
+                [defaults synchronize];
+                status=1;
+            }
+            else{
+                status=0;
+                
+            }
             
         }
-        
+        else{
+            [global showAllertMsg:@"Alert" Message:@"Server not responding"];
+        }
     }
-    else{
-        [global showAllertMsg:@"Server not responding"];
-    }
-     }
-   
+    
     return status;
 }
 -(void)startProcessing{
@@ -323,7 +322,7 @@ CGFloat animatedDistance;
     activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
     activitySpinner.hidesWhenStopped = YES;
     [activitySpinner startAnimating];
-
+    
 }
 -(void)stopProcessing{
     
@@ -349,7 +348,7 @@ CGFloat animatedDistance;
     
     if (error) {
         // Do some error handling here.
-         [self stopProcessing];
+        [self stopProcessing];
     } else {
         [self refreshInterfaceBasedOnSignIn];
         
@@ -371,26 +370,26 @@ CGFloat animatedDistance;
                 completionHandler:^(GTLServiceTicket *ticket,
                                     GTLPlusPerson *person,
                                     NSError *error) {
-                                    if([self getSignUpWithGooglePlus:person]==1)
-                                    {
-                                    
-                                        if([self performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
-                                            NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
-                                             [self stopProcessing];
-                                            [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
-                                           
-                                        }
-                                        else
-                                             [self stopProcessing];
-                                    }
+                    if([self getSignUpWithGooglePlus:person]==1)
+                    {
+                        
+                        if([self performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
+                            NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
+                            [self stopProcessing];
+                            [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
+                            
+                        }
+                        else
+                            [self stopProcessing];
+                    }
                     else
-                         [self stopProcessing];
+                        [self stopProcessing];
                     
                     if (error) {
                         //Handle Error
                         [self stopProcessing];
                     } else {
-                         [self stopProcessing];
+                        [self stopProcessing];
                     }
                 }];
     }
@@ -407,7 +406,7 @@ CGFloat animatedDistance;
     NSString *email = [GPPSignIn sharedInstance].authentication.userEmail;
     NSString *imageUrl = [[person.image.url substringToIndex:[person.image.url length] - 2] stringByAppendingString:@"200"];
     NSString *phoneNo=@"";
-     NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
+    NSLog(@"While signup UserName:%@ Password: %@",email,googleId);
     NSInteger status=[signup getSignUp:firstName LastName:lastName FullName:fullName EmailId:email Username:email Password:googleId Profilepic:imageUrl PhoneNo:phoneNo APNSToken:APNSTOKEN SignUpVia:ssousing DOB:@""];
     if(status==1)
     {
@@ -446,10 +445,10 @@ CGFloat animatedDistance;
 - (IBAction)gPlusBtn:(id)sender {
     [self startProcessing];
     if([global isConnected]){
-    [self googleSignIn];
+        [self googleSignIn];
     }
     else{
-    [self stopProcessing];
+        [self stopProcessing];
     }
 }
 
@@ -468,23 +467,23 @@ CGFloat animatedDistance;
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     [defaults setObject:@"GP" forKey:SSOUSING];
     [signIn authenticate];
-  }
+}
 
 // ---- its call a web service to login with google+ info
 
 - (IBAction)twBtn:(id)sender {
     if([global isConnected]){
-    CATransition* transition = [CATransition animation];
-    transition.duration = 1;
-    transition.type = kCATransitionMoveIn;
-    transition.subtype = kCATransitionFade;
-    
-    TwitterViewController *vc = [[TwitterViewController alloc]
-                              initWithNibName:@"TwitterView" bundle:nil];;
-    [self.view.window.layer addAnimation:transition forKey:nil];
-    [self presentViewController:vc animated:NO completion:nil];
+        CATransition* transition = [CATransition animation];
+        transition.duration = 1;
+        transition.type = kCATransitionMoveIn;
+        transition.subtype = kCATransitionFade;
+        
+        TwitterViewController *vc = [[TwitterViewController alloc]
+                                     initWithNibName:@"TwitterView" bundle:nil];;
+        [self.view.window.layer addAnimation:transition forKey:nil];
+        [self presentViewController:vc animated:NO completion:nil];
     }
-  
+    
 }
 
 - (IBAction)signUpBtn:(id)sender {
@@ -499,128 +498,121 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)passwordHelpBtn:(id)sender {
-    [self dismissAllPopTipViews];
+    [self.view endEditing:YES];
+    UIAlertView *alertView = [[UIAlertView alloc]
+                              initWithTitle:@"Reset Password"
+                              message:@"Please enter the email address associated with the account."
+                              delegate:self
+                              cancelButtonTitle:@"Cancel"
+                              otherButtonTitles:@"OK", nil];
+    [alertView setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    alertView.tag=1;
+    /* Display a numerical keypad for this text field */
+    emailrecovery  = [alertView textFieldAtIndex:0];
+    emailrecovery.keyboardType = UIKeyboardTypeEmailAddress;
     
-    if (sender == self.currentPopTipViewTarget) {
-        // Dismiss the popTipView and that is all
-        self.currentPopTipViewTarget = nil;
-    }
-    else {
-        NSString *contentMessage = nil;
-        UIView *contentView = nil;
-        NSNumber *key = [NSNumber numberWithInteger:[(UIView *)sender tag]];
-        id content = [self.contents objectForKey:key];
-        if ([content isKindOfClass:[UIView class]]) {
-            contentView = content;
-        }
-        else if ([content isKindOfClass:[NSString class]]) {
-            contentMessage = content;
-        }
-    
-        UIColor *backgroundColor = [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
-        UIColor *textColor = [UIColor colorWithRed:0.882 green:0.643 blue:0.788 alpha:1] ;
-        
-       
-        
-        CMPopTipView *popTipView;
-        if (contentView) {
-            popTipView = [[CMPopTipView alloc] initWithCustomView:contentView];
-        }
-        else {
-            popTipView = [[CMPopTipView alloc] initWithMessage:contentMessage];
-        }
-        popTipView.delegate = self;
-        
-        /* Some options to try.
-         */
-        //popTipView.disableTapToDismiss = YES;
-        //popTipView.preferredPointDirection = PointDirectionUp;
-        //popTipView.hasGradientBackground = NO;
-        //popTipView.cornerRadius = 2.0;
-        //popTipView.sidePadding = 30.0f;
-        //popTipView.topMargin = 20.0f;
-        //popTipView.pointerSize = 50.0f;
-        popTipView.hasShadow = NO;
-        popTipView.borderWidth=0;
-          popTipView.textFont=[UIFont fontWithName:@"OpenSans" size:10];
-        if (backgroundColor && ![backgroundColor isEqual:[NSNull null]]) {
-            popTipView.backgroundColor = backgroundColor;
-        }
-        if (textColor && ![textColor isEqual:[NSNull null]]) {
-            popTipView.textColor = textColor;
-          
-        }
-        
-        popTipView.animation =1.5;
-        popTipView.has3DStyle = YES;
-        
-        popTipView.dismissTapAnywhere = YES;
-        [popTipView autoDismissAnimated:YES atTimeInterval:2.0];
-        
-        if ([sender isKindOfClass:[UIButton class]]) {
-            UIButton *button = (UIButton *)sender;
-            [popTipView presentPointingAtView:button inView:self.view animated:YES];
-        }
-       
-        [self.visiblePopTipViews addObject:popTipView];
-        self.currentPopTipViewTarget = sender;
-    }
-
-    
+    [alertView show];
 }
 
--(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts{
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (buttonIndex == 1 && alertView.tag==1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        [self startProcessing];
+       __block NSData *jasonData;
+         __block NSError *error = nil;
+        dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+        [SVProgressHUD showWithStatus:@"Processing"];
+        dispatch_async(anotherThreadQueue, ^{
+        NSString *url=[NSString stringWithFormat:@"%@reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
+        NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+       
+        if([global isConnected]){
+            NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
+            NSURLResponse *response = nil;
+            
+            //getting the data
+            jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+            //json parse
+            NSLog(@"\nRequest URL: %@",url);
+            
+            
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+                  [self stopProcessing];
+            
+            if (jasonData) {
+                
+                NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+                NSLog(@"\nResponse:%@ ",response);
+                
+                if([[response objectForKey:@"success"] isEqual:@"true"])
+                {
+                    UIAlertView *alertView = [[UIAlertView alloc]
+                                              initWithTitle:@"Thanks"
+                                              message:@"An email has been sent to this address containing the password reset instructions."
+                                              delegate:self
+                                              cancelButtonTitle:nil
+                                              otherButtonTitles:@"OK", nil];
+                    [alertView show];
+                }
+                else{
+                    UIAlertView *alertView = [[UIAlertView alloc]
+                                              initWithTitle:@"Alert"
+                                              message:[response objectForKey:@"message"]
+                                              delegate:self
+                                              cancelButtonTitle:nil
+                                              otherButtonTitles:@"OK", nil];
+                    [alertView show];
+                    
+                }
+            }
+                [SVProgressHUD dismiss];;
+                
+            });
+        });
+      
+    
+    }
+}
+
+- (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
+{
+    if(alertView.tag==1){
+        NSPredicate *emailTest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@",REGEX_EMAIL];
+        NSString *inputText = [[alertView textFieldAtIndex:0] text];
+        if([emailTest evaluateWithObject:inputText] )
+        {
+            return YES;
+        }
+        else
+        {
+            return NO;
+        }
+    }
+    return YES;
+}
+-(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts withBackgroundURL:(NSURL*)backgroundURL{
     
     UserProfile *profile=[[UserProfile
-                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:@""] withSnoopTime:snoopTime withAppAlerts:appAlerts withEmailAlerts:emailAlerts withSMSAlerts:SMSAlerts];
+                           sharedInstance] initWithUserId:userId withUserName:username withEmailId:emailId withProfilePicURL:profilePicURL withPhoneNumber:phoneNumber withFirstName:firstName withLastName:lastName withFullName:fullName withJoiningDate:joiningDate withSharingURL:[NSURL URLWithString:@""] withSnoopTime:snoopTime withAppAlerts:appAlerts withEmailAlerts:emailAlerts withSMSAlerts:SMSAlerts withBackgroundURL:(NSURL*)backgroundURL];
     
     
 }
 
-- (void)dismissAllPopTipViews
-{
-    while ([self.visiblePopTipViews count] > 0) {
-        CMPopTipView *popTipView = [self.visiblePopTipViews objectAtIndex:0];
-        [popTipView dismissAnimated:YES];
-        [self.visiblePopTipViews removeObjectAtIndex:0];
-    }
-}
 
 
 
-#pragma mark - CMPopTipViewDelegate methods
-
-- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
-{
-    [self.visiblePopTipViews removeObject:popTipView];
-    self.currentPopTipViewTarget = nil;
-}
 
 
-#pragma mark - UIViewController methods
 
-- (void)willAnimateRotationToInterfaceOrientation:(__unused UIInterfaceOrientation)toInterfaceOrientation duration:(__unused NSTimeInterval)duration
-{
-    for (CMPopTipView *popTipView in self.visiblePopTipViews) {
-        id targetObject = popTipView.targetObject;
-        [popTipView dismissAnimated:NO];
-        
-        if ([targetObject isKindOfClass:[UIButton class]]) {
-            UIButton *button = (UIButton *)targetObject;
-            [popTipView presentPointingAtView:button inView:self.view animated:NO];
-        }
-        else {
-            UIBarButtonItem *barButtonItem = (UIBarButtonItem *)targetObject;
-            [popTipView presentPointingAtBarButtonItem:barButtonItem animated:NO];
-        }
-    }
-}
 -(void)viewDidDisappear:(BOOL)animated{
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-   
+    [super viewDidDisappear:YES];
+    
 }
-
++(void)signOut {
+    [[GPPSignIn sharedInstance] signOut];
+}
 
 @end

@@ -7,12 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface BillingInformation : UIViewController
+#import "SWTableViewCell.h"
+#import "BillingInfoOverview.h"
+@interface BillingInformation : UIViewController<SWTableViewCellDelegate,BillingInfoControllerDelegate>
 
 
 - (IBAction)addCard:(id)sender;
-@property (weak, nonatomic) IBOutlet UITableView *tableView1;
+
 
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @end

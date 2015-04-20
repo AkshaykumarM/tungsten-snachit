@@ -13,7 +13,7 @@
 #import "global.h"
 #import "RegexValidator.h"
 #import "UserProfile.h"
-
+#import "AddressDetails.h"
 @interface AddNewAddressForm()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
 @property (strong,nonatomic) NSArray *states;
@@ -57,6 +57,19 @@ CGFloat animatedDistance;
     [self initializeView];
     viewSize=self.view.frame.size.width;
     viewCenter=self.view.center.x-50;
+    if(self.recordIDToEdit!=-1){
+        AddressDetails *info=[[SnachItDB database] snachItAddressDetails:self.recordIDToEdit UserId:user.userID];
+        
+        self.fullNameTextField.text=info.name;
+        self.streetAddressTextField.text=info.address;
+        self.cityTextField.text=info.city;
+        self.stateTextField.text=info.state;
+        self.zipTextField.text=info.zip;
+        self.phoneTextField.text=info.phoneNumber;
+       
+        
+    }
+
     [self setupAlerts];
     CURRENTDB=SnachItDBFile;
     
@@ -86,7 +99,7 @@ CGFloat animatedDistance;
     brandImg.image=[UIImage imageWithData:product.brandImageData];
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
-    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    [productDesc loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
 
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
@@ -114,13 +127,20 @@ CGFloat animatedDistance;
     self.zipTextField.inputAccessoryView=toolbar;
     self.phoneTextField.inputAccessoryView=toolbar;
     self.stateTextField.inputAccessoryView=toolbar;
-       
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.subview.bounds];
+    self.subview.layer.masksToBounds = NO;
+    self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+    self.subview.layer.shadowOpacity = 0.8f;
+    self.subview.layer.shadowRadius=2.5f;
+    self.subview.layer.shadowPath = shadowPath.CGPath;
 }
 -(void)back:(id)sender{
         [self performSegueWithIdentifier:@"addressaddedseague" sender:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:YES];
    }
 
 - (IBAction)doneBtn:(id)sender {
@@ -128,7 +148,14 @@ CGFloat animatedDistance;
     if([self.fullNameTextField validate] &[self.streetAddressTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
         
         
-        NSDictionary *info=[[SnachItDB database] addAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
+        NSDictionary *info;
+        if(self.recordIDToEdit==-1){
+        info=[[SnachItDB database] addAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
+        }
+        else{
+            info=[[SnachItDB database] updateAddress:self.fullNameTextField.text Street:self.streetAddressTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
+            
+        }
     
     // Execute the query.
        
@@ -139,13 +166,12 @@ CGFloat animatedDistance;
         
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
 
         // Pop the view controller.
          [self performSegueWithIdentifier:@"addressaddedseague" sender:self];
     }
     else{
-        NSLog(@"Could not execute the query.");
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
     }
     }
@@ -252,7 +278,22 @@ CGFloat animatedDistance;
     self.stateTextField.text = self.statesAbv[row];
    
 }
-
+- (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
+{
+    if (textField==self.phoneTextField) {
+        if (range.location == 12) {
+            return NO;
+        }
+        return YES;
+    }
+    if (textField==self.zipTextField) {
+        if (range.location == 5) {
+            return NO;
+        }
+        return YES;
+    }
+    return YES;
+}
 
 /*ends here*/
 
@@ -283,6 +324,7 @@ CGFloat animatedDistance;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
 }
 
 @end

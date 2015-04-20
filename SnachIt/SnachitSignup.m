@@ -11,7 +11,7 @@
 #import "SWRevealViewController.h"
 #import "SnatchFeed.h"
 #import "global.h"
-#import "AFNetworking.h"
+
 #import <FacebookSDK/FacebookSDK.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
 #import <GooglePlus/GooglePlus.h>
@@ -150,12 +150,12 @@ CGFloat animatedDistance;
             }
             }
             else{
-                [global showAllertMsg:@"Password must be atleast of 6 charactors."];
+                [global showAllertMsg:@"Alert" Message:@"Password must be atleast of 6 charactors."];
             }
             
         }
         else{
-            [global showAllertMsg:@"Enter valid email id."];
+            [global showAllertMsg:@"Alert" Message:@"Enter valid email id."];
         }
         
     }else{
@@ -290,7 +290,7 @@ CGFloat animatedDistance;
                         }
                         else{
                             [self stopProcessing];
-                            [global showAllertMsg:@"Problem occured while signup, this can occur "];
+                            [global showAllertMsg:@"Alert" Message:@"Problem occured while signup"];
                         }
                     }
                     else
@@ -442,12 +442,12 @@ CGFloat animatedDistance;
             status=1;
         }
         if([[response valueForKey:@"error_code"] integerValue]==3){
-            [global showAllertMsg:[response valueForKey:@"error_message"]];
+            [global showAllertMsg:@"Alert" Message:[response valueForKey:@"error_message"]];
             status=2;
         }
     }
     else{
-        [global showAllertMsg:@"Server not responding"];
+        [global showAllertMsg:@"Alert" Message:@"Server not responding"];
         status=0;
     }
      }
@@ -511,6 +511,6 @@ CGFloat animatedDistance;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-  
+    [super viewDidDisappear:YES];
 }
 @end

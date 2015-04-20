@@ -7,18 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SWTableViewCell.h"
+#import "AddNewCardForm.h"
 
-@interface PaymentOverview : UIViewController
+@interface PaymentOverview : UIViewController<SWTableViewCellDelegate,PaymentInfoControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
-@property (weak, nonatomic) IBOutlet UITextView *productDesc;
-//- (IBAction)doneBtn:(id)sender;
 
+//- (IBAction)doneBtn:(id)sender;
+@property (weak, nonatomic) IBOutlet UIWebView *productDesc;
+
+@property (weak, nonatomic) IBOutlet UIView *subview;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 - (IBAction)addNewCardBtn:(id)sender;
-@property (weak, nonatomic) IBOutlet UITableView *paymentTableView;
+
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @property (nonatomic,retain)NSIndexPath * lastchecked ;
 @end

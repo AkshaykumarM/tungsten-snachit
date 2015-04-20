@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface ShippingOverviewAddressCell : UITableViewCell
+#import "SWTableViewCell.h"
+@interface ShippingOverviewAddressCell : SWTableViewCell
 @property (weak, nonatomic) IBOutlet UILabel *nameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *streetNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *cityStateZipLbl;

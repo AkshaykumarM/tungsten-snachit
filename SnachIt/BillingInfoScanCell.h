@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "TextFieldValidator.h"
+#import "SWTableViewCell.h"
 
-@interface BillingInfoScanCell : UITableViewCell
+@interface BillingInfoScanCell : SWTableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;

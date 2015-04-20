@@ -14,8 +14,8 @@
     NSString *_address;
     NSString *_city;
     NSString *_state;
-    int _zip;
-    int _phoneNumber;
+    NSString *_zip;
+    NSString *_phoneNumber;
 }
 
 @property (nonatomic, assign) int uniqueId;
@@ -23,10 +23,9 @@
 @property (nonatomic, copy) NSString *address;
 @property (nonatomic, copy) NSString *city;
 @property (nonatomic, copy) NSString *state;
-@property (nonatomic, assign) int zip;
-@property (nonatomic, assign) int phoneNumber;
+@property (nonatomic, copy) NSString *zip;
+@property (nonatomic, copy) NSString *phoneNumber;
 
-
-- (id)initWithUniqueId:(int)uniqueId name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(int)zip phoneNumber:(int)phoneNumber;
+-(id)initWithUniqueId:(int)uniqueId name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phoneNumber:(NSString *)phoneNumber;
 
 @end

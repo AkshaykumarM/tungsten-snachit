@@ -20,7 +20,7 @@ NSString * const SSOUSING=@"SSOUsing";
 NSString * const USERNAME=@"Username";
 NSString * const PASSWORD=@"Password";
 NSString * const LOGGEDIN=@"LoggedIn";
-NSString *const DEFAULT_BACK_IMG=@"DefaultBackImg";
+
 NSString *const DEFAULT_BILLING=@"DefaultBilling";
 NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
 NSUInteger const DEFAULT_SNOOPTIME=30;
@@ -61,13 +61,12 @@ float BORDERWIDTH=5.0f;
     NSHTTPURLResponse* urlResponse = nil;
     error = [[NSError alloc] init];
     responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
-    NSString *result = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-    NSLog(@"URL: %@", request);
-    NSLog(@"Response: %@", result);
-    
+ 
+   
     
     return responseData;
 }
+
 +(BOOL)isValidUrl:(NSURL *)urlString{
     NSURLRequest *request = [NSURLRequest requestWithURL:urlString];
     return [NSURLConnection canHandleRequest:request];
@@ -98,8 +97,8 @@ float BORDERWIDTH=5.0f;
     [alert show];
 }
 
-+(void)showAllertMsg:(NSString*)msg{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert!"
++(void)showAllertMsg:(NSString*)title Message:(NSString*)msg{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:title
                                                     message:msg
                                                    delegate:self
                                           cancelButtonTitle:@"OK"
@@ -182,9 +181,64 @@ float BORDERWIDTH=5.0f;
     NetworkStatus networkStatus = [reachability currentReachabilityStatus];
     if(networkStatus == NotReachable)
     {
-        [self showAllertMsg:checkInternetConnection];
+        [self showAllertMsg:@"Alert" Message:checkInternetConnection];
     }
     return networkStatus != NotReachable;
 }
++(BOOL) stringIsNumeric:(NSString *) str {
+    NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+    NSNumber *number = [formatter numberFromString:str];
+    return !!number;
+}
+
++(int)getWeekDaysCalc:(int)tempspeed{
+    NSDate *endDate = [self addDays:tempspeed toDate:[NSDate date]];//this will be the end date
+    NSCalendar *cal = [NSCalendar currentCalendar];
+    NSDate *startDate = [NSDate date];//this will be the start date
+    
+    //logic for calculating weekdays between start and end date
+    NSDateComponents *comps = [cal components:NSCalendarUnitWeekday | NSCalendarUnitDay fromDate:startDate toDate:endDate options:kNilOptions];
+    NSDateFormatter *fmt = [[NSDateFormatter alloc] init];
+    [fmt setLocale:[NSLocale localeWithLocaleIdentifier:@"en_US"]];
+    [fmt setDateFormat:@"EEEE"];
+    NSArray *weekend = [fmt weekdaySymbols];
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF == 'Saturday' || SELF == 'Sunday'"];
+    NSArray *weekendArr = [weekend filteredArrayUsingPredicate:pred];
+    NSString *weekendsStr = [weekendArr componentsJoinedByString:@""];
+    NSDateComponents *compsWithDay = [[NSDateComponents alloc] init];
+    [compsWithDay setDay:1];
+    NSString *dayNameStr = [fmt stringFromDate:startDate];
+    NSUInteger count = 1;
+    if ([weekendsStr rangeOfString:dayNameStr].location != NSNotFound) {
+        count++;
+    }
+    for (int i = 0; i < comps.day; i++) {
+        startDate = [cal dateByAddingComponents:compsWithDay toDate:startDate options:kNilOptions];
+        dayNameStr = [fmt stringFromDate:startDate];
+        if ([weekendsStr rangeOfString:dayNameStr].location != NSNotFound) {
+            count++;
+        }
+    }
+    //logic end here
+    int total=tempspeed+count;
+    NSDate *fdate = [self addDays:total toDate:startDate];
+    NSDateFormatter *myFormatter = [[NSDateFormatter alloc] init];
+    [myFormatter setDateFormat:@"EEEE"]; // day, like "Saturday"
+    [myFormatter setDateFormat:@"c"]; // day number, like 7 for saturday
+    
+    //checking whether future day is saturday or sunday
+    NSString *dayOfWeek = [myFormatter stringFromDate:fdate];
+      if([dayOfWeek isEqual:@"6"]){ total+=2;}
+      if([dayOfWeek isEqual:@"7"]){ total+=1;}
+   
+    return total;
+}
++(NSDate *)addDays:(NSInteger)days toDate:(NSDate *)originalDate {
+    NSDateComponents *components= [[NSDateComponents alloc] init];
+    [components setDay:days];
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    return [calendar dateByAddingComponents:components toDate:originalDate options:0];
+}
+
 
 @end

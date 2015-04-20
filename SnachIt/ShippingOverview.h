@@ -8,18 +8,21 @@
 
 #import <UIKit/UIKit.h>
 #import "SnachCheckDetails.h"
-
-@interface ShippingOverview : UIViewController
+#import "SWTableViewCell.h"
+#import "AddNewAddressForm.h"
+@interface ShippingOverview : UIViewController<UINavigationControllerDelegate,SWTableViewCellDelegate,AddressInfoControllerDelegate>
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
-@property (weak, nonatomic) IBOutlet UITextView *productDesc;
+
 //@property (weak, nonatomic) IBOutlet UIButton *doneBtn;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 - (IBAction)addNewAddressbtn:(id)sender;
+@property (weak, nonatomic) IBOutlet UIWebView *productDesc;
 
 @property (weak, nonatomic) IBOutlet UITableView *addressTableView;
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
+@property (weak, nonatomic) IBOutlet UIView *subview;
 
 @end

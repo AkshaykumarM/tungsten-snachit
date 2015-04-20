@@ -13,6 +13,7 @@
 @property (nonatomic,strong) NSString *username;
 @property (nonatomic,strong) NSString *emailID;
 @property (nonatomic,strong) NSURL *profilePicUrl;
+@property (nonatomic,strong) NSURL *backgroundUrl;
 @property (nonatomic,strong) NSString *phoneNumber;
 @property (nonatomic,strong) NSString *firstName;
 @property (nonatomic,strong) NSString *lastName;
@@ -32,7 +33,7 @@ This instance will be used to access currently logged in user info*/
 + (UserProfile *)sharedInstance;
 
 
--(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL*)sharingURL withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withEmailAlerts:(int)emailAlerts withSMSAlerts:(int)smsAlerts;
+-(id)initWithUserId:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSharingURL:(NSURL*)sharingURL withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withEmailAlerts:(int)emailAlerts withSMSAlerts:(int)smsAlerts withBackgroundURL:(NSURL*)backgroundURL;
 
 -(NSString*)getUserId;
 @end

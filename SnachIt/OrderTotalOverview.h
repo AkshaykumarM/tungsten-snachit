@@ -11,12 +11,15 @@
 @interface OrderTotalOverview : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
-@property (weak, nonatomic) IBOutlet UITextView *productDesc;
+
+@property (weak, nonatomic) IBOutlet UIWebView *productDesc;
+@property (weak, nonatomic) IBOutlet UITableView *tableviewfororder;
 
 //- (IBAction)doneBtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
 @property (weak, nonatomic) IBOutlet UILabel *totalLabel;
+@property (weak, nonatomic) IBOutlet UIView *subview;
 
 @end

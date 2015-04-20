@@ -18,7 +18,7 @@
 @synthesize phoneNumber = _phoneNumber;
 
 
-- (id)initWithUniqueId:(int)uniqueId name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(int)zip phoneNumber:(int)phoneNumber{
+- (id)initWithUniqueId:(int)uniqueId name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phoneNumber:(NSString*)phoneNumber{
     
     if ((self = [super init])) {
         self.uniqueId = uniqueId;

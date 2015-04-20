@@ -80,6 +80,7 @@ int cloaseStatus;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
     
 }
 @end

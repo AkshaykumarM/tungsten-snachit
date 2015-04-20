@@ -82,14 +82,14 @@
     NSString *snoopedShippingCost;
     NSString *snoopedSpeed;
     UserProfile *user;
-    UIButton *topProfileBtn;
+    UIImageView *topProfileBtn;
     NSDictionary *dictionaryForEmails;
     NSData *friendCountJson;
     NSData *responseData ;
     NSDictionary *dictionaryForFriendsCountResponse;
     float viewSize;
-    
-    
+    NSNumber *strikeSize;
+ 
 }
 
 
@@ -116,8 +116,12 @@
                             action:@selector(getLatestProducts)
                   forControlEvents:UIControlEventValueChanged];
     screenName=nil;
-    
-}
+    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    strikeSize= [NSNumber numberWithInt:2];
+   
+   }
+
+
 - (void)getLatestProducts
 {
     USERID=user.userID;
@@ -215,17 +219,21 @@
         return 1;
     }
     else{
+        
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     }
     return 0;
 }
--(float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     // This will create a "invisible" footer
     return 0.01f;
 }
 -(void)viewDidAppear:(BOOL)animated{
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    //initializing user data
+    user=[UserProfile sharedInstance];
+
     if([[defaults stringForKey:LOGGEDIN] isEqual:@"1"]){
         if(!isAllreadyTried){
             
@@ -249,8 +257,6 @@
         [self performSegueWithIdentifier:@"productDetails" sender:self];
         
     }
-    //initializing user data
-    user=[UserProfile sharedInstance];
     
     //setting up upper left profile pic here
     [self setupProfilePic];
@@ -259,10 +265,11 @@
     [self getLatestProducts];
     [self requestContactBookAccess];
     viewSize = self.view.frame.size.width-93;//for setting product scrollview size
-    
+    [super viewDidAppear:YES];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
+    user=[UserProfile sharedInstance];
 }
 
 - (void)loginViewFetchedUserInfo:(FBLoginView *)loginView
@@ -282,9 +289,9 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {int count=0;
     @try{
-        count=[Products count];
+        count=(int)[Products count];
         
-        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
+        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, self.view.bounds.size.width, self.view.bounds.size.height)];
         messageLabel.textColor = [UIColor blackColor];
         messageLabel.numberOfLines = 0;
         messageLabel.textAlignment = NSTextAlignmentCenter;
@@ -299,7 +306,9 @@
             
         }
         else{
-            self.tableView.backgroundView=nil;
+            
+            
+                self.tableView.backgroundView=nil;
         }
     }@catch(NSException *e){}
     return count;
@@ -342,18 +351,16 @@
     @try{
         NSUserDefaults * defs = [NSUserDefaults standardUserDefaults];
         NSDictionary * dict = [defs dictionaryRepresentation];
+        NSString *billing=[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID];
+        NSString *shipping=[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID];
+        [SnachItLogin signOut];
         for (id key in dict) {
+            if([key string]!=shipping&& [key string]!=billing)
             [defs removeObjectForKey:key];
         }
         [defs synchronize];
-        NSLog(@"Cleared User Defaults");
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//        NSString *documentsDirectory = [paths objectAtIndex:0];
-//        NSString *filePath =  [documentsDirectory stringByAppendingPathComponent:SnachItDBFile];
-//        
-//        if([[NSFileManager defaultManager] fileExistsAtPath:filePath]){
-//            [[NSFileManager defaultManager] removeItemAtPath:filePath error:nil];
-//        }
+       
+
         SnoopingUserDetails *sn=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:nil withPaymentCardNumber:nil withpaymentCardExpDate:nil withPaymentCardCvv:nil withPaymentFullName:nil withPaymentStreetName:nil withPaymentCity:nil withPaymentState:nil withPaymentZipCode:nil withPaymentPhoneNumber:nil];
         sn=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
         
@@ -401,6 +408,7 @@
             
             
             error = [[NSError alloc] init];
+            if (!tableView.isDragging && !tableView.isDecelerating){
             @try{
                 if(prod.friendCount==nil)
                     [NSURLConnection sendAsynchronousRequest:request queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
@@ -417,26 +425,36 @@
                                     cell.friendCount.layer.borderWidth = 0.5;
                                     cell.friendCount.layer.borderColor = [[UIColor whiteColor] CGColor];
                                     [cell.friendCount setTitle:[NSString stringWithFormat:@"%@",prod.friendCount]forState:UIControlStateNormal];
+                                    
+                                }
+                                else{
+                                    [cell.friendCount setHidden:YES];
+                                     prod.friendCount=0;
                                 }
                                 
                             }
                             else{
-                                prod.friendCount=0;
+                                 prod.friendCount=0;
+                                 [cell.friendCount setHidden:YES];
                             }
                         }
                         else{
                             prod.friendCount=0;
-                            NSLog(@"Response:%@",data);
+                             [cell.friendCount setHidden:YES];
                         }
                     }];
             }@catch(NSException *e){}
-        }
+            }
+    }
+    
+    
         NSArray* subviews = [[NSArray alloc] initWithArray: cell.productImagesContainer.subviews];
         for (UIView* view in subviews) {
             if ([view isKindOfClass:[UIImageView class]]) {
                 [view removeFromSuperview];
             }
         }
+       
         @try{
             NSInteger productImages=[prod.productImages count];
             if(productImages>0){
@@ -466,17 +484,24 @@
         }
         @catch(NSException *e){}
         
+        
         @try{
             [cell.productName setTitle:[NSString stringWithFormat:@"%@", prod.productname] forState:UIControlStateNormal];
             cell.productName.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
             cell.productName.titleLabel.minimumScaleFactor=0.67;
             cell.productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
             cell.productPrice.titleLabel.minimumScaleFactor=0.67;
-            
+            cell.followStatus.contentMode=UIViewContentModeScaleAspectFit;
             NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
             [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
             [numberFormatter setCurrencyCode:@"USD"];
-            [cell.productPrice setTitle:[NSString stringWithFormat:@"Retail: %@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
+            
+            NSDictionary *strikeThroughAttribute = [NSDictionary dictionaryWithObject:strikeSize
+                                                                               forKey:NSStrikethroughStyleAttributeName];
+            
+            NSAttributedString* strikeThroughText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Retail: %@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] attributes:strikeThroughAttribute];
+
+            [cell.productPrice setAttributedTitle:strikeThroughText forState:UIControlStateNormal];
         }@catch(NSException *e){}
         
         //Snoop button view setup
@@ -517,6 +542,7 @@
             [follow setNumberOfTapsRequired:1];
             cell.followStatus.userInteractionEnabled = YES;
             follow.brandId=prod.brandId;
+            cell.followStatus.tag=[prod.brandId intValue];
             follow.followStatus=[prod.followStatus intValue];
             follow.index=indexPath.row;
             if([prod.followStatus intValue] ==1)
@@ -565,13 +591,16 @@
             
             FollowStatusRecognizer *tap = (FollowStatusRecognizer*)tapRecongnizer;
             UIButton *button= (UIButton*)tapRecongnizer.view;
+            
             Product *prod = [Products objectAtIndex:tap.index];
+           
             if(tap.followStatus ==1){
                 tap.followStatus=0;
                 if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%ld",(long)tap.followStatus] ForUserId:user.userID]==1)
                 {
                     
                     [button setBackgroundColor:[UIColor colorWithRed:0.337 green:0.337 blue:0.333 alpha:1]];//Grey color /*#565655*/
+                    
                     prod.followStatus=@"0";
                 }
                 else{tap.followStatus=1;
@@ -584,6 +613,7 @@
                 if([Common updateFollowStatus:tap.brandId FollowStatus:[NSString stringWithFormat:@"%ld",(long)tap.followStatus] ForUserId:user.userID]==1)
                 {
                     [button setBackgroundColor:[UIColor colorWithRed:0.941 green:0.663 blue:0.059 alpha:1]];//Yellow color /*#f0a90f*/
+                    
                     prod.followStatus=@"1";
                     
                 }
@@ -705,35 +735,31 @@
     @try{
         //here i am setting the frame of profile pic and assigning it to a button
         CGRect frameimg = CGRectMake(0, 0, 40, 40);
-        topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
-        
+        topProfileBtn = [[UIImageView alloc] initWithFrame:frameimg];
+        UIButton *temp=[[UIButton alloc]initWithFrame:frameimg];
         //assigning the default background image
-        [topProfileBtn setBackgroundImage:[UIImage imageNamed:@"userIcon.png"] forState:UIControlStateNormal];
+        [topProfileBtn setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
         topProfileBtn.clipsToBounds=YES;
-        [topProfileBtn setShowsTouchWhenHighlighted:YES];
+        [temp setShowsTouchWhenHighlighted:YES];
         
         //setting up corner radious, border and border color width to make it circular
         topProfileBtn.layer.cornerRadius = 20.0f;
         topProfileBtn.layer.borderWidth = 2.0f;
         topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
+        topProfileBtn.layer.shadowColor=[[UIColor whiteColor] CGColor];
+        [topProfileBtn setContentMode:UIViewContentModeScaleAspectFill];
+        UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self.revealViewController action:@selector(revealToggle:)];
+        tapped.numberOfTapsRequired = 1;
+        [topProfileBtn addGestureRecognizer:tapped];
         
-        // setting action to the button
-        [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+      
         
         //assigning button to top bar iterm
         UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:topProfileBtn];
         
         //adding bar item to left bar button item
         self.navigationItem.leftBarButtonItem=mailbutton;
-        
-        //checking if profile pic url is nil else download the image and assign it to imageview
-        
-        
-        if([global isValidUrl:user.profilePicUrl]){
-            
-            [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-                [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
-            }];}
+
     }@catch(NSException *e){}
 }
 -(void)viewDidDisappear:(BOOL)animated{
@@ -741,5 +767,6 @@
     
     self.profilePic =nil;
     [Products removeAllObjects];
+    [super viewDidDisappear:YES];
 }
 @end

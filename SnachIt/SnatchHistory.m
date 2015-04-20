@@ -52,6 +52,7 @@ UIRefreshControl *refreshControl;
   
     subCellId=HISTORY_ALL;
     user=[UserProfile sharedInstance];
+    [super viewWillAppear:YES];
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -145,8 +146,9 @@ UIRefreshControl *refreshControl;
         snachhistory=[myLetestINFSnachs objectAtIndex:indexPath.row];
         
         productImageUrl=snachhistory.productImageUrl;
-        productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+        productname=[NSString stringWithFormat:@"%@",snachhistory.productName];
         orderedDate=snachhistory.productOrderedDate;
+        deliveryDate=snachhistory.productDeliveryDate;
         statusImg=snachhistory.statusIcon;
         
     }
@@ -154,7 +156,7 @@ UIRefreshControl *refreshControl;
         snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
         
         productImageUrl=snachhistory.productImageUrl;
-        productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+        productname=[NSString stringWithFormat:@"%@ ",snachhistory.productName];
         orderedDate=snachhistory.productOrderedDate;
         deliveryDate=snachhistory.productDeliveryDate;
         statusImg=snachhistory.statusIcon;
@@ -163,7 +165,7 @@ UIRefreshControl *refreshControl;
     else if([subCellId isEqual:HISTORY_ALL]){
         snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
         productImageUrl=snachhistory.productImageUrl;
-        productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+        productname=[NSString stringWithFormat:@"%@ ",snachhistory.productName];
         orderedDate=snachhistory.productOrderedDate;
         deliveryDate=snachhistory.productDeliveryDate;
         
@@ -179,12 +181,12 @@ UIRefreshControl *refreshControl;
     cell.productNameLbl.text = productname;
     cell.dateOrdered.text = orderedDate;
     cell.dateDelivered.text=deliveryDate;
-    if([statusImg isEqual:@"inflightIcon.png"]){
+    if([deliveryDate isEqual:@""]){
        cell.deliveryDateLbl.text=@"";
     }
     else
-        cell.deliveryDateLbl.text=@"Delivery Date  :";
-    
+        cell.deliveryDateLbl.text=@"Est. Delivery Date:";
+    deliveryDate=nil;
     cell.statusFlag.image=[UIImage imageNamed:statusImg];
     return cell;
 
@@ -289,11 +291,6 @@ UIRefreshControl *refreshControl;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
-    for(UIView *subview in [self.tableView subviews]) {
-        [subview removeFromSuperview];
-    }
+        [super viewDidDisappear:YES];
 }
 @end

@@ -15,14 +15,17 @@
 #import "SnoopingUserDetails.h"
 #import "UserProfile.h"
 #import "global.h"
-#import "SnachItPaymentInfo.h"
+#import "SnachItAddressInfo.h"
+#define EDITINFO @"editShippingInfo"
+#define ADDNEW @"addnewaddressseague"
 @interface ShippingOverview()
 
 @property (nonatomic, strong) NSString *selectedFirstName;
 @property (nonatomic, strong) NSString *selectedStreetAddress;
 @property (nonatomic, strong) NSString *selectedCityStateZip;
 
-
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic) int recordIDToEdit;
 -(void)loadData;
 
 @end
@@ -32,8 +35,9 @@
     SnoopingUserDetails *userDetails;
     UserProfile *user;
     NSUserDefaults *defaults;
-    NSArray *snachItPaymentInfo;
+    NSArray *snachItAddressInfo;
     int i;
+    NSIndexPath *deletepath;
 }
 @synthesize brandImg,productImg,productNameLbl,productPriceBtn,productDesc,checkedIndexPath;
 
@@ -70,7 +74,7 @@
     productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     
-    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    [productDesc loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
@@ -79,13 +83,21 @@
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
-    
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.subview.bounds];
+    self.subview.layer.masksToBounds = NO;
+    self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+    self.subview.layer.shadowOpacity = 0.8f;
+    self.subview.layer.shadowRadius=2.5f;
+    self.subview.layer.shadowPath = shadowPath.CGPath;
     
     
     
 }
 
 -(void)back:(id)sender{
+   
+     
     [self performSegueWithIdentifier:@"shippingoverviewseague" sender:nil];
     
 }
@@ -95,7 +107,7 @@
 
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return [snachItPaymentInfo count];
+    return [snachItAddressInfo count];
 }
 
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
@@ -110,18 +122,20 @@
     // Dequeue the cell.
     
     ShippingOverviewAddressCell *cell = [tableView dequeueReusableCellWithIdentifier:@"addressCell" forIndexPath:indexPath];
-    SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
+    SnachItAddressInfo *info=[snachItAddressInfo objectAtIndex:indexPath.row];
     cell.accessoryView=nil;
+    cell.rightUtilityButtons=[self rightButtons];
+    cell.delegate=self;
     // Set the loaded data to the appropriate cell labels.
     
     cell.nameLbl.text =  [NSString stringWithFormat:@"%@",info.name];
     
     cell.streetNameLbl.text = [NSString stringWithFormat:@"%@", info.street];
     
-    cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@ %d",info.city,info.state,info.zip];
+    cell.cityStateZipLbl.text = [NSString stringWithFormat:@"%@,%@, %@",info.city,info.state,info.zip];
     
     NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-    RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:DEFAULT_SHIPPING] intValue];
+    RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue];
     
     //for autoselect functionality
     int rowid=info.uniqueId;
@@ -132,7 +146,7 @@
                 [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
                 
                 self.checkedIndexPath=indexPath;
-                userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+                userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:info.zip withShipPhoneNumber:info.phone];
                 
                 i++;
             }
@@ -162,46 +176,139 @@
         UITableViewCell* uncheckCell = [tableView
                                         cellForRowAtIndexPath:self.checkedIndexPath];
         uncheckCell.accessoryView=nil;
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
+        
         
     }
     if([self.checkedIndexPath isEqual:indexPath])
     {
         self.checkedIndexPath = nil;
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
+        [self clearAddressDetails];
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
+
     }
     else
     {
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
-        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]];
+        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=(int)cell.tag;
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
+         cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
         
         self.checkedIndexPath = indexPath;
-        SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
+        SnachItAddressInfo *info=[snachItAddressInfo objectAtIndex:indexPath.row];
         // initializing address details
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:[NSString stringWithFormat:@"%d",info.zip] withShipPhoneNumber:info.phone];
+        userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:info.name withShipStreetName:info.street withShipCity:info.city withShipState:info.state withShipZipCode:info.zip withShipPhoneNumber:info.phone];
         
         
     }
     
 }
 
+-(void)clearAddressDetails{
+    userDetails=[[SnoopingUserDetails sharedInstance] initWithUserId:nil withShipFullName:nil withShipStreetName:nil withShipCity:nil withShipState:nil withShipZipCode:nil withShipPhoneNumber:nil];
+}
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (cell.isSelected) {
-        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
-        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]]; // No reason to create a new one every time, right?
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
+         cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
     }
     else {
         cell.accessoryView = nil;
     }
     
 }
+
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        @try{
+        
+        CURRENTDB =SnachItDBFile;
+        
+        BOOL status=[[SnachItDB database] deleteRecordFromAddress:(int)[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:user.userID];
+        if(status){
+            RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+            [self clearAddressDetails];
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
+            [self loadData];
+            deletepath=nil;
+        }
+         }@catch(NSException *e){}
+    }
+    else{
+        [tbl reloadRowsAtIndexPaths:[NSArray arrayWithObjects:deletepath, nil] withRowAnimation:YES];
+        deletepath=nil;
+    }
+}
+
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index
+{
+    switch (index) {
+        case 0:
+        {
+            // Get the record ID of the selected name and set it to the recordIDToEdit property.
+            
+            self.recordIDToEdit = cell.tag;
+            [self performSegueWithIdentifier:EDITINFO sender:nil];
+            break;
+        }
+        case 1:
+        {
+            // Delete button was pressed
+            UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+            NSIndexPath *cellIndexPath = [tbl indexPathForCell:cell];
+            deletepath=cellIndexPath;
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Are you sure you want to delete this information?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil];
+            [alert show];
+            
+            break;
+        }
+        default:
+            break;
+    }
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+  
+    if ([[segue identifier] isEqualToString:EDITINFO])
+    {
+        AddNewAddressForm *editInfoViewController = [segue destinationViewController];
+        editInfoViewController.delegate=self;
+        editInfoViewController.recordIDToEdit = self.recordIDToEdit;
+    }
+    if([[segue identifier] isEqualToString:ADDNEW]){
+        AddNewAddressForm *editInfoViewController = [segue destinationViewController];
+        editInfoViewController.delegate=self;
+        editInfoViewController.recordIDToEdit = -1;
+    }
+}
+
+//This method returns more and delete buttons
+- (NSArray *)rightButtons
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0]
+                                                title:@"Edit"];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
+                                                title:@"Delete"];
+    
+    return rightUtilityButtons;
+}
+
+
 - (IBAction)addNewAddressbtn:(id)sender {
-    [self performSegueWithIdentifier:@"addnewaddressseague" sender:self];
+    [self performSegueWithIdentifier:ADDNEW sender:self];
     
 }
 
@@ -215,7 +322,7 @@
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
+    snachItAddressInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
     
     // Reload the table view.
     [self.addressTableView reloadData];
@@ -231,7 +338,11 @@
     productNameLbl=nil;
     // Release any retained subviews of the main view.
 }
-
+-(void)viewWillDisappear:(BOOL)animated{
+    UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    [tbl reloadData];
+    [super viewWillDisappear:YES];
+}
 -(void)viewDidDisappear:(BOOL)animated{
     self.productImg=nil;
     self.productDesc=nil;
@@ -246,5 +357,13 @@
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
+}
+
+#pragma mark - PaymentInfoControllerDelegate method implementation
+
+-(void)editingInfoWasFinished{
+    // Reload the data.
+    [self.tableView reloadData];
 }
 @end

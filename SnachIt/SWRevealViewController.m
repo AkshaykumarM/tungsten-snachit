@@ -717,6 +717,7 @@ const int FrontViewPositionNone = 0xff;
 -(void)viewDidLoad{
     NSLog(@"Loading......");
     NSLog(@"%f",self.view.frame.size.width);
+     [super viewDidLoad];
 }
 
 - (void)viewDidAppear:(BOOL)animated

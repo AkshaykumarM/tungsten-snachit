@@ -13,11 +13,11 @@
 #import <GooglePlus/GooglePlus.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
 
-#import "AFNetworking.h"
+
 #import <Social/Social.h>
 #import "global.h"
 #import "Common.h"
-#import "ProfileTabView.h"
+
 #import "SnachItDB.h"
 #import "SnoopedProduct.h"
 #import "SnatchFeed.h"
@@ -74,7 +74,7 @@ int linkedinsharetracker;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-    
+    [super viewDidDisappear:YES];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -211,21 +211,21 @@ int linkedinsharetracker;
     [self.view addSubview:backView];
     
     //initializing linked in profile view 
-    profileTabView=[[ProfileTabView alloc] init];
-    profileTabView.parentVC=self;
-    profileTabView.view.frame=CGRectMake(0, 30, backView.frame.size.width, backView.frame.size.height-60);
-    profileTabView.sharingMsg=[NSString stringWithFormat:@"Snach.it %@ %@646x350.png %@",sharingMsg,appiconURL,sharingURL];
-    profileTabView.userid=user.userID;
-    profileTabView.snachid=product.snachId;
-    //place device check here
-    
-    //profileTabView.view.center=self.view.center;
-    [backView addSubview:profileTabView.view];
+//    profileTabView=[[ProfileTabView alloc] init];
+//    profileTabView.parentVC=self;
+//    profileTabView.view.frame=CGRectMake(0, 30, backView.frame.size.width, backView.frame.size.height-60);
+//    profileTabView.sharingMsg=[NSString stringWithFormat:@"Snach.it %@ %@646x350.png %@",sharingMsg,appiconURL,sharingURL];
+//    profileTabView.userid=user.userID;
+//    profileTabView.snachid=product.snachId;
+//    //place device check here
+//    
+//    //profileTabView.view.center=self.view.center;
+//    [backView addSubview:profileTabView.view];
     }
   }
 -(void) removeLinkedInview
 {
-    [profileTabView.view removeFromSuperview];
+    //[profileTabView.view removeFromSuperview];
     [backView removeFromSuperview];
     profileTabView=nil;
     backView=nil;
@@ -355,7 +355,7 @@ int linkedinsharetracker;
     topProfileBtn.layer.cornerRadius = 20.0f;
     topProfileBtn.layer.borderWidth = 2.0f;
     topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
-    
+     [topProfileBtn setContentMode:UIViewContentModeScaleAspectFill];
     // setting action to the button
     [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     

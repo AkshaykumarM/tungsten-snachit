@@ -7,12 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "SWTableViewCell.h"
+#import "ShippingInfoOverview.h"
+@interface ShippingInformation : UIViewController<UINavigationControllerDelegate,SWTableViewCellDelegate,ShippingInfoControllerDelegate>
 
-@interface ShippingInformation : UIViewController<UINavigationControllerDelegate>
-
-
-
-@property (weak, nonatomic) IBOutlet UITableView *tableView1;
 
 - (IBAction)addAddress:(id)sender;
 

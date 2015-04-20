@@ -10,10 +10,10 @@
 #import "UserProfile.h"
 #import "BillingInfoScanCell.h"
 #import "global.h"
-
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RegexValidator.h"
 #import "SnachItDB.h"
+#import "PaymentDetails.h"
 @interface BillingInfoOverview()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
 ;
@@ -206,11 +206,25 @@ CGFloat animatedDistance;
     [cell.expDateTextField setText:cardExp];
     [cell.securityCodeText setText:cardCVV];
     
+    if(self.recordIDToEdit!=-1){
+        PaymentDetails *info=[[SnachItDB database] snachItPaymentDetails:self.recordIDToEdit UserId:user.userID];
+        
+        cell.cardHolderNameTextField.text=info.name;
+        cell.cardNumberTextField.text=info.cardnumber;
+        cell.securityCodeText.text=[NSString stringWithFormat:@"%d",info.cvv];
+        cell.expDateTextField.text=info.expdate;
+        cell.addressTextField.text=info.address;
+        cell.cityTextField.text=info.city;
+        cell.stateTextField.text=info.state;
+        cell.postalCodeTextField.text=info.zip;
+        cell.phoneTextField.text=info.phoneNumber;
+        [cell.cardTypeImg setImage:[UIImage imageNamed: [NSString stringWithFormat:@"%@.png",[info.cardnumber lowercaseString]]]];
+        
+    }
+
     
     //setting background img
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if([defaults valueForKey:DEFAULT_BACK_IMG])
-        cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    [cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
     return cell;
 }
 
@@ -324,10 +338,14 @@ CGFloat animatedDistance;
     
     BillingInfoScanCell *cell = (BillingInfoScanCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if([cell.cardNumberTextField validate]&[cell.expDateTextField validate]&[cell.securityCodeText validate]&[cell.cardHolderNameTextField validate] &[cell.addressTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.stateTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
-        
+        NSDictionary *info;
         // Execute the query.
-        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text UserId:user.userID];
-        
+        if(self.recordIDToEdit==-1){
+        info=[[SnachItDB database] addPayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text UserId:user.userID];
+        }
+        else{
+            info=[[SnachItDB database] updatePayment:[global getCardType:[cell.cardNumberTextField.text stringByReplacingOccurrencesOfString:@" " withString:@""]] CardNumber:cell.cardNumberTextField.text CardExpDate:cell.expDateTextField.text CardCVV:cell.securityCodeText.text Name:cell.cardHolderNameTextField.text Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text  Zip:cell.postalCodeTextField.text Phone:cell.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
+        }
         
         
         
@@ -337,7 +355,7 @@ CGFloat animatedDistance;
             //this is to track recently added
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
             // Pop the view controller.
             [self.view resignFirstResponder];
             [self.navigationController popToRootViewControllerAnimated:YES];
@@ -394,7 +412,13 @@ CGFloat animatedDistance;
             return YES;
         }
         if (textField==cell.phoneTextField) {
-            if (range.location == 10) {
+            if (range.location == 12) {
+                return NO;
+            }
+            return YES;
+        }
+        if (textField==cell.postalCodeTextField) {
+            if (range.location == 5) {
                 return NO;
             }
             return YES;
@@ -522,7 +546,7 @@ CGFloat animatedDistance;
 
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
 {
-    CGFloat componentWidth ;
+    CGFloat componentWidth=0 ;
     if(pickerView.tag!=1){
         
         

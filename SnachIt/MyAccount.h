@@ -14,5 +14,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *userNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
+- (IBAction)uploadMyProPic:(id)sender;
 
 @end

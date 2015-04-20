@@ -21,7 +21,7 @@
 
 -(id)initWithProductId:(NSString*)productId withBrandId:(NSString*)brandId withSnachId:(NSString*)snachId withProductName:(NSString*)productName withBrandName:(NSString*)brandName withProductImageURL:(NSURL*)productImageURL withBrandImageURL:(NSURL*)brandImageURL  withProductPrice:(NSString*)productPrice withProductDescription:(NSString*)productDescription withProductSalesTax:(NSString*)salesTax withProductShippingCost:(NSString*)shippingCost withProductShippingSpeed:(NSString*)shippingSpeed
 {
-    self = [super init];
+    
     self.productId=productId;
     self.brandId=brandId;
     self.snachId=snachId;

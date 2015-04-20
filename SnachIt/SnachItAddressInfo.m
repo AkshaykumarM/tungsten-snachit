@@ -17,7 +17,7 @@
 @synthesize zip=_zip;
 @synthesize phone=_phone;
 
-- (id)initWithUniqueId:(int)uniqueId name:(NSString *)name street:(NSString *)street city:(NSString *)city state:(NSString *)state zip:(int)zip phone:(NSString*)phone {
+- (id)initWithUniqueId:(int)uniqueId name:(NSString *)name street:(NSString *)street city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phone:(NSString*)phone {
     if ((self = [super init])) {
         self.uniqueId = uniqueId;
         self.name = name;

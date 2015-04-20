@@ -11,7 +11,7 @@
 @interface SnachCheckDetails : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
-@property (weak, nonatomic) IBOutlet UITextView *productDescription;
+
 @property (weak, nonatomic) IBOutlet UIButton *productPrice;
 
 @property (nonatomic, strong) NSString *prodPrice;
@@ -19,9 +19,14 @@
 @property (nonatomic, strong) NSString *fullName;
 @property (nonatomic, strong) NSString *streetAddress;
 @property (nonatomic, strong) NSString *cityStateZip;
+@property (weak, nonatomic) IBOutlet UIWebView *productDescription;
+
+
+@property (weak, nonatomic) IBOutlet UIView *subview;
 
 
 @property (weak, nonatomic) IBOutlet UIButton *swipeToPay;
 @property (strong, nonatomic) IBOutlet UIView *mainview;
+@property (weak, nonatomic) IBOutlet UITableView *tableview;
 
 @end

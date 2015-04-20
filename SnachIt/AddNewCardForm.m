@@ -13,6 +13,7 @@
 #import "global.h"
 #import "RegexValidator.h"
 #import "UserProfile.h"
+#import "PaymentDetails.h"
 
 NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
 
@@ -66,13 +67,31 @@ CGFloat animatedDistance;
     viewSize=self.view.frame.size.width;
     CURRENTDB=SnachItDBFile;
     user=[UserProfile sharedInstance];
+    if(self.recordIDToEdit!=-1){
+        PaymentDetails *info=[[SnachItDB database] snachItPaymentDetails:self.recordIDToEdit UserId:user.userID];
+        
+        self.fullNameTextField.text=info.name;
+        self.cardNumber.text=info.cardnumber;
+        self.cvvTextField.text=[NSString stringWithFormat:@"%d",info.cvv];
+        self.expDateTxtField.text=info.expdate;
+        self.streetTextField.text=info.address;
+        self.cityTextField.text=info.city;
+        self.stateTextField.text=info.state;
+        self.zipTextField.text=info.zip;
+        self.phoneTextField.text=info.phoneNumber;
+        [self.cardtypeImageView setImage:[UIImage imageNamed: [NSString stringWithFormat:@"%@.png",[info.cardnumber lowercaseString]]]];
+        
+    }
+
     [self setupAlerts];
     [self detectCardType];
+    [super viewDidAppear:YES];
+    
     
 }
 -(void)viewWillAppear:(BOOL)animated{
    
-    
+    [super viewWillAppear:YES];
 }
 -(void)initializePickers{
     statePicker = [[UIPickerView alloc] init];
@@ -115,7 +134,7 @@ CGFloat animatedDistance;
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
    
-    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    [productDesc loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
     //hiding the backbutton from top bar
     //[self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -167,7 +186,16 @@ CGFloat animatedDistance;
     [self.cameraBtn setUserInteractionEnabled:YES];
     [self.cameraBtn  addGestureRecognizer:singleTap];
     
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.subview.bounds];
+    self.subview.layer.masksToBounds = NO;
+    self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+    self.subview.layer.shadowOpacity = 0.8f;
+    self.subview.layer.shadowRadius=2.5f;
+    self.subview.layer.shadowPath = shadowPath.CGPath;
     
+    
+   
 }
 -(void)doneClicked:(id)sender{
     [self.view endEditing:YES];
@@ -215,7 +243,13 @@ CGFloat animatedDistance;
     if([self.cardNumber validate]&[self.expDateTxtField validate]&[self.cvvTextField validate]&[self.fullNameTextField validate] &[self.streetTextField validate]& [self.stateTextField validate]&[self.cityTextField validate]&[self.stateTextField validate]&[self.zipTextField validate]&[self.phoneTextField validate]){
      
         
-        NSDictionary *info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
+        NSDictionary *info;
+        if(self.recordIDToEdit==-1){
+        info=[[SnachItDB database] addPayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID];
+        }
+        else{
+            info=[[SnachItDB database] updatePayment:[global getCardType:[self.cardNumber.text stringByReplacingOccurrencesOfString:@" " withString:@""] ] CardNumber:self.cardNumber.text CardExpDate:self.expDateTxtField.text CardCVV:self.cvvTextField.text  Name:self.fullNameTextField.text Street:self.streetTextField.text City:self.cityTextField.text State:self.stateTextField.text Zip:self.zipTextField.text Phone:self.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
+        }
         // Execute the query.
        
 
@@ -225,7 +259,7 @@ CGFloat animatedDistance;
          
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
             // Pop the view controller.
             [self performSegueWithIdentifier:BACKTOPAYMENT_OVERVIEW_SEAGUE sender:self];
 
@@ -359,12 +393,18 @@ CGFloat animatedDistance;
         return YES;
     }
     if (textField==self.phoneTextField) {
-        if (range.location == 10) {
+        if (range.location == 12) {
             return NO;
         }
         return YES;
 
     }
+    if (textField==self.zipTextField) {
+            if (range.location == 5) {
+                return NO;
+            }
+            return YES;
+        }
     }@catch(NSException *e){
         
     }
@@ -474,7 +514,7 @@ CGFloat animatedDistance;
 }
 - (CGFloat)pickerView:(UIPickerView *)pickerView widthForComponent:(NSInteger)component
 {
-    CGFloat componentWidth ;
+    CGFloat componentWidth=0 ;
     if(pickerView.tag!=1){
    
     
@@ -496,7 +536,7 @@ CGFloat animatedDistance;
     if (self.isViewLoaded && !self.view.window) {
         self.view = nil;
     }
-    NSLog(@"Recieved memmory warning in addnewcard");
+   
     // Do additional cleanup if necessary
 }
 - (void)viewDidUnload {
@@ -537,8 +577,6 @@ CGFloat animatedDistance;
     self.productNameLbl=nil;
     self.productPriceBtn=nil;
     self.brandImg=nil;
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
+    [super viewDidDisappear:YES];
 }
 @end

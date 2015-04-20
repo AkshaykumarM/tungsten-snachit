@@ -40,22 +40,27 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
 
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
+    [super viewWillAppear:YES];
 }
-
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:YES];
+}
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"order total";
     
     @try{
+        numberFormatter=[[NSNumberFormatter alloc] init];
+        [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+        [numberFormatter setCurrencyCode:@"USD"];
     product=[SnoopedProduct sharedInstance];
     productNameLbl.text = [NSString stringWithFormat:@"%@",product.productName ];
     brandImg.image=[UIImage imageWithData:product.brandImageData];
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
     
-    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
-    numberFormatter = [[NSNumberFormatter alloc] init];
-    [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
-    [numberFormatter setCurrencyCode:@"USD"];
+        [productDesc loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
+        
+    
     totalLabel.text=[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[self getOrderTotal]]]];
     
     //hiding the backbutton from top bar
@@ -67,10 +72,20 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *nav_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = nav_btn;
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.view.bounds];
+      
+        self.subview.layer.masksToBounds = NO;
+        self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+        self.subview.layer.shadowOpacity = 0.8f;
+        self.subview.layer.shadowRadius=2.5;
+        self.subview.layer.shadowPath = shadowPath.CGPath;
+
      }@catch(NSException *e){}
+    
+
 }
--(void)back:(id)sender{
-    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:nil];
+-(void)back:(id)sender{    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:nil];
     
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -89,7 +104,11 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     NSString *simpleTableIdentifier = [self.cellId objectAtIndex:indexPath.row];
     
     OrderTotalCell *cell = (OrderTotalCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
-    
+     @try{
+         numberFormatter=[[NSNumberFormatter alloc] init];
+         [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
+         [numberFormatter setCurrencyCode:@"USD"];
+
     cell.subtotalLabel.text = [NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[order.subTotal doubleValue]]]];
     
     //checking whether shipping cost is zero if zero "Free shipping" msg will be shown
@@ -107,6 +126,8 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     singleTap.numberOfTapsRequired = 1;
     [cell.shippingandHandling setUserInteractionEnabled:YES];
     [cell.shippingandHandling  addGestureRecognizer:singleTap];
+     }
+    @catch(NSException *e){}
     return cell;
     
 }
@@ -158,5 +179,6 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
 }
 @end

@@ -39,7 +39,7 @@ NSString * const DATEDELIVERED=@"deliveryDate";
     NSMutableArray *myLetestINFSnachs;
     NSMutableArray *myLetestDELSnachs;
     NSArray *singleProduct;
-    
+     NSNumber *strikeSize;
     NSDictionary *dictionaryForFriendsCountResponse;
     
 }
@@ -94,12 +94,8 @@ NSString * const DATEDELIVERED=@"deliveryDate";
 {
     NSString *cellId,*subCellId;
     UserProfile *user;
-    float viewHalfWidth;
-    float viewQuarterWidth;
-    float viewHalfHeight;
-    float viewQuarterHeight;
-    float startX;
-    float startY;
+   
+    
     NSString *snoopedProductId;
     NSString *snoopedSnachId;
     NSString *snoopedBrandId;
@@ -141,12 +137,8 @@ UIView* backView ;
     [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
     
-    viewHalfWidth=self.view.frame.size.width/2.0f;
-    viewQuarterWidth=viewHalfWidth/2.0f;
-    viewHalfHeight=self.view.frame.size.height/2.0f;
-    viewQuarterHeight=viewHalfHeight/2.0f;
-    startX=viewQuarterWidth/2.0f;
-    startY=viewQuarterHeight;
+    
+    
     
     
     
@@ -161,18 +153,25 @@ UIView* backView ;
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
+    self.automaticallyAdjustsScrollViewInsets = NO;
+      strikeSize= [NSNumber numberWithInt:1];
+
 }
+
 
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
     user=[UserProfile sharedInstance];
 }
 -(void)viewDidAppear:(BOOL)animated{
+    
     [self initialLize];
     [self getMYLatestSnachs];
     [self getLatestFriendsSnachs];
     [self getLatestFollowedBrandsProducts];
     [_tableView reloadData];
+    [super viewDidAppear:YES];
+    
     
 }
 
@@ -193,10 +192,9 @@ UIView* backView ;
     
     
     //setting background img
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if([defaults valueForKey:DEFAULT_BACK_IMG])
-        self.defaultbackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    [self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
     
+   
 }
 
 
@@ -324,10 +322,11 @@ UIView* backView ;
         }
         
         [cell.friendPic setImageWithURL:[NSURL URLWithString:snaches.freindProfilePic] placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
-        cell.friendPic.layer.cornerRadius= RADIOUS;
+        cell.friendPic.layer.cornerRadius= 35.0f;
         cell.friendPic.clipsToBounds = YES;
         cell.friendPic.layer.borderWidth = BORDERWIDTH;
         cell.friendPic.layer.borderColor = [UIColor whiteColor].CGColor;
+        [cell.friendPic setContentMode:UIViewContentModeScaleToFill];
         cell.friendName.text = friendName;
         
         int scrollWidth = 100;
@@ -370,18 +369,13 @@ UIView* backView ;
                     [img setImageWithURL:[NSURL URLWithString:snProducts.productImage] placeholderImage:nil];
                 }
                 else{
-                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^(void) {
-                        NSData *imgData= [NSData dataWithContentsOfURL:[NSURL URLWithString:snProducts.productImage]];
-                        if (imgData) {
-                            
-                            dispatch_sync(dispatch_get_main_queue(), ^(void) {
-                                UIImage *image = [UIImage imageWithData:imgData];
-                                if (image) {
-                                    
-                                    img.image = [self convertImageToGrayScale:image];
-                                }
-                            });
-                        }});
+                  
+                        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:snProducts.productImage]] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                            UIImage *image = [UIImage imageWithData:data];
+                            if (image) {
+                                img.image = [self convertImageToGrayScale:image];
+                            }
+                        }];
                 }
                 
                 [customTap setNumberOfTapsRequired:1];
@@ -494,8 +488,9 @@ UIView* backView ;
             snachhistory=[myLetestINFSnachs objectAtIndex:indexPath.row];
             
             productImageUrl=snachhistory.productImageUrl;
-            productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+            productname=[NSString stringWithFormat:@"%@",snachhistory.productName];
             orderedDate=snachhistory.productOrderedDate;
+            deliveryDate=snachhistory.productDeliveryDate;
             statusImg=snachhistory.statusIcon;
             
         }
@@ -503,7 +498,7 @@ UIView* backView ;
             snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
             
             productImageUrl=snachhistory.productImageUrl;
-            productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+            productname=[NSString stringWithFormat:@"%@",snachhistory.productName];
             orderedDate=snachhistory.productOrderedDate;
             deliveryDate=snachhistory.productDeliveryDate;
             statusImg=snachhistory.statusIcon;
@@ -512,7 +507,7 @@ UIView* backView ;
         else if([subCellId isEqual:HISTORY_ALL]){
             snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
             productImageUrl=snachhistory.productImageUrl;
-            productname=[NSString stringWithFormat:@"%@ %@",snachhistory.productBrandName,snachhistory.productName];
+            productname=[NSString stringWithFormat:@"%@",snachhistory.productName];
             orderedDate=snachhistory.productOrderedDate;
             deliveryDate=snachhistory.productDeliveryDate;
             
@@ -527,13 +522,14 @@ UIView* backView ;
         cell.productName.text = productname;
         cell.orderDate.text = orderedDate;
         cell.deliveryDate.text=deliveryDate;
-        if([statusImg isEqual:@"inflightIcon.png"]){
-            [cell.deliverydateLbl setHidden:YES];}
+        if([deliveryDate isEqual:@""]){
+            cell.deliverydateLbl.text =@"";
+        }
         else
-            [cell.deliverydateLbl setHidden:NO];
+            cell.deliverydateLbl.text=@"Est. Delivery Date:";
         
         cell.statusImg.image=[UIImage imageNamed:statusImg];
-      
+            deliveryDate=nil;
         return cell;
     }@catch(NSException *e){}
     }
@@ -558,7 +554,8 @@ UIView* backView ;
     
     
     _freindsPopupView=[[[NSBundle mainBundle] loadNibNamed:@"ProfileFreindsPopup" owner:self options:nil]objectAtIndex:0];
-    _freindsPopupView.frame=CGRectMake(startX, startY, 250, 250);
+    _freindsPopupView.frame=CGRectMake(0, 0 , 250, 250);
+    _freindsPopupView.center=CGPointMake( CGRectGetMidX(self.view.bounds ), CGRectGetMidY( self.view.bounds ) );
     
     [backView addSubview:_freindsPopupView];
     _productImg.image=nil;
@@ -591,7 +588,7 @@ UIView* backView ;
             
             
             [_snoopBtn setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];//greyscale
-            [_productNameLbl setTitle:[NSString stringWithFormat:@"%@ %@",prod.brandname,prod.productname] forState:UIControlStateNormal];
+            [_productNameLbl setTitle:[NSString stringWithFormat:@"%@",prod.productname] forState:UIControlStateNormal];
             _productNameLbl.titleLabel.numberOfLines = 1;
             _productNameLbl.titleLabel.adjustsFontSizeToFitWidth = YES;
             _productNameLbl.titleLabel.minimumScaleFactor=0.62;
@@ -600,8 +597,10 @@ UIView* backView ;
             NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
             [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
             [numberFormatter setCurrencyCode:@"USD"];
-            
-            [_productPriceLbl setTitle:[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] forState:UIControlStateNormal];
+            NSDictionary *strikeThroughAttribute = [NSDictionary dictionaryWithObject:strikeSize
+                                                                               forKey:NSStrikethroughStyleAttributeName];
+            NSAttributedString* strikeThroughText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"Retail: %@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[prod.price doubleValue]]]] attributes:strikeThroughAttribute];
+            [_productPriceLbl setAttributedTitle:strikeThroughText forState:UIControlStateNormal];
             if(prod.status==0 || prod.status==1)
                  [_followStatus setEnabled:YES];
             if(![_productNameLbl.titleLabel.text isEqual:@""] && _productNameLbl.titleLabel.text!=nil  && ![_productPriceLbl.titleLabel.text isEqual:@""]&& _productPriceLbl.titleLabel.text!=nil  && ![snoopedSnachId isEqual:@""] && snoopedSnachId!=nil && prod.status)
@@ -674,7 +673,7 @@ UIView* backView ;
                     }];
                 }@catch(NSException *e){}
 
-            }}@catch(NSException *e){ [global showAllertMsg:@"Something happened wrong"];}
+            }}@catch(NSException *e){ [global showAllertMsg:@"Alert" Message:@"Something happened wrong"];}
         
         
     }
@@ -748,7 +747,8 @@ UIView* backView ;
     
 }
 - (IBAction)indexChanged:(id)sender {
-    
+     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    @try{
     switch (self.tabSelect.selectedSegmentIndex)
     {
         case 0:
@@ -756,24 +756,30 @@ UIView* backView ;
             [_subTabSelect setHidden:YES];
             [_lastLine setHidden:YES];
             [_tableView reloadData];
+           
+            [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
             break;
         case 1:
             cellId=BRAND_CELL;
             [_subTabSelect setHidden:YES];
             [_lastLine setHidden:YES];
             [_tableView reloadData];
+           [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
             break;
         case 2:
             cellId=SNACH_CELL;
             [_subTabSelect setHidden:NO];
             [_lastLine setHidden:NO];
             [_tableView reloadData];
+            [_tableView scrollToRowAtIndexPath:indexPath  atScrollPosition:0 animated:YES];
             
             break;
     }
+    }
+    @catch(NSException *e){}
 }
 - (IBAction)subTabIndexChanged:(id)sender {
-    
+   
     switch (self.subTabSelect.selectedSegmentIndex)
     {
         case 0:
@@ -784,8 +790,6 @@ UIView* backView ;
         case 1:
             subCellId=HISTORY_INFLIGHT;
             [_tableView reloadData];
-            
-            
             break;
         case 2:
             subCellId=HISTORY_DELIVERED;
@@ -877,7 +881,7 @@ UIView* backView ;
                             {
                                 for (NSDictionary *tempSnachDic in latestFriendSnachs2) {
                                     Products *snached= [[Products alloc] init];
-                                    snached.snachId=[tempSnachDic objectForKey:PRODUCTS_SNACHID];
+                                    snached.snachId=[NSString stringWithFormat:@"%@",[tempSnachDic objectForKey:PRODUCTS_SNACHID]];
                                     snached.productImage=[tempSnachDic objectForKey:PRODUCTS_IMAGE];
                                     snached.snachStatus=[[tempSnachDic objectForKey:PRODUCTS_SNACHSTATUS] intValue];
                                     [snachs addObject:snached];
@@ -919,7 +923,7 @@ UIView* backView ;
                         for (NSDictionary *tempFollowDic in latestFriendSnachs2) {
                             Products *followed= [[Products alloc] init];
                             followed.productId=[tempFollowDic objectForKey:PRODUCTS_ID];
-                            followed.snachId=[tempFollowDic objectForKey:PRODUCTS_SNACHID];
+                            followed.snachId=[NSString stringWithFormat:@"%@",[tempFollowDic objectForKey:PRODUCTS_SNACHID] ];
                             followed.productImage=[tempFollowDic objectForKey:PRODUCTS_IMAGE];
                             followed.snachStatus=1;
                             [brandProducts addObject:followed];
@@ -1004,7 +1008,7 @@ UIView* backView ;
     }
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
-    
+    NSLog(@"Response : %@",latestFriendSnachs);
     
     return [latestFriendSnachs objectForKey:@"data"];
 }
@@ -1018,6 +1022,7 @@ UIView* backView ;
     }
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    NSLog(@"%@",latestFriendSnachs);
     return latestFriendSnachs;
 }
 
@@ -1141,7 +1146,8 @@ UIView* backView ;
 {
     // Create image rectangle with current image width/height
     CGRect imageRect = CGRectMake(0, 0, image.size.width, image.size.height);
-    
+    UIImage *newImage=nil;
+    @try{
     // Grayscale color space
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceGray();
     
@@ -1156,24 +1162,20 @@ UIView* backView ;
     CGImageRef imageRef = CGBitmapContextCreateImage(context);
     
     // Create a new UIImage object
-    UIImage *newImage = [UIImage imageWithCGImage:imageRef];
+     newImage = [UIImage imageWithCGImage:imageRef];
     
     // Release colorspace, context and bitmap information
     CGColorSpaceRelease(colorSpace);
     CGContextRelease(context);
     CFRelease(imageRef);
-    
+    }
+    @catch(NSException *e){}
     // Return the new grayscale image
     return newImage;
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
-    for(UIView *subview in [self.tableView subviews]) {
-        [subview removeFromSuperview];
-    }
+    
     snoopedProductId=nil;
     snoopedSnachId=nil;
     snoopedBrandId=nil;
@@ -1188,6 +1190,8 @@ UIView* backView ;
     snoopedShippingCost=nil;
     snoopedSpeed=nil;
     dictionaryForEmails=nil;
+    //self.defaultbackImg=nil;
+    self.profilePic=nil;
     dictionaryForFriendsCountResponse=nil;
     
     friendCountJson=nil;
@@ -1196,6 +1200,7 @@ UIView* backView ;
     [myLetestALLSnachs removeAllObjects];
     [myLetestDELSnachs removeAllObjects];
     [myLetestINFSnachs removeAllObjects];
+    [super viewDidDisappear:YES];
 }
 
 

@@ -14,8 +14,8 @@
     NSString *_address;
     NSString *_city;
     NSString *_state;
-    int _zip;
-    int _phoneNumber;
+    NSString *_zip;
+    NSString *_phoneNumber;
     NSString *_cardname;
     NSString *_cardnumber;
     NSString *_expdate;
@@ -27,12 +27,12 @@
 @property (nonatomic, copy) NSString *address;
 @property (nonatomic, copy) NSString *city;
 @property (nonatomic, copy) NSString *state;
-@property (nonatomic, assign) int zip;
-@property (nonatomic, assign) int phoneNumber;
+@property (nonatomic, assign) NSString *zip;
+@property (nonatomic, assign) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *cardname;
 @property (nonatomic, copy) NSString *cardnumber;
 @property (nonatomic, copy) NSString *expdate;
 @property (nonatomic, assign) int cvv;
 
-- (id)initWithUniqueId:(int)uniqueId CardName:(NSString*)cardname CardNumber:(NSString*)cardNumber CardExpdate:(NSString*)expdate CardCVV:(int)cvv name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(int)zip phoneNumber:(int)phoneNumber;
+- (id)initWithUniqueId:(int)uniqueId CardName:(NSString*)cardname CardNumber:(NSString*)cardNumber CardExpdate:(NSString*)expdate CardCVV:(int)cvv name:(NSString *)name address:(NSString *)address city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phoneNumber:(NSString *)phoneNumber;
 @end

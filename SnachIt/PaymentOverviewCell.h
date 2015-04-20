@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface PaymentOverviewCell : UITableViewCell
+#import "SWTableViewCell.h"
+@interface PaymentOverviewCell : SWTableViewCell
 @property (weak, nonatomic) IBOutlet UIImageView *cardImage;
 @property (weak, nonatomic) IBOutlet UILabel *cardNameLbl;
 

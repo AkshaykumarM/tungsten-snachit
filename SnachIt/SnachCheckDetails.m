@@ -18,6 +18,10 @@
 #import "global.h"
 #import "SnachItDB.h"
 #import "UserProfile.h"
+#import "PaymentDetails.h"
+#import "AddressDetails.h"
+#import "SnachItAddressInfo.h"
+#import "SVProgressHUD.h"
 NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
 NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
 NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
@@ -30,8 +34,7 @@ double orderTotal;
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
 @end
-UIView *backView;
-UIActivityIndicatorView *activitySpinner;
+
 @implementation SnachCheckDetails
 {
     NSInteger tempQuntity;
@@ -40,6 +43,8 @@ UIActivityIndicatorView *activitySpinner;
     SnoopingUserDetails *userdetails;
     Order *order;
     UserProfile *user;
+    PaymentDetails *pinfo;
+    AddressDetails *ainfo;
 }
 @synthesize productImg,brandImg,productDescription,description,productPrice,productName,cellId,prodPrice;
 
@@ -57,19 +62,31 @@ UIActivityIndicatorView *activitySpinner;
     price= [order.orderTotal doubleValue];
     prodPrice=order.orderTotal;
     tempQuntity=[order.orderQuantity intValue];
+    [self initCheckoutDetails];
     CURRENTDB=SnoopTimeDBFile;
     
+   
+    
 }
-
+-(void)initCheckoutDetails{
+    CURRENTDB=SnachItDBFile;
+    NSUserDefaults *df=[NSUserDefaults standardUserDefaults];
+    if([[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue]!=-1){
+    pinfo=[[SnachItDB database] snachItPaymentDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue] UserId:user.userID];
+    userdetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:pinfo.cardname withPaymentCardNumber:pinfo.cardnumber withpaymentCardExpDate:pinfo.expdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",pinfo.cvv] withPaymentFullName:pinfo.name withPaymentStreetName:pinfo.address  withPaymentCity:pinfo.city withPaymentState:pinfo.state withPaymentZipCode:pinfo.zip withPaymentPhoneNumber: pinfo.phoneNumber];
+    }
+    if([[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue]!=-1){
+    ainfo=[[SnachItDB database] snachItAddressDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue] UserId:user.userID];
+    userdetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:ainfo.name withShipStreetName:ainfo.address withShipCity:ainfo.city withShipState:ainfo.state withShipZipCode:ainfo.zip withShipPhoneNumber:ainfo.phoneNumber];
+    }
+}
 -(void)viewDidAppear:(BOOL)animated{
     [self setViewLookAndFeel];
-    
-    
-    
+    [super viewDidAppear:YES];
 }
 -(void)viewWillAppear:(BOOL)animated{
     [self initializeView];
-    
+    [super viewWillAppear:YES];
 }
 -(void)initializeView{
     @try{
@@ -78,13 +95,21 @@ UIActivityIndicatorView *activitySpinner;
         brandImg.image=[UIImage imageWithData:product.brandImageData];
         productImg.image=[UIImage imageWithData:product.productImageData];
         [productPrice setTitle: product.productPrice forState: UIControlStateNormal];
-        productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+        [productDescription loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
         
         //hiding the backbutton from top bar
         [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
         
         self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCancel target:self action:@selector(cancelSnach:)];
         [self initializeOrder];
+        UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.view.bounds];
+        
+        self.subview.layer.masksToBounds = NO;
+        self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+        self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+        self.subview.layer.shadowOpacity = 0.8f;
+        self.subview.layer.shadowRadius=2.5;
+        self.subview.layer.shadowPath = shadowPath.CGPath;
     }@catch(NSException *e){}
 }
 
@@ -112,7 +137,7 @@ UIActivityIndicatorView *activitySpinner;
 -(double)getOrderTotal{
     if([userdetails.shipState isEqual:@"UT"])
     {
-        order.salesTax=[NSString stringWithFormat:@"%f",(6.75/100)*[order.subTotal doubleValue]];
+        order.salesTax=[NSString stringWithFormat:@"%f",([product.productSalesTax doubleValue]/100)*[order.subTotal doubleValue]];
     }
     else{
         order.salesTax=[NSString stringWithFormat:@"%f",(0/100)*[product.productPrice doubleValue]];
@@ -232,13 +257,13 @@ UIActivityIndicatorView *activitySpinner;
 }
 
 - (void)snachIt:(id)sender {
-    
-    [self startProcessing];
+ 
+    [SVProgressHUD showWithStatus:@"Processing"];
+    [self.view setUserInteractionEnabled:NO];
     if([global isConnected]){
         @try{
             if([self snachProduct]==1){
-                [self stopProcessing];
-                
+                [SVProgressHUD dismiss];
                 [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
                 product.productImageData=nil;
                 product.brandImageData=nil;
@@ -251,12 +276,17 @@ UIActivityIndicatorView *activitySpinner;
                 
             }
             else{
-                [self stopProcessing];
+                [SVProgressHUD dismiss];
+                [self.view setUserInteractionEnabled:YES];
             }
-        }@catch(NSException *e){}
+        }@catch(NSException *e){
+            [self.view setUserInteractionEnabled:YES];
+        }
     }
     else{
-        [self stopProcessing];
+        [SVProgressHUD dismiss];
+        [self.view setUserInteractionEnabled:YES];
+        
     }
     
 }
@@ -315,7 +345,7 @@ UIActivityIndicatorView *activitySpinner;
         else
         {
             @try{
-                [global showAllertMsg:[response objectForKey:@"error_message"]];
+                [global showAllertMsg:@"Alert" Message:[response objectForKey:@"error_message"]];
                 status=0;
             }
             @catch(NSException *e){
@@ -326,48 +356,56 @@ UIActivityIndicatorView *activitySpinner;
     
     return status;
 }
--(void)startProcessing{
-    
-    backView = [[UIView alloc] initWithFrame:self.mainview.frame];
-    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
-    [self.tableView addSubview:backView];
-    activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [backView addSubview:activitySpinner];
-    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
-    activitySpinner.hidesWhenStopped = YES;
-    [activitySpinner startAnimating];
-    
-}
--(void)stopProcessing{
-    
-    [activitySpinner stopAnimating];
-    [backView removeFromSuperview];
-}
+
 
 
 -(void)initializeOrder{
     double shippingcost;
     double salesTax;
     double tempst;
-    int speed;
+    NSString *speed;
+    int tempspeed;
+    
     @try{
         tempst=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
         shippingcost=[product.productShippingCost doubleValue];
         
         if([userdetails.shipState isEqual:@"UT"])
-            salesTax=(6.75/100)*[product.productPrice doubleValue];
+            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
         else{
             salesTax=(0/100)*[product.productPrice doubleValue];
         }
-        speed=[product.productShippingSpeed intValue];
+        
+        if([global stringIsNumeric:product.productShippingSpeed])
+        {
+            tempspeed=[product.productShippingSpeed intValue];
+            speed=product.productShippingSpeed;
+        }
+        else{
+            @try{
+                speed=product.productShippingSpeed;
+                NSRange equalRange = [speed rangeOfString:@"-" options:NSBackwardsSearch];
+                if (equalRange.location != NSNotFound) {
+                    NSString *result = [speed substringFromIndex:equalRange.location + equalRange.length];
+                    tempspeed= [result intValue] ;
+                    
+                } else {
+                    tempspeed=[product.productShippingSpeed intValue];
+                }
+            }
+            @catch(NSException *e){
+                tempspeed=[product.productShippingSpeed intValue];
+            }
+        }
     }
     @catch(NSException *e){
         shippingcost=0;
         salesTax=0;
         speed=0;
     }
+    
     NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.day = speed;
+    dateComponents.day = [global getWeekDaysCalc:tempspeed];
     NSDate *currentdate=[NSDate date];
     NSDate *deliverydate = [[NSCalendar currentCalendar]dateByAddingComponents:dateComponents
                                                                         toDate: currentdate
@@ -376,8 +414,9 @@ UIActivityIndicatorView *activitySpinner;
     [df setDateFormat:@"MM/dd/yyyy"];
     
     
-    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
+    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%@",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
 }
+
 
 -(void)viewDidDisappear:(BOOL)animated{
     self.productImg=nil;
@@ -393,5 +432,6 @@ UIActivityIndicatorView *activitySpinner;
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
 }
 @end

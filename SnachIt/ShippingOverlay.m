@@ -35,6 +35,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 
 -(void)viewDidAppear:(BOOL)animated{
     [self initializeView];
+    [super viewDidAppear:YES];
 }
 -(void)initializeView{
      self.navigationController.navigationBar.topItem.title = @"snach details";
@@ -45,7 +46,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
      productImg.image=[UIImage imageWithData:product.productImageData];
     [productPriceBtn setTitle: product.productPrice forState: UIControlStateNormal];
 
-    productDesc.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+        [productDesc loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@;font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ] baseURL:nil];
    
     //hiding the backbutton from top bar
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -58,6 +59,14 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
         
     self.navigationItem.leftBarButtonItem = nav_btn;
      }@catch(NSException *e){}
+    
+    UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.subview.bounds];
+    self.subview.layer.masksToBounds = NO;
+    self.subview.layer.shadowColor = [UIColor blackColor].CGColor;
+    self.subview.layer.shadowOffset = CGSizeMake(0.0f, 0.0f);  /*Change value of X n Y as per your need of shadow to appear to like right bottom or left bottom or so on*/
+    self.subview.layer.shadowOpacity = 0.8f;
+    self.subview.layer.shadowRadius=2.5f;
+    self.subview.layer.shadowPath = shadowPath.CGPath;
 }
 -(void)back:(id)sender{
     [self performSegueWithIdentifier:BACKTOORDEROVERVIEW sender:nil];
@@ -65,7 +74,7 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
 }
 
 -(void)viewWillAppear:(BOOL)animated{
-    
+    [super viewWillAppear:YES];
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
@@ -134,5 +143,6 @@ NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
     for(UIView *subview in [self.tableView subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
 }
 @end

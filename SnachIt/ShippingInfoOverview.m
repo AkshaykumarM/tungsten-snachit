@@ -13,10 +13,13 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RegexValidator.h"
 #import "SnachItDB.h"
+#import "AddressDetails.h"
 @interface ShippingInfoOverview()<UIPickerViewDataSource,UIPickerViewDelegate,UITextFieldDelegate>
 
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
+-(void)loadInfoToEdit;
+
 @end
 @implementation ShippingInfoOverview
 {
@@ -39,7 +42,7 @@ CGFloat animatedDistance;
     // Set the Label text with the selected recipe
     [self setViewLookAndFeel];
     
-      CURRENTDB=SnachItDBFile;
+    CURRENTDB=SnachItDBFile;
     statepicker = [[UIPickerView alloc] init];
     statepicker.dataSource = self;
     statepicker.delegate = self;
@@ -61,15 +64,15 @@ CGFloat animatedDistance;
     
     [toolbar setItems:[NSArray arrayWithObjects:flexibleSpaceLeft, doneButton, nil]];
     
-   
-   }
+    
+}
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
     viewSize=self.view.frame.size.width;
     viewCenter=self.view.center.x-50;
+    
     [self setupAlerts];
     
- 
 }
 -(void)doneClicked:(id)sender{
     [self.view endEditing:YES];
@@ -130,7 +133,7 @@ CGFloat animatedDistance;
     
     
     [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
-  
+    
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     cell.stateTextField.inputView = statepicker;
@@ -152,10 +155,22 @@ CGFloat animatedDistance;
     cell.cityTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.firstNameTextField.keyboardType=UIKeyboardTypeAlphabet;
     cell.lastNameTextField.keyboardType=UIKeyboardTypeAlphabet;
-    
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if([defaults valueForKey:DEFAULT_BACK_IMG])
-        cell.defBackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    if(self.recordIDToEdit!=-1){
+        AddressDetails *info=[[SnachItDB database] snachItAddressDetails:self.recordIDToEdit UserId:user.userID];
+        @try{
+        cell.firstNameTextField.text=[info.name componentsSeparatedByString:@" "][0];
+        cell.lastNameTextField.text=[info.name componentsSeparatedByString:@" "][1];
+        }@catch(NSException *e){
+            cell.firstNameTextField.text=info.name;
+        }
+        cell.addressTextField.text=info.address;
+        cell.cityTextField.text=info.city;
+        cell.stateTextField.text=info.state;
+        cell.postalCodeTextField.text=info.zip;
+        cell.phoneTextField.text=info.phoneNumber;
+        
+    }
+    [cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
     return cell;
 }
 
@@ -266,15 +281,19 @@ CGFloat animatedDistance;
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
 {
-     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-        if (textField==cell.phoneTextField) {
-        if (range.location == 10) {
+    ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
+    if (textField==cell.phoneTextField) {
+        if (range.location == 12) {
             return NO;
         }
         return YES;
-        
     }
-    
+    if (textField==cell.postalCodeTextField) {
+        if (range.location == 5) {
+            return NO;
+        }
+        return YES;
+    }
     return YES;
 }
 
@@ -299,16 +318,21 @@ CGFloat animatedDistance;
     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
     if([cell.firstNameTextField validate] &[cell.lastNameTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.addressTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
-    
+        NSDictionary *info;
         //saving address into database
-        NSDictionary *info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",cell.firstNameTextField.text,cell.lastNameTextField.text] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID];
-
+        if(self.recordIDToEdit!=-1){
             
+             info=[[SnachItDB database] updateAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
+        }
+        else{
+           info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID];
+        }
+        
         // If the query was successfully executed then pop the view controller.
         if ( [info valueForKey:@"status"]!= 0) {
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:DEFAULT_SHIPPING];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
             // Pop the view controller.
             [self.view resignFirstResponder];
             [self.navigationController popViewControllerAnimated:YES];
@@ -320,9 +344,31 @@ CGFloat animatedDistance;
     }
 }
 -(void)viewDidDisappear:(BOOL)animated{
- 
+    
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
 }
+
+#pragma mark - Private method implementation
+
+-(void)loadInfoToEdit{
+    // Create the query.
+    CURRENTDB=SnachItDBFile;
+    AddressDetails *info=[[SnachItDB database] snachItAddressDetails:self.recordIDToEdit UserId:user.userID];
+    
+    ShippingInfoAddCell *cell=(ShippingInfoAddCell*)[self.tableView viewWithTag:2];;
+    // Set the loaded data to the textfields.
+    cell.firstNameTextField.text =info.name;
+    cell.lastNameTextField.text =info.name;
+    cell.addressTextField.text=info.address;
+    cell.cityTextField.text=info.city;
+    cell.stateTextField.text=info.state;
+    cell.postalCodeTextField.text=info.zip;
+    cell.phoneTextField.text=info.phoneNumber;
+    
+}
+
+
 @end

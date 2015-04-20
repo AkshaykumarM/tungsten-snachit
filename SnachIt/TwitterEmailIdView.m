@@ -28,6 +28,7 @@ CGFloat animatedDistance;
 -(void)viewDidLoad{
     UIColor *color = [UIColor whiteColor];
     self.emailIdTextField.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
+    [super viewDidLoad];
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];

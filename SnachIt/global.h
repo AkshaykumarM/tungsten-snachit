@@ -42,7 +42,6 @@ extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;
 extern int RECENTLY_ADDED_SHIPPING_INFO_TRACKER;
 extern NSString *screenName;
 
-extern NSString *const DEFAULT_BACK_IMG;
 
 
 @interface global : NSObject
@@ -55,8 +54,12 @@ extern NSString *const DEFAULT_BACK_IMG;
 +(void)showAllertForInvalidCredentials;
 +(void)showAllertForEnterValidCredentials;
 +(NSString*)getCardType:(NSString*)number;
-+(void)showAllertMsg:(NSString*)msg;
++(void)showAllertMsg:(NSString*)title Message:(NSString*)msg;
 +(void)setTextFieldInsets:(UITextField*)textfield;
 +(NSString*)processString :(NSString*)yourString;
 +(BOOL)isConnected;//for checking internet connection
++(BOOL) stringIsNumeric:(NSString *) str ;
++(int)getWeekDaysCalc:(int)tempspeed;
++(NSDate *)addDays:(NSInteger)days toDate:(NSDate *)originalDate;
+
 @end

@@ -16,8 +16,9 @@
 
 @property (weak, nonatomic) IBOutlet UIImageView *productimage;
 @property (weak, nonatomic) IBOutlet UILabel *productName;
-@property (weak, nonatomic) IBOutlet UITextView *productDescription;
+//@property (weak, nonatomic) IBOutlet UITextView *productDescription;
 @property (weak, nonatomic) IBOutlet UIButton *productPrice;
+@property (weak, nonatomic) IBOutlet UIWebView *productDescription;
 
 @property (nonatomic, strong) NSData *brandImageData;
 @property (nonatomic, strong) NSData *productImageData;

@@ -9,11 +9,18 @@
 #import <UIKit/UIKit.h>
 #import "TextFieldValidator.h"
 
+@protocol AddressInfoControllerDelegate
+
+-(void)editingInfoWasFinished;
+
+@end
 @interface AddNewAddressForm : UIViewController
 @property (weak, nonatomic) IBOutlet UIImageView *brandImg;
 @property (weak, nonatomic) IBOutlet UIImageView *productImg;
-@property (weak, nonatomic) IBOutlet UITextView *productDesc;
 
+@property (weak, nonatomic) IBOutlet UIWebView *productDesc;
+
+@property (weak, nonatomic) IBOutlet UIView *subview;
 
 @property (weak, nonatomic) IBOutlet UILabel *productNameLbl;
 @property (weak, nonatomic) IBOutlet UIButton *productPriceBtn;
@@ -26,5 +33,8 @@
 @property (weak, nonatomic) IBOutlet TextFieldValidator *stateTextField;
 @property (weak, nonatomic) IBOutlet TextFieldValidator *zipTextField;
 @property (weak, nonatomic) IBOutlet TextFieldValidator *phoneTextField;
+@property (nonatomic) int recordIDToEdit;
+
+@property (nonatomic, strong) id<AddressInfoControllerDelegate> delegate;
 
 @end

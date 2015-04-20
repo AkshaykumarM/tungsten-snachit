@@ -18,8 +18,11 @@
 #import "RegexValidator.h"
 #import "SnachItDB.h"
 #import "SnachItPaymentInfo.h"
-
+#define ADDSEGUE @"addcardsegue"
+#define EDITSEGUE @"editcardsegue"
 @interface BillingInformation()
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (nonatomic) int recordIDToEdit;
 @end
 @implementation BillingInformation
 {
@@ -27,6 +30,7 @@
     NSUserDefaults *defaults;
     NSArray *snachItPaymentInfo;
     int i;
+    NSIndexPath *deletepath;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -71,7 +75,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if(tableView==self.tableView1)
+    if(tableView.tag==1)
     {
         return 1;
     }
@@ -81,7 +85,7 @@
 }
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if(tableView==self.tableView1)
+    if(tableView.tag==1)
     {
         return 600;
     }
@@ -95,7 +99,7 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{   if(tableView==self.tableView1)
+{   if(tableView.tag==1)
 {
     BillingInfoCell *cell = (BillingInfoCell *)[tableView dequeueReusableCellWithIdentifier:@"BillingInfoCell" forIndexPath:indexPath];
     cell.profilePicImg.layer.cornerRadius=RADIOUS;
@@ -114,8 +118,7 @@
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
    
-    if([defaults valueForKey:DEFAULT_BACK_IMG])
-        cell.defBackImageView.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    [cell.defBackImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
 
 
     return cell;
@@ -125,6 +128,8 @@ else{
     SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
     
     // Set the loaded data to the appropriate cell labels.
+    cell.rightUtilityButtons = [self rightButtons];
+    cell.delegate = self;
     NSString *cardname=info.cardname;
     cell.CardTypeLbl.text = [NSString stringWithFormat:@"%@", cardname];
     cell.cardImg.image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.png",[cardname stringByReplacingOccurrencesOfString:@" " withString:@""].lowercaseString]];
@@ -134,7 +139,7 @@ else{
     cell.cvvLbl.text =[NSString stringWithFormat:@"**** - %@",[tempNumber substringFromIndex:[tempNumber length]-3]];
     
     NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)[[def valueForKey:DEFAULT_BILLING] integerValue];
+    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)[[def valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] integerValue];
     
     int rowid=info.uniqueId;
     cell.tag=rowid;
@@ -143,6 +148,7 @@ else{
             @try{
         self.checkedIndexPath=indexPath;
         [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
+       
                 
             }
             @catch(NSException *e){
@@ -161,7 +167,7 @@ else{
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
-    if(tableView!=self.tableView1){
+    if(tableView.tag!=1){
         
         UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
         tmp.accessoryView=nil;
@@ -179,28 +185,69 @@ else{
     else
     {
         UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]];
+        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]];
         self.checkedIndexPath = indexPath;
-        [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+        [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
+        cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
         RECENTLY_ADDED_PAYMENT_INFO_TRACKER=(int)cell.tag;
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
     }
     }
 }
 
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-    if(tableView!=self.tableView1){
+    if(tableView.tag!=1){
         if (cell.isSelected) {
-            cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"check_mark.png"]]; // No reason to create a new one every time, right?
-            [cell.accessoryView setFrame:CGRectMake(0, 0, 50, 50)];
+            cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]]; // No reason to create a new one every time, right?
+            [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
+             cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
         }
         else {
             cell.accessoryView = nil;
         }
     }
 }
+
+
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(tableView.tag!=1){
+    return YES;
+    }
+    return NO;
+}
+
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if(tableView.tag!=1){
+        return YES;
+    }
+    return NO;
+}
+
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+        @try{
+        BOOL status=[[SnachItDB database] deleteRecordFromPayment:[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:user.userID];
+        if(status){
+            RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
+            [self loadData];
+            deletepath=nil;
+        }
+        }@catch(NSException *e){}
+    }
+    else{
+        [tbl reloadRowsAtIndexPaths:[NSArray arrayWithObjects:deletepath, nil] withRowAnimation:YES];
+         deletepath=nil;
+    }
+}
+
 
 
 -(NSString*)getCardType:(NSString*)number{
@@ -241,15 +288,41 @@ else{
 - (IBAction)saveBtn:(id)sender {
     if(RECENTLY_ADDED_PAYMENT_INFO_TRACKER>0){
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%lu",(unsigned long)RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:DEFAULT_BILLING];
+        [def setObject:[NSString stringWithFormat:@"%lu",(unsigned long)RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
         [def synchronize];
-        [global showAllertMsg:@"Saved successfully"];
+        [global showAllertMsg:@"Alert" Message:@"Saved successfully"];
     }
     else{
-        [global showAllertMsg:@"Please select atleast one billing address."];
+        [global showAllertMsg:@"Alert" Message:@"Please select atleast one billing address."];
     }
 
   
+}
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell didTriggerRightUtilityButtonWithIndex:(NSInteger)index
+{
+    switch (index) {
+        case 0:
+        {
+            // Get the record ID of the selected name and set it to the recordIDToEdit property.
+            
+            self.recordIDToEdit = cell.tag;
+            [self performSegueWithIdentifier:EDITSEGUE sender:nil];
+            break;
+        }
+        case 1:
+        {
+            // Delete button was pressed
+            UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+            NSIndexPath *cellIndexPath = [tbl indexPathForCell:cell];
+            deletepath=cellIndexPath;
+            UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert" message:@"Are you sure you want to delete this information?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Yes", nil];
+            [alert show];
+            
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 
@@ -260,8 +333,41 @@ else{
     transition.subtype = kCATransitionFromRight;
     [self.view.window.layer addAnimation:transition forKey:nil];
     
-    [self performSegueWithIdentifier:@"addcardsegue" sender:nil];
+    [self performSegueWithIdentifier:ADDSEGUE sender:nil];
    
+}
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    
+    // Do your stuff here
+    UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
+    [tbl reloadData];
+}
+//This method returns more and delete buttons
+- (NSArray *)rightButtons
+{
+    NSMutableArray *rightUtilityButtons = [NSMutableArray new];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:0.78f green:0.78f blue:0.8f alpha:1.0]
+                                                title:@"Edit"];
+    [rightUtilityButtons sw_addUtilityButtonWithColor:
+     [UIColor colorWithRed:1.0f green:0.231f blue:0.188 alpha:1.0f]
+                                                title:@"Delete"];
+    
+    return rightUtilityButtons;
+}
+
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    BillingInfoOverview *editInfoViewController = [segue destinationViewController];
+    editInfoViewController.delegate = self;
+    if ([[segue identifier] isEqualToString:EDITSEGUE])
+    {
+        editInfoViewController.recordIDToEdit = self.recordIDToEdit;
+    }
+    else{
+        editInfoViewController.recordIDToEdit = -1;
+    }
 }
 -(void)loadData{
     // Form the query.
@@ -270,6 +376,13 @@ else{
 
     UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
     [tbl reloadData];
+}
+
+#pragma mark - BillingInfoControllerDelegate method implementation
+
+-(void)editingInfoWasFinished{
+    // Reload the data.
+    [self loadData];
 }
 
 

@@ -8,10 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <GooglePlus/GooglePlus.h>
-#import "CMPopTipView.h"
+
 
 @class GPPSignInButton;
-@interface SnachItLogin : UIViewController<CMPopTipViewDelegate>
+@interface SnachItLogin : UIViewController
 @property (weak, nonatomic) IBOutlet UITextField *emailTfield;
 @property (weak, nonatomic) IBOutlet UITextField *passwordTfield;
 
@@ -27,7 +27,7 @@
 
 
 - (IBAction)signInBtn:(id)sender;
-
++(void)signOut ;
 
 
 
@@ -36,5 +36,5 @@
 -(void)googleSignIn;
 -(int)performSignIn:(NSString*)username Password:(NSString*)password SSOUsing:(NSString*)ssoUsing;
 -(int)getSignUpWithGooglePlus:(GTLPlusPerson*)person;
--(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts;
+-(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts withBackgroundURL:(NSURL*)backgroundURL;
 @end

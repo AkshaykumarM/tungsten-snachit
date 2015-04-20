@@ -7,15 +7,20 @@
 //
 
 #import <UIKit/UIKit.h>
+@protocol BillingInfoControllerDelegate
+
+-(void)editingInfoWasFinished;
+
+@end
 
 @interface BillingInfoOverview : UIViewController<UITextFieldDelegate>
 ;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 
+@property (nonatomic) int recordIDToEdit;
 
-
-
+@property (nonatomic, strong) id<BillingInfoControllerDelegate> delegate;
 - (IBAction)saveBtn:(id)sender;
 
 @end

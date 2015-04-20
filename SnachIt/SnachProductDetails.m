@@ -85,9 +85,10 @@
     }
     else{
         [self.navigationController popViewControllerAnimated:YES];
-        [global showAllertMsg:@"Your snoop time for this deal is over.You can't snach this now."];
+        [global showAllertMsg:@"Alert" Message:@"Your snoop time for this deal is over.You can't snach this now."];
     }
          }@catch(NSException *e){}
+    [super viewWillAppear:YES];
 }
 -(void)initializeView{
     @try{
@@ -110,8 +111,9 @@
     [numberFormatter setCurrencyCode:@"USD"];
     [productPrice setTitle:[NSString stringWithFormat:@"%@",[numberFormatter stringFromNumber:[NSNumber numberWithDouble:[product.productPrice doubleValue]]]] forState: UIControlStateNormal];
     
-    productDescription.attributedText=[[NSAttributedString alloc] initWithData:[product.productDescription dataUsingEncoding:NSUnicodeStringEncoding] options:@{ NSDocumentTypeDocumentAttribute: NSHTMLTextDocumentType } documentAttributes:nil error:nil];
+    [productDescription loadHTMLString:[NSString stringWithFormat:@"<html>\n""<head>\n""<style type=\"text/css\">\n"" body{ font-size:%@; font-family:'Open Sans';}\n""</style>\n""</head>\n""<body>%@</body>\n""</html>",[NSNumber numberWithInt:14],product.productDescription ]  baseURL:nil];
     
+        
      }@catch(NSException *e){}
    [self.navigationController.topViewController.navigationItem setHidesBackButton:YES];
 }
@@ -190,25 +192,49 @@
     double shippingcost;
     double salesTax;
     double tempst;
-    int speed;
+    NSString *speed;
+    int tempspeed;
+    
     @try{
     tempst=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];
     shippingcost=[product.productShippingCost doubleValue];
     
         if([userdetails.shipState isEqual:@"UT"])
-            salesTax=(6.75/100)*[product.productPrice doubleValue];
+            salesTax=([product.productSalesTax doubleValue]/100)*[product.productPrice doubleValue];//calculating sales tax
         else{
             salesTax=(0/100)*[product.productPrice doubleValue];
         }
-    speed=[product.productShippingSpeed intValue];
+       
+        if([global stringIsNumeric:product.productShippingSpeed])
+        {
+           tempspeed=[product.productShippingSpeed intValue];
+           speed=product.productShippingSpeed;
+        }
+        else{
+            @try{
+            speed=product.productShippingSpeed;
+            NSRange equalRange = [speed rangeOfString:@"-" options:NSBackwardsSearch];
+            if (equalRange.location != NSNotFound) {
+                NSString *result = [speed substringFromIndex:equalRange.location + equalRange.length];
+                tempspeed= [result intValue] ;
+                
+            } else {
+               tempspeed=[product.productShippingSpeed intValue];
+            }
+            }
+            @catch(NSException *e){
+                   tempspeed=[product.productShippingSpeed intValue];
+            }
+        }
     }
     @catch(NSException *e){
         shippingcost=0;
         salesTax=0;
         speed=0;
     }
+   
     NSDateComponents *dateComponents = [NSDateComponents new];
-    dateComponents.day = speed;
+    dateComponents.day = [global getWeekDaysCalc:tempspeed];
     NSDate *currentdate=[NSDate date];
     NSDate *deliverydate = [[NSCalendar currentCalendar]dateByAddingComponents:dateComponents
                                                                    toDate: currentdate
@@ -217,8 +243,9 @@
     [df setDateFormat:@"MM/dd/yyyy"];
     
     
-    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%d",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
+    order=[[Order sharedInstance] initWithUserId:user.userID withProductId:product.productId withSnachId:product.snachId withEmailId:user.emailID withOrderQuantity:@"1" withSubTotal:product.productPrice withOrderTotal:[NSString stringWithFormat:@"%f",[self getOrderTotal]] withShippingCost:[NSString stringWithFormat:@"%f",shippingcost] withFreeShipping:@"Free Shipping" withSalesTax:[NSString stringWithFormat:@"%f",salesTax] withSpeed:[NSString stringWithFormat:@"%@",speed] withOrderDate:[df stringFromDate:currentdate]  withDeliveryDate:[df stringFromDate:deliverydate] withFixedSt:[NSString stringWithFormat:@"%f",tempst]];
 }
+
 
 -(void)viewDidDisappear:(BOOL)animated{
     self.productImageData=nil;
@@ -235,6 +262,6 @@
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
-    
+    [super viewDidDisappear:YES];
 }
 @end

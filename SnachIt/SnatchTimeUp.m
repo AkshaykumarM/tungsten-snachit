@@ -82,7 +82,7 @@
     topProfileBtn.layer.cornerRadius = 20.0f;
     topProfileBtn.layer.borderWidth = 2.0f;
     topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
-    
+     [topProfileBtn setContentMode:UIViewContentModeScaleAspectFill];
     // setting action to the button
     [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -108,6 +108,7 @@
     for(UIView *subview in [self.view subviews]) {
         [subview removeFromSuperview];
     }
+    [super viewDidDisappear:YES];
     }
 
 @end

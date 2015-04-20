@@ -31,7 +31,8 @@ static SnachItDB *_database;
 }
 
 - (id)init {
-    if ((self = [super init])) {
+    self = [super init];
+    if (self ) {
         NSString *dbFilename=CURRENTDB;
         NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
         self.documentsDirectory = [paths objectAtIndex:0];
@@ -165,15 +166,15 @@ static SnachItDB *_database;
             char *cityChars = (char *) sqlite3_column_text(statement, 3);
             char *stateChars = (char *) sqlite3_column_text(statement, 4);
             char *streetChars = (char *) sqlite3_column_text(statement, 2);
-            int   zip =  sqlite3_column_int(statement, 5);
+            char  *zip =  (char *) sqlite3_column_text(statement, 5);
             char *phoneChars =(char *) sqlite3_column_text(statement, 6);
-            
+             NSString *postalcode = [[NSString alloc] initWithUTF8String:zip];
             NSString *name = [[NSString alloc] initWithUTF8String:nameChars];
             NSString *street = [[NSString alloc] initWithUTF8String:streetChars];
             NSString *city = [[NSString alloc] initWithUTF8String:cityChars];
             NSString *state = [[NSString alloc] initWithUTF8String:stateChars];
             NSString *phone = [[NSString alloc] initWithUTF8String:phoneChars];
-            SnachItAddressInfo *info = [[SnachItAddressInfo alloc] initWithUniqueId:uniqueId name:name street:street city:city state:state zip:zip phone:phone];
+            SnachItAddressInfo *info = [[SnachItAddressInfo alloc] initWithUniqueId:uniqueId name:name street:street city:city state:state zip:postalcode phone:phone];
             [retval addObject:info];
             [name release];
             [city release];
@@ -198,27 +199,29 @@ static SnachItDB *_database;
     if (sqlite3_prepare_v2(_database, [query UTF8String], -1, &statement, nil) == SQLITE_OK) {
         while (sqlite3_step(statement) == SQLITE_ROW) {
             int uniqueId = sqlite3_column_int(statement, 0);
-            char *cardnumber= (char *) sqlite3_column_text(statement, 2);
             char *cardname= (char *) sqlite3_column_text(statement, 1);
+            char *cardnumber= (char *) sqlite3_column_text(statement, 2);
+           
             char *cardexpdate= (char *) sqlite3_column_text(statement, 3);
             int cardcvv= sqlite3_column_int(statement, 4);
             char *nameChars = (char *) sqlite3_column_text(statement, 5);
+            char *streetChars = (char *) sqlite3_column_text(statement, 6);
             char *cityChars = (char *) sqlite3_column_text(statement, 7);
             char *stateChars = (char *) sqlite3_column_text(statement, 8);
-            char *streetChars = (char *) sqlite3_column_text(statement, 6);
-            int   zip =  sqlite3_column_int(statement, 9);
+            
+            char  *zip =  (char *) sqlite3_column_text(statement, 9);
             char *phoneChars =(char *) sqlite3_column_text(statement, 10);
             
             NSString *name = [[NSString alloc] initWithUTF8String:nameChars];
             NSString *street = [[NSString alloc] initWithUTF8String:streetChars];
-         
+            NSString *postalcode = [[NSString alloc] initWithUTF8String:zip];
             NSString *city = [[NSString alloc] initWithUTF8String:cityChars];
             NSString *state = [[NSString alloc] initWithUTF8String:stateChars];
             NSString *cardname1 = [[NSString alloc] initWithUTF8String:cardname];
             NSString *cardnumber1 = [[NSString alloc] initWithUTF8String:cardnumber];
             NSString *expdate = [[NSString alloc] initWithUTF8String:cardexpdate];
             
-            SnachItPaymentInfo *info = [[SnachItPaymentInfo alloc] initWithUniqueId:uniqueId CardName:cardname1 CardNumber:cardnumber1 CardExpDate:expdate CardCVV:cardcvv name:name street:street city:city state:state zip:zip phone:[[NSString alloc] initWithUTF8String:phoneChars]];
+            SnachItPaymentInfo *info = [[SnachItPaymentInfo alloc] initWithUniqueId:uniqueId CardName:cardname1 CardNumber:cardnumber1 CardExpDate:expdate CardCVV:cardcvv name:name street:street city:city state:state zip:postalcode phone:[[NSString alloc] initWithUTF8String:phoneChars]];
             
             [retval addObject:info];
             [name release];
@@ -263,9 +266,50 @@ static SnachItDB *_database;
     [self bindString:zip column:9 statement:statement];
     [self bindString:phone column:10 statement:statement];
     [self bindString:[df stringFromDate:currentdatetime] column:11 statement:statement];
+    currentdatetime=nil;
     [self bindString:userid column:12 statement:statement];
     if (sqlite3_step(statement) == SQLITE_DONE) {
        // NSLog(@"Data Inserted");
+        status=true;
+    } else {
+        //NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
+        status=false;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(_database);
+    [info setObject:[NSString stringWithFormat:@"%d",status] forKey:@"status"];
+    [info setObject:[NSString stringWithFormat:@"%lld",sqlite3_last_insert_rowid(_database)] forKey:@"lastrow"];
+    return info;
+}
+
+-(NSDictionary*)updatePayment:(NSString *)cardName CardNumber:(NSString *)cardNumber CardExpDate:(NSString *)expdate CardCVV:(NSString *)cvv Name:(NSString *)name Street:(NSString *)street City:(NSString *)city State:(NSString *)state Zip:(NSString *)zip Phone:(NSString *)phone UserId:(NSString*)userid RecordId:(NSString*)recordId{
+    
+    NSMutableDictionary *info=[[NSMutableDictionary alloc] init];
+    BOOL status=false;
+   
+    const char *query = "update payment set cardnumber=?,cardname=?,expdate=?,cvv=?,fullName=?,street=?,city=?,state=?,zip=?,phone=? where userid=? and id=?";
+    
+    sqlite3_stmt *statement = NULL;
+    
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, NULL) != SQLITE_OK) {
+        NSLog(@"prepare failed: %s", sqlite3_errmsg(_database));
+        
+    }
+    [self bindString:cardNumber column:2 statement:statement];
+    [self bindString:cardName column:1 statement:statement];
+    [self bindString:expdate column:3 statement:statement];
+    [self bindString:cvv column:4 statement:statement];
+    [self bindString:name column:5 statement:statement];
+    [self bindString:street column:6 statement:statement];
+    [self bindString:city column:7 statement:statement];
+    [self bindString:state column:8 statement:statement];
+    [self bindString:zip column:9 statement:statement];
+    [self bindString:phone column:10 statement:statement];
+    [self bindString:userid column:11 statement:statement];
+    [self bindString:recordId column:12 statement:statement];
+
+    if (sqlite3_step(statement) == SQLITE_DONE) {
+        // NSLog(@"Data Inserted");
         status=true;
     } else {
         //NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
@@ -314,27 +358,61 @@ static SnachItDB *_database;
     [info setObject:[NSString stringWithFormat:@"%lld",sqlite3_last_insert_rowid(_database)] forKey:@"lastrow"];
     return info;
 }
+-(NSDictionary*)updateAddress:(NSString*)name Street:(NSString*)street City:(NSString*)city State:(NSString*)state Zip:(NSString*)zip Phone:(NSString*)phone UserId:(NSString*)userid RecordId:(NSString *)recordid{
+    NSMutableDictionary *info=[[NSMutableDictionary alloc] init];
+    BOOL status=false;
+   
+    const char *query = "update address set fullName=?,street=?,city=?,state=?,zip=?,phone=? where userid=? and id=?";
+    sqlite3_stmt *statement = NULL;
+    
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, NULL) != SQLITE_OK) {
+        NSLog(@"prepare failed: %s", sqlite3_errmsg(_database));
+        
+    }
+    [self bindString:name column:1 statement:statement];
+    [self bindString:street column:2 statement:statement];
+    [self bindString:city column:3 statement:statement];
+    [self bindString:state column:4 statement:statement];
+    [self bindString:zip column:5 statement:statement];
+    [self bindString:phone column:6 statement:statement];
+    [self bindString:userid column:7 statement:statement];
+    [self bindString:recordid column:8 statement:statement];
+    if (sqlite3_step(statement) == SQLITE_DONE) {
+        //NSLog(@"Data Inserted");
+        status=true;
+    } else {
+        // NSLog(@"Insert failed: %s", sqlite3_errmsg(_database));
+        status=false;
+    }
+    sqlite3_finalize(statement);
+    sqlite3_close(_database);
+    [info setObject:[NSString stringWithFormat:@"%d",status] forKey:@"status"];
+    [info setObject:[NSString stringWithFormat:@"%lld",sqlite3_last_insert_rowid(_database)] forKey:@"lastrow"];
+    return info;
+}
 
-- (PaymentDetails *)snachItPaymentDetails:(int)uniqueId {
+
+
+- (PaymentDetails *)snachItPaymentDetails:(int)uniqueId UserId:(NSString*)userid {
     PaymentDetails *retval = nil;
-    NSString *query = [NSString stringWithFormat:@"SELECT id,cardnumber,cardname,expdate,cvv,fullName,street, city, state, zip, phone FROM payment WHERE id=%d", uniqueId];
+    NSString *query = [NSString stringWithFormat:@"SELECT id,cardnumber,cardname,expdate,cvv,fullName,street, city, state, zip, phone FROM payment WHERE id=%d and userid=%@", uniqueId,userid];
     sqlite3_stmt *statement;
     if (sqlite3_prepare_v2(_database, [query UTF8String], -1, &statement, nil) == SQLITE_OK) {
         while (sqlite3_step(statement) == SQLITE_ROW) {
             int uniqueId = sqlite3_column_int(statement, 0);
-            char *cardnumber = (char *) sqlite3_column_text(statement, 1);
-            char *cardname = (char *) sqlite3_column_text(statement, 2);
+            char *cardnumber = (char *) sqlite3_column_text(statement, 2);
+            char *cardname = (char *) sqlite3_column_text(statement, 1);
             char *expdate = (char *) sqlite3_column_text(statement, 3);
             int cvv = sqlite3_column_int(statement, 4);
             char *nameChars = (char *) sqlite3_column_text(statement, 5);
             char *streetChars = (char *) sqlite3_column_text(statement, 6);
             char *cityChars = (char *) sqlite3_column_text(statement, 7);
             char *stateChars = (char *) sqlite3_column_text(statement, 8);
-            int zip = sqlite3_column_int(statement, 9);
-            int phone = sqlite3_column_int(statement, 10);
+            char *zip = (char *) sqlite3_column_text(statement, 9);
+            char *phone = (char *) sqlite3_column_text(statement, 10);
             
             
-            retval = [[PaymentDetails alloc] initWithUniqueId:uniqueId CardName:[[NSString alloc] initWithUTF8String:cardname] CardNumber:[[NSString alloc] initWithUTF8String:cardnumber] CardExpdate:[[NSString alloc] initWithUTF8String:expdate] CardCVV:cvv name:[[NSString alloc] initWithUTF8String:nameChars] address:[[NSString alloc] initWithUTF8String:streetChars] city:[[NSString alloc] initWithUTF8String:cityChars] state:[[NSString alloc] initWithUTF8String:stateChars] zip:zip phoneNumber:phone];
+            retval = [[PaymentDetails alloc] initWithUniqueId:uniqueId CardName:[[NSString alloc] initWithUTF8String:cardname] CardNumber:[[NSString alloc] initWithUTF8String:cardnumber] CardExpdate:[[NSString alloc] initWithUTF8String:expdate] CardCVV:cvv name:[[NSString alloc] initWithUTF8String:nameChars] address:[[NSString alloc] initWithUTF8String:streetChars] city:[[NSString alloc] initWithUTF8String:cityChars] state:[[NSString alloc] initWithUTF8String:stateChars] zip:[[NSString alloc] initWithUTF8String:zip] phoneNumber:[[NSString alloc] initWithUTF8String:phone]];
             
             break;
         }
@@ -348,9 +426,9 @@ static SnachItDB *_database;
 
 
 
-- (AddressDetails *)snachItAddressDetails:(int)uniqueId {
+- (AddressDetails *)snachItAddressDetails:(int)uniqueId UserId:(NSString*)userid{
     AddressDetails *retval = nil;
-    NSString *query = [NSString stringWithFormat:@"SELECT id, fullName,street, city, state, zip, phone FROM address WHERE id=%d", uniqueId];
+    NSString *query = [NSString stringWithFormat:@"SELECT id, fullName,street, city, state, zip, phone FROM address WHERE id=%d and userid=%@", uniqueId,userid];
     sqlite3_stmt *statement;
     if (sqlite3_prepare_v2(_database, [query UTF8String], -1, &statement, nil) == SQLITE_OK) {
         while (sqlite3_step(statement) == SQLITE_ROW) {
@@ -359,15 +437,16 @@ static SnachItDB *_database;
             char *streetChars = (char *) sqlite3_column_text(statement, 2);
             char *cityChars = (char *) sqlite3_column_text(statement, 3);
             char *stateChars = (char *) sqlite3_column_text(statement, 4);
-            int zip = sqlite3_column_int(statement, 5);
-            int phone = sqlite3_column_int(statement, 6);
+            char *zip =  (char *) sqlite3_column_text(statement, 5);
+            char *phone = (char *) sqlite3_column_text(statement, 6);
             
             NSString *name = [[NSString alloc] initWithUTF8String:nameChars];
             NSString *street=[[NSString alloc] initWithUTF8String:streetChars];;
             NSString *city = [[NSString alloc] initWithUTF8String:cityChars];
             NSString *state = [[NSString alloc] initWithUTF8String:stateChars];
-
-            retval = [[[AddressDetails alloc] initWithUniqueId:uniqueId name:name address:street city:city state:state zip:zip phoneNumber:phone] autorelease];
+            NSString *postal = [[NSString alloc] initWithUTF8String:zip];
+            
+            retval = [[[AddressDetails alloc] initWithUniqueId:uniqueId name:name address:street city:city state:state zip:postal phoneNumber:[[NSString alloc] initWithUTF8String:phone]] autorelease];
             
             [name release];
             [city release];
@@ -383,7 +462,63 @@ static SnachItDB *_database;
     return retval;
 }
 
+-(BOOL)deleteRecordFromPayment:(int)uniqueId Userid:(NSString*)userid{
+    
+        const char *query= "Delete from payment where id=? and userid=?";
+    sqlite3_stmt *statement;
+    BOOL status=false;
+    @try{
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, NULL) != SQLITE_OK) {
+        NSLog(@"prepare failed: %s", sqlite3_errmsg(_database));
+        
+    }
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, nil) == SQLITE_OK) {
+        [self bindString:[NSString stringWithFormat:@"%d",uniqueId] column:1 statement:statement];
+        [self bindString:userid column:2 statement:statement];
+        if (sqlite3_step(statement) == SQLITE_DONE) {
+            NSLog(@"Data deleted %s",query);
+            status=true;
+        } else {
+            NSLog(@"Delete failed: %s", sqlite3_errmsg(_database));
+            status=false;
+        }
+        sqlite3_finalize(statement);
+    }
+    }
+    @catch(NSException *e){}
+    sqlite3_finalize(statement);
+    sqlite3_close(_database);
+    return status;
+}
 
+-(BOOL)deleteRecordFromAddress:(int)uniqueId Userid:(NSString*)userid{
+
+    const char *query= "Delete from address where id=? and userid=?";
+    sqlite3_stmt *statement;
+    BOOL status=false;
+    @try{
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, NULL) != SQLITE_OK) {
+        NSLog(@"prepare failed: %s", sqlite3_errmsg(_database));
+        
+    }
+    if (sqlite3_prepare_v2(_database, query, -1, &statement, nil) == SQLITE_OK) {
+        [self bindString:[NSString stringWithFormat:@"%d",uniqueId] column:1 statement:statement];
+        [self bindString:userid column:2 statement:statement];
+        if (sqlite3_step(statement) == SQLITE_DONE) {
+            NSLog(@"Data deleted %s",query);
+            status=true;
+        } else {
+            NSLog(@"Delete failed: %s", sqlite3_errmsg(_database));
+            status=false;
+        }
+        sqlite3_finalize(statement);
+    }
+    }
+    @catch(NSException *e){}
+    sqlite3_finalize(statement);
+    sqlite3_close(_database);
+    return status;
+}
 -(BOOL)bindString:(NSString *)value column:(NSInteger)column statement:(sqlite3_stmt *)statement
 {
     if (value) {

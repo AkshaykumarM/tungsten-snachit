@@ -21,7 +21,7 @@
 }
 
 -(id)initWithUserId:(NSString*)userId withProductId:(NSString*)productId withSnachId:(NSString*)snachId withEmailId:(NSString*)emailId withOrderQuantity:(NSString*)orderQuantity withSubTotal:(NSString*)subTotal withOrderTotal:(NSString*)orderTotal withShippingCost:(NSString*)shippingCost withFreeShipping:(NSString*)freeShipping withSalesTax:(NSString*)salesTax withSpeed:(NSString*)speed withOrderDate:(NSString*)orderDate withDeliveryDate:(NSString*)deliveryDate withFixedSt:(NSString*)fixedSt{
-    self = [super init];
+    
     self.userId=userId;
     self.productId=productId;
     self.snachId=snachId;

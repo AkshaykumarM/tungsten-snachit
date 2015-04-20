@@ -10,9 +10,9 @@
 #import "MyAccountOptions.h"
 #import "SWRevealViewController.h"
 #import "global.h"
-#import "AFNetworking.h"
 #import "UserProfile.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "SVProgressHUD.h"
 @interface MyAccount ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property(nonatomic,strong) NSArray *options,*icons;
 
@@ -45,6 +45,7 @@
     singleTap.numberOfTapsRequired = 2;
     [self.defaultbackImg setUserInteractionEnabled:YES];
     [self.defaultbackImg  addGestureRecognizer:singleTap];
+
     }
 
 -(void)setViewLookAndFeel{
@@ -62,6 +63,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     user=[UserProfile sharedInstance];
+    [super viewWillAppear:YES];
 }
 -(void)initialLize{
     
@@ -75,10 +77,8 @@
     self.userNameLbl.minimumScaleFactor=0.5;
     
     //setting background img
-    self.defaultbackImg.image=[UIImage imageNamed:@"defbackimg.png"];
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if([defaults valueForKey:DEFAULT_BACK_IMG])
-        self.defaultbackImg.image=[UIImage imageWithData:[defaults valueForKey:DEFAULT_BACK_IMG]];
+    [self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+
     
 }
 
@@ -139,26 +139,51 @@
 -(void) getPhoto:(id) sender {
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
-    
+    picker.view.tag=1;
            picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
     [self presentViewController:picker animated:YES completion:nil];
 }
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    UIImage *sourceImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+-(void) getProPic{
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.view.tag=2;
+    picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
- 
+    [self presentViewController:picker animated:YES completion:nil];
+}
+- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
+    if(picker.view.tag==1){
+    UIImage *sourceImage = [info valueForKey:UIImagePickerControllerOriginalImage];
 
     self.defaultbackImg.image = [self scaleAndRotateImage:sourceImage];
-    
-    
-    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    [defaults setObject:UIImagePNGRepresentation([self scaleAndRotateImage:sourceImage]) forKey:DEFAULT_BACK_IMG];
+       
+        
+            [self uploadImage:sourceImage ImageName:@"header" APIname:@"update-cover-pic/"];
+            [self.defaultbackImg setImage:sourceImage];
+        
+        
+        
+
     [picker dismissViewControllerAnimated:YES completion:nil];
+    }
+    if(picker.view.tag==2){
+        
+        UIImage *sourceImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+        
+        
+            [self uploadImage:sourceImage ImageName:@"avatar" APIname:@"update-profile-pic/"];
+            [self.profilePic setImage:sourceImage];
+        
+       
+        [picker dismissViewControllerAnimated:YES completion:nil];
+    }
    
  
     
 }
+
+
 - (UIImage*)scaleAndRotateImage:(UIImage *)image
 {
     int kMaxResolution = self.view.frame.size.width; // Or whatever
@@ -268,5 +293,114 @@
     return imageCopy;
 }
 
+-(void)uploadImage:(UIImage*)image ImageName:(NSString*)filename APIname:(NSString*)apiname
+{
+    dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
+    [SVProgressHUD showWithStatus:@"Uploading"];
+    dispatch_async(anotherThreadQueue, ^{
+        //create request
+        @try{
+        NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
+        
+        //Set Params
+        [request setHTTPShouldHandleCookies:NO];
+        [request setTimeoutInterval:60];
+        [request setHTTPMethod:@"POST"];
+        
+        //Create boundary, it can be anything
+        NSString *boundary = @"------VohpleBoundary4QuqLuM1cE5lMwCy";
+        
+        // set Content-Type in HTTP header
+        NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+        [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+        
+        // post body
+        NSMutableData *body = [NSMutableData data];
+        
+        //Populate a dictionary with all the regular values you would like to send.
+        NSMutableDictionary *parameters = [[NSMutableDictionary alloc] init];
+        
+        [parameters setValue:user.userID forKey:@"customerId"];
+        NSData *imageData = [self getCompressedImagetoOneMB:image];
+        
+        
+        // add params (all params are strings)
+        for (NSString *param in parameters) {
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"\r\n\r\n", param] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"%@\r\n", [parameters objectForKey:param]] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        
+        NSString *FileParamConstant = @"filename";
+        
+       
+        //Assuming data is not nil we add this to the multipart form
+        if (imageData)
+        {
+            [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"%@%@.jpg\"\r\n",FileParamConstant,filename,user.userID] dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:[@"Content-Type:image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+            [body appendData:imageData];
+            [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        
+        //Close off the request with the boundary
+        [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+        
+        // setting the body of the post to the request
+        [request setHTTPBody:body];
+        
+        // set URL
+        [request setURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@%@",ec2maschineIP,apiname]]];
+        NSHTTPURLResponse* urlResponse = nil;
+        NSError *error = [[NSError alloc] init];
+        NSData *responseData = [NSURLConnection sendSynchronousRequest:request returningResponse:&urlResponse error:&error];
+        NSDictionary *dict=[NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
+   
+                                    if([[dict valueForKey:@"success"] isEqual:@"true"])
+                                       {
+                                           if([apiname isEqual:@"update-cover-pic/"])
+                                               user.backgroundUrl=[dict valueForKey:@"headerImgURL"];
+                                           else
+                                           user.profilePicUrl=[dict valueForKey:@"ProfilePicUrl"];
+                                           
+                                           
+                                       }
+        }
+        @catch(NSException *e){
+            
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+           
+            [SVProgressHUD dismiss];;
+            if([apiname isEqual:@"update-cover-pic/"])
+             [self.defaultbackImg setImage:image];
+            else
+            [self.profilePic setImage:image];
+        });
+        });
+    
+}
+-(NSData *)getCompressedImagetoOneMB:(UIImage *)image{
+    CGFloat compression = 0.5f;
+    CGFloat maxCompression = 0.1f;
+    int maxFileSize = 250*1024;
+    
+    NSData *imageData = UIImageJPEGRepresentation(image, compression);
+    
+    while ([imageData length] > maxFileSize && compression > maxCompression)
+    {
+        compression -= 0.1;
+        imageData = UIImageJPEGRepresentation(image, compression);
+        
+    }
 
+    return imageData;
+}
+
+- (IBAction)uploadMyProPic:(id)sender {
+    [self getProPic];
+    
+    
+}
 @end

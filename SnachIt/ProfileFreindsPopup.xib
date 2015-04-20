@@ -34,8 +34,7 @@
                     <rect key="frame" x="90" y="224" width="90" height="40"/>
                     <color key="backgroundColor" red="0.94955413509999997" green="0.77620295770000003" blue="0.17249000149999999" alpha="1" colorSpace="calibratedRGB"/>
                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <inset key="contentEdgeInsets" minX="22" minY="12" maxX="22" maxY="12"/>
-                    <state key="normal" image="star-5-32.png">
+                    <state key="normal" image="star.png">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
@@ -147,8 +146,8 @@
                     <fontDescription key="fontDescription" name="CenturyGothic" family="Century Gothic" pointSize="13"/>
                     <inset key="contentEdgeInsets" minX="0.0" minY="0.0" maxX="9" maxY="0.0"/>
                     <state key="normal" title="Price ">
-                        <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="titleColor" red="0.61568627450000002" green="0.1019607843" blue="0.47058823529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="titleShadowColor" red="0.61568627450000002" green="0.1019607843" blue="0.47058823529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </state>
                     <variation key="default">
                         <mask key="constraints">
@@ -323,6 +322,6 @@
     </objects>
     <resources>
         <image name="friends_count.png" width="41" height="44"/>
-        <image name="star-5-32.png" width="32" height="32"/>
+        <image name="star.png" width="24" height="24"/>
     </resources>
 </document>
