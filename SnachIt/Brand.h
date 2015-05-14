@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-extern NSString * const BRAND_BRANDID;
-extern NSString * const BRAND_BRANDNAME;
-extern NSString * const BRAND_BRANDIMAGE;
-extern NSString * const BRAND_BRANDPRODUCTS;
+ #define BRAND_BRANDID @"brandId"
+ #define BRAND_BRANDNAME @"brandName"
+ #define BRAND_BRANDIMAGE @"brandImage"
+ #define BRAND_BRANDPRODUCTS @"products"
 @interface Brand : NSObject
 
 @property (strong, nonatomic) NSString *brandId;

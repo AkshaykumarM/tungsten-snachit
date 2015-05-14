@@ -27,10 +27,10 @@
 {
     UserProfile *user;
     NSUserDefaults *defaults;
-    NSArray *snachItAddressInfo;
+    NSMutableArray *snachItAddressInfo;
     int i;
     NSIndexPath *deletepath;
-}
+    }
 @synthesize checkedIndexPath;
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -42,7 +42,7 @@
     UITableView *tb1=(UITableView *)[self.view viewWithTag:1];
     tb1.estimatedRowHeight = 600; // for example. Set your average height
     defaults=[NSUserDefaults standardUserDefaults];
-   
+    
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -122,15 +122,15 @@
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
-    cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    cell.memberSinceLbl.text=[NSString stringWithFormat:@"%@%@",MEMBER_SINCE,[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
-        [cell.backImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+       // [cell.backImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:DEFAULTBACKGROUNDIMG]];
 
     
     return cell;
@@ -232,10 +232,12 @@
          @try{
        BOOL status=[[SnachItDB database] deleteRecordFromAddress:[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:user.userID];
         if(status){
-        RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
-        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
-        [self loadData];
+            RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+            NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [snachItAddressInfo removeObjectAtIndex:deletepath.row];
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
+            [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
+            
             deletepath=nil;
         }
          }@catch(NSException *e){}
@@ -264,7 +266,7 @@
 -(void)loadData{
     // Form the query.
      CURRENTDB=SnachItDBFile;
-    snachItAddressInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
+    snachItAddressInfo = [[[SnachItDB database] snachItAddressInfo:user.userID] mutableCopy];
     
     // Reload the table view.
      UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
@@ -301,6 +303,26 @@
 
 
 
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell scrollingToState:(SWCellState)state
+{
+    switch (state) {
+        case 0:
+           
+            break;
+        case 1:
+           
+            break;
+        case 2:
+            if(cell.accessoryView!=nil)
+            {
+                cell.accessoryView=nil;
+                RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+            }
+            break;
+        default:
+            break;
+    }
+}
 //-(void) getPhoto:(id) sender {
 //    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
 //    picker.delegate = self;

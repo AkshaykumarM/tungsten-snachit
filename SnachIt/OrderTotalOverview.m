@@ -13,8 +13,8 @@
 #import "SnoopedProduct.h"
 #import "Order.h"
 #import "global.h"
-NSString *const BACKSTPSEAGUE=@"backtoSTPSeague";
-NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
+#define BACKSTPSEAGUE @"backtoSTPSeague"
+#define SHIPPINGANDHANDLING @"shippingAndHandlingSegue"
 
 @interface OrderTotalOverview()
 @property (nonatomic,strong) NSArray *cellId;
@@ -85,7 +85,8 @@ NSString *const SHIPPINGANDHANDLING=@"shippingAndHandlingSegue";
     
 
 }
--(void)back:(id)sender{    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:nil];
+-(void)back:(id)sender{
+    [self performSegueWithIdentifier:BACKSTPSEAGUE sender:nil];
     
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{

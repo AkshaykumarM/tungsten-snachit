@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TextFieldValidator.h"
 @interface ShippingInfoAddCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
+//@property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;

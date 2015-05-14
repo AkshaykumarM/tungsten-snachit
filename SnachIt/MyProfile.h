@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface MyProfile : UIViewController 
+#import "AftershipTracker.h"
+@interface MyProfile : UIViewController <AftershipTrackerDelegate>
 
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 @property (weak, nonatomic) IBOutlet UILabel *fullNameLbl;
@@ -28,12 +28,13 @@
 - (IBAction)snoopButton:(id)sender;
 @property (weak, nonatomic) IBOutlet UIButton *snoopBtn;
 
-@property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
+//@property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
 @property (weak, nonatomic) IBOutlet UIButton *friendCount;
 - (IBAction)followBrand:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIButton *followStatus;
 
+@property (weak, nonatomic) IBOutlet UIImageView *middleLine;
 @property (weak, nonatomic) IBOutlet UIButton *snoopTime;
 
 -(void)unfollowBrand:(id)sender;

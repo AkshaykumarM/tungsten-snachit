@@ -7,16 +7,18 @@
 //
 
 #import <Foundation/Foundation.h>
-extern NSString * const HISTORY_PRODUCT_NAME;
-extern NSString * const HISTORY_PRODUCT_BRAND_NAME;
-extern NSString * const HISTORY_PRODUCT_ORDERDATE;
-extern NSString * const HISTORY_PRODUCT_DELIVERYDATE;
-extern NSString * const HISTORY_PRODUCT_IMAGE;
-extern NSString * const HISTORY_PRODUCT_STATUS;
-extern NSString * const HISTORY_INFLIGHT;
-extern NSString * const HISTORY_DELIVERED;
-extern NSString * const HISTORY_ALL;
-
+#define HISTORY_PRODUCT_NAME @"productName"
+#define HISTORY_PRODUCT_NAME @"productName"
+#define HISTORY_PRODUCT_BRAND_NAME @"brandName"
+#define HISTORY_PRODUCT_ORDERDATE @"dateOrdered"
+#define HISTORY_PRODUCT_DELIVERYDATE @"deliveryDate"
+#define HISTORY_PRODUCT_IMAGE @"productImage"
+#define HISTORY_PRODUCT_STATUS @"status"
+#define HISTORY_INFLIGHT @"inflight"
+#define HISTORY_DELIVERED @"delivered"
+#define HISTORY_ALL @"all"
+#define HISTORY_TRACKING_NO @"trackingNumber"
+#define HISTORY_SLUG @"slug"
 
 @interface SnachHistory : NSObject
 @property (strong, nonatomic) NSString *productImageUrl;
@@ -26,4 +28,6 @@ extern NSString * const HISTORY_ALL;
 @property (strong, nonatomic) NSString *productDeliveryDate;
 @property (strong, nonatomic) NSString *statusIcon;
 @property (strong, nonatomic) NSString *productstatus;
+@property (strong, nonatomic) NSString *trackingNo;
+@property (strong, nonatomic) NSString *slug;
 @end

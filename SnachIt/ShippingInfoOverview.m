@@ -132,7 +132,7 @@ CGFloat animatedDistance;
     cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
@@ -170,7 +170,7 @@ CGFloat animatedDistance;
         cell.phoneTextField.text=info.phoneNumber;
         
     }
-    [cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
     return cell;
 }
 
@@ -320,17 +320,22 @@ CGFloat animatedDistance;
     if([cell.firstNameTextField validate] &[cell.lastNameTextField validate]& [cell.stateTextField validate]&[cell.cityTextField validate]&[cell.addressTextField validate]&[cell.postalCodeTextField validate]&[cell.phoneTextField validate]){
         NSDictionary *info;
         //saving address into database
-        if(self.recordIDToEdit!=-1){
+        if(self.recordIDToEdit==-1){
+            info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID];
             
-             info=[[SnachItDB database] updateAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
         }
         else{
-           info=[[SnachItDB database] addAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID];
+            info=[[SnachItDB database] updateAddress:[NSString stringWithFormat:@"%@ %@",[cell.firstNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]],[cell.lastNameTextField.text stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]] Street:cell.addressTextField.text City:cell.cityTextField.text State:cell.stateTextField.text Zip:(NSString*)cell.postalCodeTextField.text Phone:(NSString*)cell.phoneTextField.text UserId:user.userID RecordId:[NSString stringWithFormat:@"%d",self.recordIDToEdit]];
         }
         
         // If the query was successfully executed then pop the view controller.
         if ( [info valueForKey:@"status"]!= 0) {
+             if(self.recordIDToEdit==-1){
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
+             }
+             else{
+                 RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.recordIDToEdit;
+             }
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
             // Pop the view controller.

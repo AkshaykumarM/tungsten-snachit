@@ -97,7 +97,7 @@
                     </connections>
                 </button>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="p8L-97-iHb">
-                    <rect key="frame" x="72" y="383" width="175" height="16"/>
+                    <rect key="frame" x="73" y="383" width="175" height="16"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="175" id="DpT-Mc-RMn"/>
                         <constraint firstAttribute="height" constant="16" id="W3t-Cj-z8c"/>
@@ -140,8 +140,8 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZp-gf-JNZ">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="233"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="fwh-XZ-oyo">
-                            <rect key="frame" x="90" y="47" width="140" height="140"/>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="fwh-XZ-oyo">
+                            <rect key="frame" x="30" y="-19" width="140" height="140"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="lessThanOrEqual" constant="140" id="1CI-Hw-qdO"/>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="140" id="Mze-aa-SMV"/>
@@ -217,7 +217,7 @@
                 <constraint firstAttribute="trailing" secondItem="Tfm-dQ-cFT" secondAttribute="trailing" id="xB3-jU-tYc"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="-335" y="-593"/>
+            <point key="canvasLocation" x="-244" y="-605"/>
         </view>
     </objects>
     <resources>

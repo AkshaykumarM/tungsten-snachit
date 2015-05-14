@@ -44,12 +44,14 @@ UIView *backView;
 CGFloat animatedDistance;
 - (void)viewDidLoad
 {
+    
     [self setViewLookAndFeel];
     [super viewDidLoad];
     
     // Array of (backgroundColor, textColor) pairs.
     // NSNull for either means leave as default.
     // A color scheme will be picked randomly per CMPopTipView.
+    
 }
 
 -(void)viewDidAppear:(BOOL)animated{
@@ -70,7 +72,7 @@ CGFloat animatedDistance;
     self.emailTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"email" attributes:@{NSForegroundColorAttributeName: color}];
     self.passwordTfield.attributedPlaceholder = [[NSAttributedString alloc] initWithString:@"password" attributes:@{NSForegroundColorAttributeName: color}];
     self.emailTfield.keyboardType=UIKeyboardTypeEmailAddress;
-    
+   
     
 }
 
@@ -269,13 +271,10 @@ CGFloat animatedDistance;
         //getting the data
         NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
         //json parse
-        NSLog(@"\nRequest URL: %@",url);
-        
         
         if (jasonData) {
             
             NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-            NSLog(@"\nResponse:%@ ",response);
             
             if([[response objectForKey:@"success"] isEqual:@"true"])
             {
@@ -494,6 +493,7 @@ CGFloat animatedDistance;
     [self.view.window.layer addAnimation:transition forKey:nil];
     SnachitSignup *startscreen = [[SnachitSignup alloc]
                                   initWithNibName:@"SignUpScreen" bundle:nil];
+    
     [self presentViewController:startscreen animated:NO completion:nil];
 }
 
@@ -605,9 +605,7 @@ CGFloat animatedDistance;
 
 
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
+   
     [super viewDidDisappear:YES];
     
 }

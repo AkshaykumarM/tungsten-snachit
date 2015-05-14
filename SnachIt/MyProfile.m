@@ -23,12 +23,25 @@
 #import "Product.h"
 #import "Common.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+
 NSString * const SNACH_CELL=@"snachsCell";
 NSString * const FRIEND_CELL=@"friendsCell";
 NSString * const BRAND_CELL=@"brandsCell";
 NSString * const SNACHFEED=@"snachfeed";
 NSString * const DATEORDERED=@"dateOrdered";
 NSString * const DATEDELIVERED=@"deliveryDate";
+
+
+//this interface is for track me button
+@interface TrackMeTapGestureRecognizer : UITapGestureRecognizer
+
+@property (nonatomic, strong) NSString * trackingNo;
+@property (nonatomic, strong) NSString * slug;
+@end
+
+@implementation TrackMeTapGestureRecognizer
+
+@end
 @interface MyProfile ()<UINavigationControllerDelegate>
 {
     NSMutableArray *friendsSnachs;
@@ -41,6 +54,9 @@ NSString * const DATEDELIVERED=@"deliveryDate";
     NSArray *singleProduct;
      NSNumber *strikeSize;
     NSDictionary *dictionaryForFriendsCountResponse;
+    int yfortable;
+    NSString *slugname;
+    NSString *trackingno;
     
 }
 
@@ -58,6 +74,8 @@ NSString * const DATEDELIVERED=@"deliveryDate";
 @property (nonatomic, strong) NSString * tappedProductName;
 @property (nonatomic, strong) NSString * tappedProductPrice;
 @end
+
+
 
 @interface customTapGestureRecognizer : UITapGestureRecognizer
 
@@ -78,6 +96,8 @@ NSString * const DATEDELIVERED=@"deliveryDate";
 
 
 @end
+
+
 
 @interface UnfollowButton : UITapGestureRecognizer
 
@@ -122,11 +142,11 @@ UIView* backView ;
 - (void)viewDidLoad {
     [super viewDidLoad];
    
-    
+    yfortable=320;
     self.profilePic.layer.cornerRadius= RADIOUS;
     self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = BORDERWIDTH;
-    self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
+    //self.profilePic.layer.borderWidth = BORDERWIDTH;
+    //self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
   
     cellId=FRIEND_CELL;
     subCellId=HISTORY_ALL;
@@ -137,10 +157,7 @@ UIView* backView ;
     [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
     
-    
-    
-    
-    
+   
     
     refreshControl= [[UIRefreshControl alloc] init];
     [refreshControl addTarget:self action:@selector(getLatestFriendsSnachs) forControlEvents:UIControlEventValueChanged];
@@ -153,9 +170,12 @@ UIView* backView ;
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
-    self.automaticallyAdjustsScrollViewInsets = NO;
-      strikeSize= [NSNumber numberWithInt:1];
-
+    
+      strikeSize= [NSNumber numberWithInt:2];
+    
+    [self setAutomaticallyAdjustsScrollViewInsets:NO];
+   
+    
 }
 
 
@@ -169,21 +189,26 @@ UIView* backView ;
     [self getMYLatestSnachs];
     [self getLatestFriendsSnachs];
     [self getLatestFollowedBrandsProducts];
-    [_tableView reloadData];
+    [self.tableView reloadData];
+    [self.tabSelect setSelectedSegmentIndex:0];
+    
     [super viewDidAppear:YES];
     
     
 }
-
+-(void)viewDidLayoutSubviews{
+    self.tableView.frame=CGRectMake(0, yfortable, self.view.frame.size.width, self.view.frame.size.height-yfortable);
+    [super viewDidLayoutSubviews];
+}
 -(void)initialLize{
     
-    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     
     if(![user.fullName isKindOfClass:[NSNull class]])
         self.fullNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
-    self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    self.memberSinceLbl.text=[NSString stringWithFormat:@"%@%@",MEMBER_SINCE,[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     //setting user snoop time
     self.snoopTime.titleLabel.adjustsFontSizeToFitWidth=YES;
@@ -192,9 +217,10 @@ UIView* backView ;
     
     
     //setting background img
-    [self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:DEFAULTBACKGROUNDIMG]];
     
-   
+    self.tableView.contentInset=UIEdgeInsetsZero;
+    
 }
 
 
@@ -291,7 +317,6 @@ UIView* backView ;
 
 
 
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString *simpleTableIdentifier =cellId;
@@ -320,8 +345,9 @@ UIView* backView ;
             cell = [[MyProfileFreindsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
             
         }
-        
-        [cell.friendPic setImageWithURL:[NSURL URLWithString:snaches.freindProfilePic] placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+        cell.layoutMargins = UIEdgeInsetsZero;
+        cell.preservesSuperviewLayoutMargins = NO;
+        [cell.friendPic setImageWithURL:[NSURL URLWithString:snaches.freindProfilePic] placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
         cell.friendPic.layer.cornerRadius= 35.0f;
         cell.friendPic.clipsToBounds = YES;
         cell.friendPic.layer.borderWidth = BORDERWIDTH;
@@ -408,7 +434,7 @@ UIView* backView ;
         if(brand){
             
             [cell.brandName setImageWithURL:[NSURL URLWithString:brand.brandImg] placeholderImage:nil];
-            
+            cell.followStatus.imageView.contentMode=UIViewContentModeScaleAspectFit;
             products=brand.products;
             cell.productImageConatainer.scrollEnabled = YES;
             int scrollWidth = 100;
@@ -483,6 +509,8 @@ UIView* backView ;
         NSString *deliveryDate;
         SnachHistory *snachhistory;
         NSString *statusImg;
+        NSString *trackingNo;
+        NSString *slug;
         @try{
         if([subCellId isEqual:HISTORY_INFLIGHT]){
             snachhistory=[myLetestINFSnachs objectAtIndex:indexPath.row];
@@ -492,7 +520,8 @@ UIView* backView ;
             orderedDate=snachhistory.productOrderedDate;
             deliveryDate=snachhistory.productDeliveryDate;
             statusImg=snachhistory.statusIcon;
-            
+            trackingNo=snachhistory.trackingNo;
+            slug=snachhistory.slug;
         }
         else if([subCellId isEqual:HISTORY_DELIVERED]){
             snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
@@ -502,7 +531,8 @@ UIView* backView ;
             orderedDate=snachhistory.productOrderedDate;
             deliveryDate=snachhistory.productDeliveryDate;
             statusImg=snachhistory.statusIcon;
-            
+            trackingNo=snachhistory.trackingNo;
+            slug=snachhistory.slug;
         }
         else if([subCellId isEqual:HISTORY_ALL]){
             snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
@@ -510,9 +540,9 @@ UIView* backView ;
             productname=[NSString stringWithFormat:@"%@",snachhistory.productName];
             orderedDate=snachhistory.productOrderedDate;
             deliveryDate=snachhistory.productDeliveryDate;
-            
             statusImg=snachhistory.statusIcon;
-            
+            trackingNo=snachhistory.trackingNo;
+            slug=snachhistory.slug;
         }
         MyProfileSnachsCell *cell = (MyProfileSnachsCell *)[tableView dequeueReusableCellWithIdentifier:simpleTableIdentifier forIndexPath:indexPath];
         cell.tag = indexPath.row;
@@ -522,6 +552,24 @@ UIView* backView ;
         cell.productName.text = productname;
         cell.orderDate.text = orderedDate;
         cell.deliveryDate.text=deliveryDate;
+            
+            if([trackingNo isKindOfClass:[NSNull class]] || trackingNo==nil)
+            {[cell.trackMeBTN setHidden:YES];
+                
+                
+            }
+            else{
+                TrackMeTapGestureRecognizer *trackMeTap = [[TrackMeTapGestureRecognizer alloc]
+                                                           initWithTarget:self
+                                                           action:@selector(trackMe:) ];
+                [trackMeTap setNumberOfTapsRequired:1];
+                cell.trackMeBTN.userInteractionEnabled = YES;
+                trackMeTap.trackingNo=trackingNo;
+                trackMeTap.slug=slug;
+                [cell.trackMeBTN addGestureRecognizer:trackMeTap];
+                [cell.trackMeBTN setHidden:NO];
+            }
+
         if([deliveryDate isEqual:@""]){
             cell.deliverydateLbl.text =@"";
         }
@@ -538,6 +586,23 @@ UIView* backView ;
     else{
         return nil;
     }
+}
+
+//this is for track me action
+-(IBAction)trackMe:(UITapGestureRecognizer*)sender{
+    TrackMeTapGestureRecognizer *tap=(TrackMeTapGestureRecognizer *)sender;
+    slugname=tap.slug;
+    trackingno=tap.trackingNo;
+    [self performSegueWithIdentifier:@"trackme" sender:nil];
+}
+
+//sending slugname and tracking no before segue
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+    
+    AftershipTracker *aftershipTracker = [segue destinationViewController];
+    aftershipTracker.delegate=self;
+    aftershipTracker.slugname = slugname;
+    aftershipTracker.trackingNo=trackingno;
 }
 
 
@@ -589,6 +654,7 @@ UIView* backView ;
             
             [_snoopBtn setBackgroundColor:[UIColor colorWithRed:0.88 green:0.88 blue:0.88 alpha:1.0]];//greyscale
             [_productNameLbl setTitle:[NSString stringWithFormat:@"%@",prod.productname] forState:UIControlStateNormal];
+            _followStatus.imageView.contentMode=UIViewContentModeScaleAspectFit;
             _productNameLbl.titleLabel.numberOfLines = 1;
             _productNameLbl.titleLabel.adjustsFontSizeToFitWidth = YES;
             _productNameLbl.titleLabel.minimumScaleFactor=0.62;
@@ -693,37 +759,7 @@ UIView* backView ;
     
 }
 
-//- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-//{ self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-//
-//    // Return the number of sections.
-//    if (friendsSnachs|| followedBrand|| myLetestALLSnachs) {
-//
-//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
-//        return 1;
-//
-//    }
-//
-//    else {
-//
-//        // Display a message when the table is empty
-//        UILabel *messageLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, self.view.bounds.size.height)];
-//
-//        messageLabel.text = @"Please pull down to fill the snachs";
-//        messageLabel.textColor = [UIColor blackColor];
-//        messageLabel.numberOfLines = 0;
-//        messageLabel.textAlignment = NSTextAlignmentCenter;
-//        messageLabel.font = [UIFont fontWithName:@"Helvetica-Light" size:20];
-//        [messageLabel sizeToFit];
-//
-//        self.tableView.backgroundView = messageLabel;
-//
-//        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-//
-//    }
-//
-//    return 0;
-//}
+
 
 - (float)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
     // This will create a "invisible" footer
@@ -747,7 +783,7 @@ UIView* backView ;
     
 }
 - (IBAction)indexChanged:(id)sender {
-     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
     @try{
     switch (self.tabSelect.selectedSegmentIndex)
     {
@@ -755,29 +791,38 @@ UIView* backView ;
             cellId=FRIEND_CELL;
             [_subTabSelect setHidden:YES];
             [_lastLine setHidden:YES];
-            [_tableView reloadData];
-           
+            yfortable=320;
+            [self viewDidLayoutSubviews];
+             [_tableView reloadData];
             [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+           
             break;
         case 1:
             cellId=BRAND_CELL;
             [_subTabSelect setHidden:YES];
             [_lastLine setHidden:YES];
-            [_tableView reloadData];
-           [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+             yfortable=320;
+              [self viewDidLayoutSubviews];
+             [_tableView reloadData];
+             [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+            
             break;
         case 2:
             cellId=SNACH_CELL;
             [_subTabSelect setHidden:NO];
             [_lastLine setHidden:NO];
+             yfortable=354;
+            [self viewDidLayoutSubviews];
             [_tableView reloadData];
-            [_tableView scrollToRowAtIndexPath:indexPath  atScrollPosition:0 animated:YES];
-            
+            [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
             break;
     }
     }
     @catch(NSException *e){}
 }
+
+
+
 - (IBAction)subTabIndexChanged:(id)sender {
    
     switch (self.subTabSelect.selectedSegmentIndex)
@@ -793,6 +838,7 @@ UIView* backView ;
             break;
         case 2:
             subCellId=HISTORY_DELIVERED;
+
             [_tableView reloadData];
             break;
     }
@@ -820,11 +866,7 @@ UIView* backView ;
     
     
 }
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    
-    
-    
-}
+
 
 
 
@@ -869,7 +911,7 @@ UIView* backView ;
                 if (!error) {
                     NSArray *latestFriendSnachs = [self makeRequest:data];
                     friendsSnachs = [NSMutableArray arrayWithCapacity:10];
-                    NSLog(@"Response : %@",latestFriendSnachs);
+                    
                     if (latestFriendSnachs) {
                         for (NSDictionary *tempDic in latestFriendSnachs) {
                             FriendSnachs *fSnachs = [[FriendSnachs alloc] init];
@@ -894,10 +936,12 @@ UIView* backView ;
                     // As this block of code is run in a background thread, we need to ensure the GUI
                     // update is executed in the main thread
                     [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+              
                 }
             }];
         }
     }
+    
 }
 
 //this function will return all brands and their running snachs
@@ -943,7 +987,7 @@ UIView* backView ;
 //this function will return all snached snachs
 - (void)getMYLatestSnachs
 {
-    NSLog(@"Get my snachs");
+    
     [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-user-snach-history/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         
         if (!error) {
@@ -963,6 +1007,8 @@ UIView* backView ;
                     snachhistory.productOrderedDate=[tempDic objectForKey:HISTORY_PRODUCT_ORDERDATE];
                     snachhistory.productDeliveryDate=[tempDic objectForKey:HISTORY_PRODUCT_DELIVERYDATE];
                     snachhistory.productstatus=[tempDic objectForKey:HISTORY_PRODUCT_STATUS];
+                    snachhistory.trackingNo=[tempDic objectForKey:HISTORY_TRACKING_NO];
+                    snachhistory.slug=[tempDic objectForKey:HISTORY_SLUG];
                     if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
                     {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
                     else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])
@@ -1000,29 +1046,27 @@ UIView* backView ;
 
 -(NSArray*)makeRequest:(NSData *)response{
     NSError *error = nil;
-    // NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:response options:0 error:&error];
-    //    NSLog(@"parsed data: %@",parsedData);
+   
     if (error != nil) {
         NSLog(@"Error: %@", error.description);
         return nil;
     }
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
-    NSLog(@"Response : %@",latestFriendSnachs);
+    
     
     return [latestFriendSnachs objectForKey:@"data"];
 }
 -(NSDictionary*)makeHistoryRequest:(NSData *)response{
     NSError *error = nil;
-    // NSDictionary *parsedData = [NSJSONSerialization JSONObjectWithData:response options:0 error:&error];
-    //    NSLog(@"parsed data: %@",parsedData);
+    
     if (error != nil) {
         NSLog(@"Error: %@", error.description);
         return nil;
     }
     
     NSDictionary *latestFriendSnachs = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
-    NSLog(@"%@",latestFriendSnachs);
+   
     return latestFriendSnachs;
 }
 

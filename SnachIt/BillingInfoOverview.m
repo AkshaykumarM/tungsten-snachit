@@ -16,7 +16,7 @@
 #import "PaymentDetails.h"
 @interface BillingInfoOverview()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
-;
+
 @property (strong,nonatomic) NSArray *states;
 @property (strong,nonatomic) NSArray *statesAbv;
 
@@ -165,7 +165,7 @@ CGFloat animatedDistance;
     cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingChanged];
     [cell.cardNumberTextField addTarget:self action:@selector(detectCardType) forControlEvents:UIControlEventEditingDidEndOnExit];
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
@@ -224,7 +224,7 @@ CGFloat animatedDistance;
 
     
     //setting background img
-    [cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[cell.defBackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
     return cell;
 }
 
@@ -353,7 +353,12 @@ CGFloat animatedDistance;
         if ([info valueForKey:@"status"]!= 0) {
             
             //this is to track recently added
+             if(self.recordIDToEdit==-1){
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
+             }
+             else{
+                 RECENTLY_ADDED_PAYMENT_INFO_TRACKER=self.recordIDToEdit;
+             }
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
             // Pop the view controller.

@@ -21,6 +21,8 @@
 #import "SnachItDB.h"
 #import "SnoopedProduct.h"
 #import "SnatchFeed.h"
+#define SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(v)  ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] != NSOrderedAscending)
+
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
 int linkedinsharetracker;
 @interface AppShare()<GPPSignInDelegate,GPPShareDelegate>
@@ -65,7 +67,7 @@ int linkedinsharetracker;
         referalCode=[defaults valueForKey:@"referalCode"];
     }
     sharingURL=[self generateSharingURL];
-    sharingMsg=@"A fun + simple way to snach things!";
+    sharingMsg=@"Hey friends! You gotta download this app. It’s absolutely amazing and a quick way to shop for all those products you want…";
     linkedinsharetracker=0;
     
 }
@@ -109,9 +111,12 @@ int linkedinsharetracker;
         });
     };
 
-        [fbsheet setInitialText:sharingMsg];
-        [fbsheet addURL:[NSURL URLWithString:sharingURL]];
-    [fbsheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@snachit-app-icon.png",appiconURL]]]]];
+        [fbsheet setInitialText:[NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
+       if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
+            [fbsheet addURL:[NSURL URLWithString:@"snach.it"]];
+       }
+       
+    [fbsheet addImage:[UIImage imageNamed:@"facebook_ad.png"]];
     
     [self presentViewController:fbsheet animated:NO completion:^{
         
@@ -188,9 +193,11 @@ int linkedinsharetracker;
     };
     
     //  Set the initial body of the Tweet
-    [tweetSheet setInitialText: sharingMsg];
-    [tweetSheet addURL:[NSURL URLWithString:sharingURL]];
-    [tweetSheet addImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@1024x512.png",appiconURL]]]]];
+    [tweetSheet setInitialText: [NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
+       if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
+    [tweetSheet addURL:[NSURL URLWithString:@"snach.it"]];
+       }
+    [tweetSheet addImage:[UIImage imageNamed:@"twitter_ad.png"]];
     //  Adds an image to the Tweet.  For demo purposes, assume we have an
     //  image named 'larry.png' that we wish to attach
 
@@ -265,10 +272,9 @@ int linkedinsharetracker;
                                     NSError *error) {
                   
                     id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
-                    [shareBuilder setURLToShare:[NSURL URLWithString:@"snach.it"]];
-                    [shareBuilder setPrefillText:sharingURL];
-                    [shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@726x500.png",appiconURL]]];
-                    
+                    [shareBuilder setPrefillText:[NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
+                    //[shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@googleplus_ad.png",appiconURL]]];
+                    [shareBuilder attachImage:[UIImage imageNamed:@"googleplus_ad.png"]];
                     [shareBuilder open];
                     
                     if (error) {
@@ -281,7 +287,7 @@ int linkedinsharetracker;
                     }
                 }];
         
-        NSLog(@"Reset time");
+       
     }
     
 }
@@ -347,7 +353,7 @@ int linkedinsharetracker;
     topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
     
     //assigning the default background image
-    [topProfileBtn setBackgroundImage:[UIImage imageNamed:@"userIcon.png"] forState:UIControlStateNormal];
+    [topProfileBtn setBackgroundImage:[UIImage imageNamed:DEFAULTPLACEHOLDER] forState:UIControlStateNormal];
     topProfileBtn.clipsToBounds=YES;
     [topProfileBtn setShowsTouchWhenHighlighted:YES];
     

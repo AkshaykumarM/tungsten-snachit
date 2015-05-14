@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface ShippingInfoCell : UITableViewCell
-@property (weak, nonatomic) IBOutlet UIImageView *backImageView;
+//@property (weak, nonatomic) IBOutlet UIImageView *backImageView;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;

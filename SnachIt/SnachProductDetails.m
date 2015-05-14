@@ -15,6 +15,8 @@
 #import "SnachItDB.h"
 #import "global.h"
 #import "SnoopingUserDetails.h"
+#define TIMEUPSEGUE @"timeup"
+#define SNACHITSEGUE @"snachit"
 @interface SnachProductDetails()
 
 
@@ -131,7 +133,7 @@
         {
             [[SnachItDB database]updatetime:user.userID SnachId:[product.snachId intValue] SnachTime:0];
         }
-        [self performSegueWithIdentifier:@"timeup" sender:self];
+        [self performSegueWithIdentifier:TIMEUPSEGUE sender:self];
     }
     }@catch(NSException *e){}
 }
@@ -142,7 +144,7 @@
     {
         [[SnachItDB database]updatetime:user.userID SnachId:[product.snachId intValue] SnachTime:(int)seconds];
     }
-      [self performSegueWithIdentifier:@"snachit" sender:self];
+      [self performSegueWithIdentifier:SNACHITSEGUE sender:self];
     
 }
 

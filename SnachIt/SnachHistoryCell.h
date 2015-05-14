@@ -16,4 +16,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *statusFlag;
 @property (weak, nonatomic) IBOutlet UILabel *deliveryDateLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *productImage;
+@property (weak, nonatomic) IBOutlet UIButton *trackMeBtn;
+
 @end

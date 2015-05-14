@@ -9,24 +9,13 @@
 #import "global.h"
 #import "RegexValidator.h"
 #import "Reachability.h"
-//NSString const *ec2maschineIP=@"http://192.168.0.121:8000/";
-NSString const *ec2maschineIP=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/";
+
 NSString *USERID;//this will be the global userid
 NSString *SNACHID;//this will be the global snachid
 
 bool isApplicationLaunchedFromNotification=FALSE;
 bool isAllreadyTried=FALSE;
-NSString * const SSOUSING=@"SSOUsing";
-NSString * const USERNAME=@"Username";
-NSString * const PASSWORD=@"Password";
-NSString * const LOGGEDIN=@"LoggedIn";
 
-NSString *const DEFAULT_BILLING=@"DefaultBilling";
-NSString *const DEFAULT_SHIPPING=@"DefaultShipping";
-NSUInteger const DEFAULT_SNOOPTIME=30;
-NSString * const SnachItDBFile=@"snachit.sql";
-NSString * const SnoopTimeDBFile=@"snoopTimes.sql";
-NSString * const checkInternetConnection=@"You are not connected to internet, Please check connection.";
 NSString *CURRENTDB;
 NSString *screenName;
 NSString *ssousing;
@@ -40,9 +29,6 @@ NSString *cardCVV=@"";
 int RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
 int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
 @implementation global
-float  RADIOUS=37.5f;//to make profile pic circular
-float BORDERWIDTH=5.0f;
-
 
 /*
  This method will make post request and will return the response

@@ -22,6 +22,8 @@
 #import "SnachItDB.h"
 #import "SnoopingUserDetails.h"
 
+#define PRODUCTDETAILSSEGUE @"productDetails"
+#define SNOOPSEGUE @"snoop"
 @interface SnatchFeed(){
     NSMutableArray *Products;
 }
@@ -254,7 +256,7 @@
     //checking from where the user tapped the snoop button
     if(snooptTracking==1)
     {
-        [self performSegueWithIdentifier:@"productDetails" sender:self];
+        [self performSegueWithIdentifier:PRODUCTDETAILSSEGUE sender:self];
         
     }
     
@@ -338,7 +340,7 @@
         }
     }
     else{
-        NSLog(@"SSOUSING %@ Username %@ %@ ",SSOUsing,username,password);
+     
         [self presentViewController:startscreen animated:YES completion:nil];
         
     }
@@ -388,7 +390,7 @@
         cell.tag = indexPath.row;
         //setting up product image carousel
         cell.productImagesContainer.scrollEnabled = YES;
-        
+        [cell.followStatus.imageView setContentMode:UIViewContentModeScaleAspectFit];
         cell.productImagesContainer.backgroundColor=[UIColor whiteColor];
         NSError *error;
         dictionaryForEmails=[Common getDictionaryForFriendCount:prod.productId SnachId:prod.snachId EmailId:user.emailID];
@@ -491,7 +493,7 @@
             cell.productName.titleLabel.minimumScaleFactor=0.67;
             cell.productPrice.titleLabel.adjustsFontSizeToFitWidth=YES;  //adjusting button font
             cell.productPrice.titleLabel.minimumScaleFactor=0.67;
-            cell.followStatus.contentMode=UIViewContentModeScaleAspectFit;
+            cell.followStatus.imageView.contentMode=UIViewContentModeScaleAspectFit;
             NSNumberFormatter *numberFormatter = [[NSNumberFormatter alloc] init];
             [numberFormatter setNumberStyle: NSNumberFormatterCurrencyStyle];
             [numberFormatter setCurrencyCode:@"USD"];
@@ -578,7 +580,7 @@
         snoopedShippingCost=tap.productShippingCost;
         snoopedSalesTax=tap.productSalesTax;
         snoopedSpeed=tap.productSpeed;
-        [self performSegueWithIdentifier:@"snoop" sender:self];
+        [self performSegueWithIdentifier:SNOOPSEGUE sender:self];
     }@catch(NSException *e){}
 }
 
@@ -587,7 +589,6 @@
     if([global isConnected]){
         
         @try{
-            
             
             FollowStatusRecognizer *tap = (FollowStatusRecognizer*)tapRecongnizer;
             UIButton *button= (UIButton*)tapRecongnizer.view;
@@ -738,7 +739,7 @@
         topProfileBtn = [[UIImageView alloc] initWithFrame:frameimg];
         UIButton *temp=[[UIButton alloc]initWithFrame:frameimg];
         //assigning the default background image
-        [topProfileBtn setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+        [topProfileBtn setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
         topProfileBtn.clipsToBounds=YES;
         [temp setShowsTouchWhenHighlighted:YES];
         

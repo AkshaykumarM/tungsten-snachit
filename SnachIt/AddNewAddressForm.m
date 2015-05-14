@@ -14,6 +14,7 @@
 #import "RegexValidator.h"
 #import "UserProfile.h"
 #import "AddressDetails.h"
+#define ADDRESS_ADDED @"addressaddedseague"
 @interface AddNewAddressForm()<UIPickerViewDelegate,UIPickerViewDataSource,UITextFieldDelegate>
 
 @property (strong,nonatomic) NSArray *states;
@@ -136,7 +137,7 @@ CGFloat animatedDistance;
     self.subview.layer.shadowPath = shadowPath.CGPath;
 }
 -(void)back:(id)sender{
-        [self performSegueWithIdentifier:@"addressaddedseague" sender:nil];
+        [self performSegueWithIdentifier:ADDRESS_ADDED sender:nil];
 }
 
 -(void)viewWillAppear:(BOOL)animated{
@@ -163,13 +164,17 @@ CGFloat animatedDistance;
     
     // If the query was successfully executed then pop the view controller.
     if ([info objectForKey:@"status"] != 0) {
-        
+         if(self.recordIDToEdit==-1){
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
+         }
+         else{
+             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.recordIDToEdit;
+         }
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
         [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
 
         // Pop the view controller.
-         [self performSegueWithIdentifier:@"addressaddedseague" sender:self];
+         [self performSegueWithIdentifier:ADDRESS_ADDED sender:self];
     }
     else{
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;

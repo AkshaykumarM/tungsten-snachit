@@ -12,7 +12,7 @@
 #import "SnoopedProduct.h"
 #import "Order.h"
 #import "global.h"
-NSString *const BACKTOORDEROVERVIEW=@"backToOrderOverview";
+#define BACKTOORDEROVERVIEW @"backToOrderOverview"
 @interface ShippingOverlay()
 @property (nonatomic,strong) NSArray *cellId;
 

@@ -18,6 +18,7 @@
 #import "SnachItAddressInfo.h"
 #define EDITINFO @"editShippingInfo"
 #define ADDNEW @"addnewaddressseague"
+#define SHIPPING_OVERVIEW @"shippingoverviewseague"
 @interface ShippingOverview()
 
 @property (nonatomic, strong) NSString *selectedFirstName;
@@ -35,7 +36,7 @@
     SnoopingUserDetails *userDetails;
     UserProfile *user;
     NSUserDefaults *defaults;
-    NSArray *snachItAddressInfo;
+    NSMutableArray *snachItAddressInfo;
     int i;
     NSIndexPath *deletepath;
 }
@@ -98,7 +99,7 @@
 -(void)back:(id)sender{
    
      
-    [self performSegueWithIdentifier:@"shippingoverviewseague" sender:nil];
+    [self performSegueWithIdentifier:SHIPPING_OVERVIEW sender:nil];
     
 }
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
@@ -233,13 +234,14 @@
         
         CURRENTDB =SnachItDBFile;
         
-        BOOL status=[[SnachItDB database] deleteRecordFromAddress:(int)[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:user.userID];
+        BOOL status=[[SnachItDB database] deleteRecordFromAddress:(int)[tbl cellForRowAtIndexPath:deletepath].tag Userid:user.userID];
         if(status){
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
-            [self clearAddressDetails];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [snachItAddressInfo removeObjectAtIndex:deletepath.row];
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
-            [self loadData];
+            
             deletepath=nil;
         }
          }@catch(NSException *e){}
@@ -257,7 +259,7 @@
         {
             // Get the record ID of the selected name and set it to the recordIDToEdit property.
             
-            self.recordIDToEdit = cell.tag;
+            self.recordIDToEdit = (int)cell.tag;
             [self performSegueWithIdentifier:EDITINFO sender:nil];
             break;
         }
@@ -276,7 +278,26 @@
             break;
     }
 }
-
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell scrollingToState:(SWCellState)state
+{
+    switch (state) {
+        case 0:
+            
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            if(cell.accessoryView!=nil)
+            {
+                cell.accessoryView=nil;
+                RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+            }
+            break;
+        default:
+            break;
+    }
+}
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
   
     if ([[segue identifier] isEqualToString:EDITINFO])
@@ -313,16 +334,12 @@
 }
 
 
-//- (IBAction)doneBtn:(id)sender {
-//    
-//    [self performSegueWithIdentifier:@"shippingoverviewseague" sender:self];
-//    
-//}
+
 
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItAddressInfo = [[SnachItDB database] snachItAddressInfo:user.userID];
+    snachItAddressInfo = [[[SnachItDB database] snachItAddressInfo:user.userID] mutableCopy];
     
     // Reload the table view.
     [self.addressTableView reloadData];

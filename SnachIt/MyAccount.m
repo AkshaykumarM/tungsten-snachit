@@ -13,6 +13,7 @@
 #import "UserProfile.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "SVProgressHUD.h"
+#import "T&CViewController.h"
 @interface MyAccount ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property(nonatomic,strong) NSArray *options,*icons;
 
@@ -41,10 +42,10 @@
     // This will remove extra separators from tableview
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(getPhoto:)];
-    singleTap.numberOfTapsRequired = 2;
-    [self.defaultbackImg setUserInteractionEnabled:YES];
-    [self.defaultbackImg  addGestureRecognizer:singleTap];
+    //UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(getPhoto:)];
+    //singleTap.numberOfTapsRequired = 2;
+   // [self.defaultbackImg setUserInteractionEnabled:YES];
+    //[self.defaultbackImg  addGestureRecognizer:singleTap];
 
     }
 
@@ -67,17 +68,17 @@
 }
 -(void)initialLize{
     
-    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [self.profilePic setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
    
     if(![user.fullName isKindOfClass:[NSNull class]])
         self.userNameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
 
-    self.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    self.memberSinceLbl.text=[NSString stringWithFormat:@"%@%@",MEMBER_SINCE,[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     self.userNameLbl.adjustsFontSizeToFitWidth=YES;
     self.userNameLbl.minimumScaleFactor=0.5;
     
     //setting background img
-    [self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[self.defaultbackImg setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:DEFAULTBACKGROUNDIMG]];
 
     
 }
@@ -154,13 +155,13 @@
 }
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     if(picker.view.tag==1){
-    UIImage *sourceImage = [info valueForKey:UIImagePickerControllerOriginalImage];
+    //UIImage *sourceImage = [info valueForKey:UIImagePickerControllerOriginalImage];
 
-    self.defaultbackImg.image = [self scaleAndRotateImage:sourceImage];
+    //self.defaultbackImg.image = [self scaleAndRotateImage:sourceImage];
        
         
-            [self uploadImage:sourceImage ImageName:@"header" APIname:@"update-cover-pic/"];
-            [self.defaultbackImg setImage:sourceImage];
+            //[self uploadImage:sourceImage ImageName:@"header" APIname:@"update-cover-pic/"];
+            //[self.defaultbackImg setImage:sourceImage];
         
         
         
@@ -296,7 +297,7 @@
 -(void)uploadImage:(UIImage*)image ImageName:(NSString*)filename APIname:(NSString*)apiname
 {
     dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-    [SVProgressHUD showWithStatus:@"Uploading"];
+    [SVProgressHUD showWithStatus:@"Uploading" maskType:SVProgressHUDMaskTypeBlack];
     dispatch_async(anotherThreadQueue, ^{
         //create request
         @try{
@@ -373,9 +374,9 @@
         dispatch_async(dispatch_get_main_queue(), ^{
            
             [SVProgressHUD dismiss];;
-            if([apiname isEqual:@"update-cover-pic/"])
-             [self.defaultbackImg setImage:image];
-            else
+            //if([apiname isEqual:@"update-cover-pic/"])
+             //[self.defaultbackImg setImage:image];
+            //else
             [self.profilePic setImage:image];
         });
         });
@@ -403,4 +404,5 @@
     
     
 }
+
 @end

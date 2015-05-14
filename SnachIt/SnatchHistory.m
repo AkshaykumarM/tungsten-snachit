@@ -13,8 +13,19 @@
 #import "global.h"
 #import "UserProfile.h"
 #import "SnachHistory.h"
+#define TRACKMESEGUE @"trackmesegue"
+
 #import <SDWebImage/UIImageView+WebCache.h>
 
+@interface trackMeTapGestureRecognizer : UITapGestureRecognizer
+
+@property (nonatomic, strong) NSString * trackingNo;
+@property (nonatomic, strong) NSString * slug;
+@end
+
+@implementation trackMeTapGestureRecognizer
+
+@end
 @interface SnatchHistory()
 @property(nonatomic,strong) NSArray *snachhistoryInflightList;
 @property(nonatomic,strong) NSArray *snachhistoryDeliveredList;
@@ -28,6 +39,8 @@ UIRefreshControl *refreshControl;
     NSMutableArray *myLetestALLSnachs;
     NSMutableArray *myLetestINFSnachs;
     NSMutableArray *myLetestDELSnachs;
+    NSString *slugname;
+    NSString *trackingno;
     
 }
 - (void)viewDidLoad {
@@ -47,6 +60,8 @@ UIRefreshControl *refreshControl;
     refreshControl.tintColor = [UIColor whiteColor];
     [self.tableView addSubview:refreshControl];
     self.automaticallyAdjustsScrollViewInsets = NO;
+    self.providesPresentationContextTransitionStyle = YES;
+    self.definesPresentationContext = YES;
 }
 -(void)viewWillAppear:(BOOL)animated{
   
@@ -58,6 +73,8 @@ UIRefreshControl *refreshControl;
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:YES];
     screenName=nil;
+    slugname=nil;
+    trackingno=nil;
     [self getMYLatestSnachs];
 }
 
@@ -139,6 +156,8 @@ UIRefreshControl *refreshControl;
     NSString *productname;
     NSString *orderedDate;
     NSString *deliveryDate;
+    NSString *trackingNo;
+    NSString *slug;
     SnachHistory *snachhistory;
     NSString *statusImg;
     
@@ -150,7 +169,8 @@ UIRefreshControl *refreshControl;
         orderedDate=snachhistory.productOrderedDate;
         deliveryDate=snachhistory.productDeliveryDate;
         statusImg=snachhistory.statusIcon;
-        
+        trackingNo=snachhistory.trackingNo;
+        slug=snachhistory.slug;
     }
     else if([subCellId isEqual:HISTORY_DELIVERED]){
         snachhistory=[myLetestDELSnachs objectAtIndex:indexPath.row];
@@ -160,7 +180,8 @@ UIRefreshControl *refreshControl;
         orderedDate=snachhistory.productOrderedDate;
         deliveryDate=snachhistory.productDeliveryDate;
         statusImg=snachhistory.statusIcon;
-        
+        trackingNo=snachhistory.trackingNo;
+                slug=snachhistory.slug;
     }
     else if([subCellId isEqual:HISTORY_ALL]){
         snachhistory=[myLetestALLSnachs objectAtIndex:indexPath.row];
@@ -168,8 +189,9 @@ UIRefreshControl *refreshControl;
         productname=[NSString stringWithFormat:@"%@ ",snachhistory.productName];
         orderedDate=snachhistory.productOrderedDate;
         deliveryDate=snachhistory.productDeliveryDate;
-        
         statusImg=snachhistory.statusIcon;
+        trackingNo=snachhistory.trackingNo;
+                slug=snachhistory.slug;
         
     }
     SnachHistoryCell *cell = (SnachHistoryCell *)[tableView dequeueReusableCellWithIdentifier:@"historyCell" forIndexPath:indexPath];
@@ -181,17 +203,47 @@ UIRefreshControl *refreshControl;
     cell.productNameLbl.text = productname;
     cell.dateOrdered.text = orderedDate;
     cell.dateDelivered.text=deliveryDate;
+       if([trackingNo isKindOfClass:[NSNull class]] || trackingNo==nil)
+    {[cell.trackMeBtn setHidden:YES];
+       
+
+    }
+    else{
+        trackMeTapGestureRecognizer *trackMeTap = [[trackMeTapGestureRecognizer alloc]
+                                                   initWithTarget:self
+                                                   action:@selector(trackMe:) ];
+        [trackMeTap setNumberOfTapsRequired:1];
+        cell.trackMeBtn.userInteractionEnabled = YES;
+        trackMeTap.trackingNo=trackingNo;
+        trackMeTap.slug=slug;
+        [cell.trackMeBtn addGestureRecognizer:trackMeTap];
+        [cell.trackMeBtn setHidden:NO];
+    }
+    
     if([deliveryDate isEqual:@""]){
        cell.deliveryDateLbl.text=@"";
     }
     else
         cell.deliveryDateLbl.text=@"Est. Delivery Date:";
+    
     deliveryDate=nil;
     cell.statusFlag.image=[UIImage imageNamed:statusImg];
     return cell;
+}
 
 
-
+-(IBAction)trackMe:(UITapGestureRecognizer*)sender{
+    trackMeTapGestureRecognizer *tap=(trackMeTapGestureRecognizer *)sender;
+    slugname=tap.slug;
+    trackingno=tap.trackingNo;
+    [self performSegueWithIdentifier:TRACKMESEGUE sender:nil];
+}
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
+ 
+    AftershipTracker *aftershipTracker = [segue destinationViewController];
+    aftershipTracker.delegate=self;
+    aftershipTracker.slugname = slugname;
+    aftershipTracker.trackingNo=trackingno;
 }
 
 
@@ -222,7 +274,6 @@ UIRefreshControl *refreshControl;
 
 - (void)getMYLatestSnachs
 {
-    NSLog(@"Get my snachs");
     [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-user-snach-history/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
         
         if (!error) {
@@ -242,6 +293,8 @@ UIRefreshControl *refreshControl;
                     snachhistory.productOrderedDate=[tempDic objectForKey:HISTORY_PRODUCT_ORDERDATE];
                     snachhistory.productDeliveryDate=[tempDic objectForKey:HISTORY_PRODUCT_DELIVERYDATE];
                     snachhistory.productstatus=[tempDic objectForKey:HISTORY_PRODUCT_STATUS];
+                    snachhistory.trackingNo=[tempDic objectForKey:HISTORY_TRACKING_NO];
+                    snachhistory.slug=[tempDic objectForKey:HISTORY_SLUG];
                     if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
                     {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
                     else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])

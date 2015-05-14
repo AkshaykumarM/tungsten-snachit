@@ -7,8 +7,8 @@
 //
 
 #import <UIKit/UIKit.h>
-
-@interface SnatchHistory : UIViewController
+#import "AftershipTracker.h"
+@interface SnatchHistory : UIViewController<AftershipTrackerDelegate>
 
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *snachHistorySegmentControl;

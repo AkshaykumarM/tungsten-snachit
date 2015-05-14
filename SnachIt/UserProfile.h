@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define DEFAULTPLACEHOLDER @"userIcon.png"
+#define MEMBER_SINCE @"Member since "
+#define DEFAULTBACKGROUNDIMG @"defbackimg.png"
 @interface UserProfile : NSObject
 @property (nonatomic,strong) NSString *userID;
 @property (nonatomic,strong) NSString *username;

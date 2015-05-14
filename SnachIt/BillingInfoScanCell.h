@@ -11,7 +11,7 @@
 #import "SWTableViewCell.h"
 
 @interface BillingInfoScanCell : SWTableViewCell
-@property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
+//@property (weak, nonatomic) IBOutlet UIImageView *defBackImg;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePicImg;
 @property (weak, nonatomic) IBOutlet UILabel *fullnameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *memberSinceLbl;

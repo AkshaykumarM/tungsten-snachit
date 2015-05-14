@@ -10,4 +10,6 @@
 
 @implementation SnachHistoryCell
 
+- (IBAction)trackMe:(id)sender {
+}
 @end

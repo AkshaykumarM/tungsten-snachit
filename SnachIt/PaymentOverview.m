@@ -31,7 +31,7 @@
     SnoopedProduct *product;
     SnoopingUserDetails *userDetails;
     NSUserDefaults *defaults;
-    NSArray *snachItPaymentInfo;
+    NSMutableArray *snachItPaymentInfo;
     int i;
     NSIndexPath *deletepath;
     UserProfile *user;
@@ -233,13 +233,15 @@
           @try{
        
         CURRENTDB=SnachItDBFile;
-        BOOL status=[[SnachItDB database] deleteRecordFromPayment:(int)[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:USERID];
+        BOOL status=[[SnachItDB database] deleteRecordFromPayment:(int)[tbl cellForRowAtIndexPath:deletepath].tag Userid:USERID];
         if(status){
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
             [self clearPaymentDetails];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [snachItPaymentInfo removeObjectAtIndex:deletepath.row];
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
-            [self loadData];
+            
             deletepath=nil;
         }
           }@catch(NSException *e){}
@@ -276,7 +278,26 @@
             break;
     }
 }
-
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell scrollingToState:(SWCellState)state
+{
+    switch (state) {
+        case 0:
+            
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            if(cell.accessoryView!=nil)
+            {
+                cell.accessoryView=nil;
+                RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+            }
+            break;
+        default:
+            break;
+    }
+}
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender{
    
     if ([[segue identifier] isEqualToString:EDIT])
@@ -308,7 +329,7 @@
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [[SnachItDB database] snachItPaymentInfo:USERID];
+    snachItPaymentInfo = [[[SnachItDB database] snachItPaymentInfo:USERID] mutableCopy];
     
     // Reload the table view.
     [self.tableView reloadData];

@@ -66,13 +66,17 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
+    
 	OAServiceTicketTW *ticket = [[OAServiceTicketTW alloc] initWithRequest:request
 															  response:response
 																  data:responseData
 															didSucceed:[(NSHTTPURLResponse *)response statusCode] < 400];
-
+        @try{
 	[delegate performSelector:didFinishSelector withObject:ticket withObject:responseData];
+        }
+    @catch(NSException *e){}
 	[ticket release];
+  
 }
 
 - (void)fetchDataWithRequest:(OAMutableURLRequestTW *)aRequest delegate:(id)aDelegate didFinishSelector:(SEL)finishSelector didFailSelector:(SEL)failSelector {

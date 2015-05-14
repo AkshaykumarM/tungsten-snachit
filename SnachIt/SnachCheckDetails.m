@@ -22,10 +22,10 @@
 #import "AddressDetails.h"
 #import "SnachItAddressInfo.h"
 #import "SVProgressHUD.h"
-NSString *const PAYMENT_OVERVIEW_SEAGUE =@"paymentOverviewSeague";
-NSString *const SHIPPING_OVERVIEW_SEAGUE =@"shippingOverview";
-NSString *const ORDER_TOTAL_OVERVIEW_SEAGUE =@"orderTotalOverviewSeague";
-NSString *const STP_SEGUE =@"STPSegue";
+#define PAYMENT_OVERVIEW_SEAGUE @"paymentOverviewSeague"
+#define SHIPPING_OVERVIEW_SEAGUE @"shippingOverview"
+#define ORDER_TOTAL_OVERVIEW_SEAGUE @"orderTotalOverviewSeague"
+#define STP_SEGUE @"STPSegue"
 double orderTotal;
 @interface SnachCheckDetails()
 

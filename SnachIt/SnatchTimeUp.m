@@ -11,6 +11,8 @@
 #import "UserProfile.h"
 #import "SnatchFeed.h"
 #import "global.h"
+
+#define APPSHARESEGUE @"appshare"
 @implementation SnatchTimeUp{
     UserProfile *user;
     UIButton *topProfileBtn;
@@ -64,7 +66,7 @@
 }
 
 - (IBAction)shareAppBtn:(id)sender {
-    [self performSegueWithIdentifier:@"appshare" sender:self];
+    [self performSegueWithIdentifier:APPSHARESEGUE sender:self];
 }
 -(void)setupProfilePic{
     /*Upper left profile pic work starts here*/
@@ -74,7 +76,7 @@
     topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
      [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     //assigning the default background image
-    [topProfileBtn setBackgroundImage:[UIImage imageNamed:@"userIcon.png"] forState:UIControlStateNormal];
+    [topProfileBtn setBackgroundImage:[UIImage imageNamed:DEFAULTPLACEHOLDER] forState:UIControlStateNormal];
     topProfileBtn.clipsToBounds=YES;
     [topProfileBtn setShowsTouchWhenHighlighted:YES];
     

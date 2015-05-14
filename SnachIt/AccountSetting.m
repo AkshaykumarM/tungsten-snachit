@@ -19,6 +19,8 @@
 #import "SnachitStartScreen.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "SVProgressHUD.h"
+#import "ChangePasswordViewController.h"
+
 #define REGEX_USERNAME @"[a-zA-Z\\s]*"
 #define REGEX_USER_NAME_LIMIT @"^.{3,10}$"
 #define REGEX_USER_NAME @"[A-Za-z0-9]{3,10}"
@@ -38,7 +40,7 @@
     UserProfile *user;
     NSString *appAlerts;
     NSString *emailAlerts;
-    NSString *smsAlerts;
+   
     
     int viewWidth;
     UIToolbar* toolbar;
@@ -114,13 +116,13 @@ CGFloat animatedDistance;
     cell.profilePicImageView.clipsToBounds=YES;
     cell.profilePicImageView.layer.borderWidth=BORDERWIDTH;
     cell.profilePicImageView.layer.borderColor=[UIColor whiteColor].CGColor;
-    [cell.profilePicImageView setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [cell.profilePicImageView setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     //initializing the textfields
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
-    cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    cell.memberSinceLbl.text=[NSString stringWithFormat:@"%@%@",MEMBER_SINCE,[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     if(![user.emailID isKindOfClass:[NSNull class]])
         [cell.emailTextField setText:user.emailID];
     if(![user.fullName isKindOfClass:[NSNull class]])
@@ -133,73 +135,63 @@ CGFloat animatedDistance;
     [global setTextFieldInsets:cell.phoneTextField];
     cell.phoneTextField.inputAccessoryView=toolbar;
     //setting background img
-    [cell.defaultBackImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[cell.defaultBackImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:DEFAULTBACKGROUNDIMG]];
 
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     
     cell.phoneTextField.keyboardType=UIKeyboardTypeNumberPad;
     
-    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,477, 50, 22)];
+    SevenSwitch *appAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,530, 50, 22)];
     [appAllertSwitch addTarget:self action:@selector(appAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-    appAllertSwitch.offImage = [UIImage imageNamed:checkmark];
-    appAllertSwitch.onImage = [UIImage imageNamed:uncheckmark];
+    appAllertSwitch.offImageView.image = [UIImage imageNamed:checkmark];
+    appAllertSwitch.onImageView.image = [UIImage imageNamed:uncheckmark];
+    
+    appAllertSwitch.offImageView.contentMode=UIViewContentModeScaleAspectFit;
+    appAllertSwitch.onImageView.contentMode=UIViewContentModeScaleAspectFit;
     appAllertSwitch.onTintColor = [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1] ;
-    appAllertSwitch.inactiveColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+    appAllertSwitch.inactiveColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     appAllertSwitch.isRounded = NO;
     appAllertSwitch.shadowColor=[UIColor clearColor];
     appAllertSwitch.contentMode=UIViewContentModeScaleAspectFit;
     if(user.isappAlertsOn==1){
-        appAllertSwitch.on=NO; appAlerts=@"True";appAllertSwitch.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];}
+        appAllertSwitch.on=NO; appAlerts=@"True";appAllertSwitch.borderColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];}
     else{
         appAllertSwitch.on=YES;appAlerts=@"False";appAllertSwitch.borderColor=[UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];}
     
     [cell.contentView addSubview:appAllertSwitch];
     
     
-    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,523, 50, 22)];
+    SevenSwitch *emailAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,576, 50, 22)];
     [emailAllertSwitch addTarget:self action:@selector(emailAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
 
-    emailAllertSwitch.offImageView.image=[[UIImage imageNamed:checkmark ] resizableImageWithCapInsets:UIEdgeInsetsMake(2,2 , 2, 2)];
+    emailAllertSwitch.offImageView.image=[UIImage imageNamed:checkmark ];
     emailAllertSwitch.onImageView.image = [UIImage imageNamed:uncheckmark];
 
-    emailAllertSwitch.contentMode=UIViewContentModeScaleAspectFit;
+    emailAllertSwitch.onImageView.contentMode=UIViewContentModeScaleAspectFit;
+    emailAllertSwitch.offImageView.contentMode=UIViewContentModeScaleAspectFit;
     emailAllertSwitch.onTintColor = [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1] ;
-    emailAllertSwitch.inactiveColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+    emailAllertSwitch.inactiveColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     emailAllertSwitch.isRounded = NO;
     emailAllertSwitch.shadowColor=[UIColor clearColor];
     
     if(user.isemailAlertsOn==1){
-        emailAllertSwitch.on=NO; emailAlerts=@"True";emailAllertSwitch.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+        emailAllertSwitch.on=NO; emailAlerts=@"True";emailAllertSwitch.borderColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     }
     else{
         emailAllertSwitch.on=YES;emailAlerts=@"False"; emailAllertSwitch.borderColor=[UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];}
     [cell.contentView addSubview:emailAllertSwitch];
     
-    SevenSwitch *smsAllertSwitch = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,568, 50, 22)];
-    [smsAllertSwitch addTarget:self action:@selector(smsAllertSwitchChanged:) forControlEvents:UIControlEventValueChanged];
-    smsAllertSwitch.offImage = [UIImage imageNamed:checkmark];
-    smsAllertSwitch.contentMode=UIViewContentModeScaleAspectFit;
-    smsAllertSwitch.onImage = [UIImage imageNamed:uncheckmark];
-    smsAllertSwitch.onTintColor = [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1] ;
-    smsAllertSwitch.inactiveColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
-    smsAllertSwitch.isRounded = NO;
+
     
-    smsAllertSwitch.shadowColor=[UIColor clearColor];
-    if(user.issmsAlertsOn==1){
-        smsAllertSwitch.on=NO; smsAlerts=@"True";smsAllertSwitch.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];}
-    else{
-        smsAllertSwitch.on=YES;smsAlerts=@"False";smsAllertSwitch.borderColor=[UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];}
-    
-    [cell.contentView addSubview:smsAllertSwitch];
-    
-    signOut = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,617, 50, 22)];
+    signOut = [[SevenSwitch alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-60,623, 50, 22)];
     [signOut addTarget:self action:@selector(signOut:) forControlEvents:UIControlEventValueChanged];
     signOut.offImage = [UIImage imageNamed:checkmark];
     signOut.onImage = [UIImage imageNamed:uncheckmark];
-    signOut.contentMode=UIViewContentModeScaleAspectFit;
+    signOut.onImageView.contentMode=UIViewContentModeScaleAspectFit;
+    signOut.offImageView.contentMode=UIViewContentModeScaleAspectFit;
     signOut.onTintColor = [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1] ;
-    signOut.inactiveColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+    signOut.inactiveColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     signOut.borderColor=[UIColor colorWithRed:0.267 green:0.843 blue:0.369 alpha:1];
     signOut.isRounded = NO;
     signOut.on=NO;
@@ -214,10 +206,7 @@ CGFloat animatedDistance;
    [[self.tableViewsetting superview] endEditing:YES];
 }
 -(void)setViewLookAndFeel{
-    // Set the gesture
-//    [self.backButton setTarget:self.revealViewController];
-//    [self.backButton setAction:@selector(revealToggle:)];
-//    [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
+    
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
@@ -336,7 +325,7 @@ CGFloat animatedDistance;
     appAlerts=  sender.on ? @"False" : @"True";
     if([appAlerts isEqual:@"True"])
     {
-        sender.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+        sender.borderColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     }
     else{
        sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
@@ -372,23 +361,13 @@ CGFloat animatedDistance;
     emailAlerts=  sender.on ? @"False" : @"True";
     if([emailAlerts isEqual:@"True"])
     {
-        sender.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
+        sender.borderColor=[UIColor colorWithRed:0.302 green:0.847 blue:0.396 alpha:1];
     }
     else{
         sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
     }
 }
-- (void)smsAllertSwitchChanged:(SevenSwitch *)sender {
-    smsAlerts=   sender.on ? @"False" : @"True";
-    if([smsAlerts isEqual:@"True"])
-    {
-        sender.borderColor=[UIColor colorWithRed:0.404 green:0.745 blue:0.384 alpha:1];
-    }
-    else{
-        sender.borderColor= [UIColor colorWithRed:0.573 green:0.573 blue:0.573 alpha:1];
-    }
 
-}
 -(NSDictionary*)getProfileUpdateValues{
     AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     
@@ -397,10 +376,10 @@ CGFloat animatedDistance;
     [dictionary setValue:tableCell.nameTextField.text forKey:@"fullName"];
     [dictionary setValue:tableCell.emailTextField.text forKey:@"emailId"];
     [dictionary setValue:tableCell.phoneTextField.text forKey:@"phoneNumber"];
-    [dictionary setValue:tableCell.phoneTextField.text forKey:@"phoneNumber"];
+    [dictionary setValue:@"0" forKey:@"SMSAlerts"];
     [dictionary setValue:[appAlerts isEqual:@"True"]?@"1":@"0" forKey:@"appAlerts"];
     [dictionary setValue:[emailAlerts isEqual:@"True"]?@"1":@"0" forKey:@"emailAlerts"];
-    [dictionary setValue:[smsAlerts isEqual:@"True"]?@"1":@"0" forKey:@"SMSAlerts"];
+    
     return dictionary;
     
 }
@@ -413,11 +392,6 @@ CGFloat animatedDistance;
     picker.sourceType = UIImagePickerControllerSourceTypeSavedPhotosAlbum;
     
     [self presentViewController:picker animated:YES completion:nil];
-}
-- (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-     AccountSettingCell *cell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [[picker presentingViewController ] dismissViewControllerAnimated:YES completion:nil];
-    cell.defaultBackImageView.image = [info objectForKey:@"UIImagePickerControllerOriginalImage"];
 }
 
 //this function will end editing by dissmissing keyboard if user touches outside the textfields
@@ -450,6 +424,19 @@ CGFloat animatedDistance;
             
         }
     }
+    
+}
+
+//change password button
+- (IBAction)changePassword:(id)sender {
+    ChangePasswordViewController *changePassword = [[ChangePasswordViewController alloc]
+                                  initWithNibName:@"ChangePassword" bundle:nil];
+    self.providesPresentationContextTransitionStyle = YES;
+    self.definesPresentationContext = YES;
+    [changePassword setModalPresentationStyle:UIModalPresentationOverCurrentContext];
+    self.modalPresentationStyle = UIModalPresentationFormSheet;
+  
+    [self.navigationController presentViewController:changePassword animated:NO completion:nil];
     
 }
 

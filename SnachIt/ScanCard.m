@@ -46,11 +46,10 @@ int cloaseStatus;
 #pragma mark - CardIOPaymentViewControllerDelegate
 
 - (void)userDidProvideCreditCardInfo:(CardIOCreditCardInfo *)info inPaymentViewController:(CardIOPaymentViewController *)paymentViewController {
-    NSLog(@"Scan succeeded with info: %@", info);
+    
     // Do whatever needs to be done to deliver the purchased items.
     [self dismissViewControllerAnimated:YES completion:nil];
      cloaseStatus=1;
-    NSLog(@"%@",[NSString stringWithFormat:@"Received card info. Number: %@, expiry: %02lu/%lu, cvv: %@.", info.cardNumber, (unsigned long)info.expiryMonth, (unsigned long)info.expiryYear, info.cvv]);
     
     cardNumber=[NSString stringWithFormat:@"%@",info.cardNumber];
     cardExp=[NSString stringWithFormat:@"%02lu/%lu",(unsigned long)info.expiryMonth,(unsigned long)info.expiryYear];
@@ -60,7 +59,7 @@ int cloaseStatus;
 }
 
 - (void)userDidCancelPaymentViewController:(CardIOPaymentViewController *)paymentViewController {
-    NSLog(@"User cancelled scan");
+    
     cardNumber=@"";
     cardExp=@"";
     cardCVV=@"";

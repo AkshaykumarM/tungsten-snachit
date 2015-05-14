@@ -15,8 +15,8 @@
 #import "UserProfile.h"
 #import "PaymentDetails.h"
 
-NSString *const BACKTOPAYMENT_OVERVIEW_SEAGUE=@"backtoPaymentOverview";
-
+#define BACKTOPAYMENT_OVERVIEW_SEAGUE @"backtoPaymentOverview"
+#define SCANCARD @"scanCard"
 @interface AddNewCardForm()<UIPickerViewDataSource,UIPickerViewDelegate>
 
 @property (strong,nonatomic) NSArray *states;
@@ -202,7 +202,7 @@ CGFloat animatedDistance;
 }
 
 -(void)back:(id)sender{
-    [self performSegueWithIdentifier:@"backtoPaymentOverview" sender:nil];
+    [self performSegueWithIdentifier:BACKTOPAYMENT_OVERVIEW_SEAGUE sender:nil];
     
 }
 -(void)detectCardType{
@@ -256,8 +256,12 @@ CGFloat animatedDistance;
         
         // If the query was successfully executed then pop the view controller.
         if ([info objectForKey:@"status"] != 0) {
-         
+            if(self.recordIDToEdit==-1){
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
+            }
+            else{
+                RECENTLY_ADDED_PAYMENT_INFO_TRACKER=self.recordIDToEdit;
+            }
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
             // Pop the view controller.
@@ -348,7 +352,7 @@ CGFloat animatedDistance;
 }
 
 -(void)cameraIconAction{
-    [self performSegueWithIdentifier:@"scanCard" sender:nil];
+    [self performSegueWithIdentifier:SCANCARD sender:nil];
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

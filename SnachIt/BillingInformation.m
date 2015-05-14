@@ -28,7 +28,7 @@
 {
     UserProfile *user;
     NSUserDefaults *defaults;
-    NSArray *snachItPaymentInfo;
+    NSMutableArray *snachItPaymentInfo;
     int i;
     NSIndexPath *deletepath;
 }
@@ -109,16 +109,16 @@
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     
-    cell.memberSinceLbl.text=[NSString stringWithFormat:@"Member since %@",[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
+    cell.memberSinceLbl.text=[NSString stringWithFormat:@"%@%@",MEMBER_SINCE,[user.joiningDate substringFromIndex:[user.joiningDate length]-4]];
     
     
-    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:@"userIcon.png"]];
+    [cell.profilePicImg setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     cell.fullnameLbl.adjustsFontSizeToFitWidth=YES;
     cell.fullnameLbl.minimumScaleFactor=0.5;
     //setting background img
    
-    [cell.defBackImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:@"defbackimg.png"]];
+    //[cell.defBackImageView setImageWithURL:user.backgroundUrl placeholderImage:[UIImage imageNamed:DEFAULTBACKGROUNDIMG]];
 
 
     return cell;
@@ -236,8 +236,10 @@ else{
         if(status){
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+            [snachItPaymentInfo removeObjectAtIndex:deletepath.row];
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
-            [self loadData];
+            
             deletepath=nil;
         }
         }@catch(NSException *e){}
@@ -324,7 +326,26 @@ else{
             break;
     }
 }
-
+- (void)swipeableTableViewCell:(SWTableViewCell *)cell scrollingToState:(SWCellState)state
+{
+    switch (state) {
+        case 0:
+            
+            break;
+        case 1:
+            
+            break;
+        case 2:
+            if(cell.accessoryView!=nil)
+            {
+                cell.accessoryView=nil;
+                RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+            }
+            break;
+        default:
+            break;
+    }
+}
 
 - (IBAction)addCard:(id)sender {
     CATransition* transition = [CATransition animation];
@@ -372,7 +393,7 @@ else{
 -(void)loadData{
     // Form the query.
     CURRENTDB=SnachItDBFile;
-    snachItPaymentInfo = [[SnachItDB database] snachItPaymentInfo:user.userID];
+    snachItPaymentInfo = [[[SnachItDB database] snachItPaymentInfo:user.userID] mutableCopy];
 
     UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
     [tbl reloadData];

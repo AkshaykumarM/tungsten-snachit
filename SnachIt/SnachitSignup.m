@@ -127,7 +127,7 @@ CGFloat animatedDistance;
 - (IBAction)signUpBtn:(id)sender {
  
    
-  //  [self performSegueWithIdentifier: @"signInScreenSegue" sender:self];
+ 
     if([self.emailTextField hasText] &&[self.passwordTextField hasText])
     {
         NSString *username= self.emailTextField.text;
@@ -508,9 +508,6 @@ CGFloat animatedDistance;
     [backView removeFromSuperview];
 }
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
-    [super viewDidDisappear:YES];
+      [super viewDidDisappear:YES];
 }
 @end

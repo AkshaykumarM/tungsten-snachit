@@ -8,12 +8,23 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-extern NSString const *ec2maschineIP;
-//extern NSString const *tempmaschineIP;
-
+#define DEFAULT_SNOOPTIME 30
+//#define ec2maschineIP @"http://192.168.0.121:8000/"
+#define ec2maschineIP @"http://ec2-52-1-195-249.compute-1.amazonaws.com/"
+#define SSOUSING @"SSOUsing"
+#define USERNAME @"Username"
+#define PASSWORD @"Password"
+#define LOGGEDIN @"LoggedIn"
+#define DEFAULT_BILLING @"DefaultBilling"
+#define DEFAULT_SHIPPING @"DefaultShipping"
+#define SnachItDBFile @"snachit.sql"
+#define SnoopTimeDBFile @"snoopTimes.sql"
+#define checkInternetConnection @"You are not connected to internet, Please check connection."
+#define RADIOUS 50.0f //to make profile pic circular
+#define BORDERWIDTH 5.0f
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
-extern NSUInteger const DEFAULT_SNOOPTIME;
+
 extern int i;
 extern NSString *USERID;
 extern NSString *SNACHID;
@@ -21,21 +32,12 @@ extern bool isAllreadyTried;
 extern NSString *cardNumber;
 extern NSString *cardExp;
 extern NSString *cardCVV;
-extern NSString * const SSOUSING;
-extern NSString * const USERNAME;
-extern NSString * const PASSWORD;
-extern NSString * const LOGGEDIN;
-extern NSString * const DEFAULT_BILLING;
-extern NSString * const DEFAULT_SHIPPING;
-extern NSString * const SnachItDBFile;
-extern NSString * const SnoopTimeDBFile;
-extern NSString *CURRENTDB;
-extern NSString * const checkInternetConnection;
 
+
+extern NSString *CURRENTDB;
 
 extern bool isApplicationLaunchedFromNotification;
-extern float  RADIOUS;
-extern float BORDERWIDTH;
+
 extern int snooptTracking;
 extern NSString *ssousing;
 extern int RECENTLY_ADDED_PAYMENT_INFO_TRACKER;

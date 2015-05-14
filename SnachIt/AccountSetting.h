@@ -20,5 +20,7 @@
 -(NSDictionary*)getProfileUpdateValues;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewsetting;
 - (IBAction)save:(id)sender;
+- (IBAction)changePassword:(id)sender;
+
 
 @end

@@ -15,5 +15,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *deliveryDate;
 @property (weak, nonatomic) IBOutlet UIImageView *statusImg;
 @property (weak, nonatomic) IBOutlet UILabel *deliverydateLbl;
+@property (weak, nonatomic) IBOutlet UIButton *trackMeBTN;
 
 @end

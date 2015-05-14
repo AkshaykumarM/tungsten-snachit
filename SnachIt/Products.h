@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-extern NSString * const PRODUCTS_ID;
-extern NSString * const PRODUCTS_SNACHID;
-extern NSString * const PRODUCTS_IMAGE;
-extern NSString * const PRODUCTS_SNACHSTATUS;
+ #define PRODUCTS_ID @"productId"
+ #define PRODUCTS_SNACHID @"snach_id"
+ #define PRODUCTS_IMAGE @"productImg"
+ #define PRODUCTS_SNACHSTATUS @"status"
 
 @interface Products : NSObject
 @property (strong, nonatomic) NSString *productId;
