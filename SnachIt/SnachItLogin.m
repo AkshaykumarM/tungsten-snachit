@@ -22,7 +22,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 NSString *const SIGNINSEGUE=@"signInSegue";
 NSString *const USER_ID=@"userId";
 
-UIView *backView;
+
 @interface SnachItLogin()<GPPSignInDelegate>
 
 
@@ -39,8 +39,8 @@ static const CGFloat MINIMUM_SCROLL_FRACTION = 0.2;
 static const CGFloat MAXIMUM_SCROLL_FRACTION = 0.8;
 static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
 static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
-UIActivityIndicatorView *activitySpinner;
-UIView *backView;
+
+
 CGFloat animatedDistance;
 - (void)viewDidLoad
 {
@@ -151,7 +151,7 @@ CGFloat animatedDistance;
     [super viewDidUnload];
 }
 - (IBAction)fbBtn:(id)sender {
-    [self startProcessing];
+  [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
     if([global isConnected]){
         ssousing=@"FB";
         // If the session state is any of the two "open" states when the button is clicked
@@ -163,7 +163,7 @@ CGFloat animatedDistance;
             [FBSession.activeSession closeAndClearTokenInformation];
             
             // If the session state is not any of the two "open" states when the button is clicked
-            [self stopProcessing];
+            [SVProgressHUD dismiss];
         } else {
             // Open a session showing the user the login UI
             // You must ALWAYS ask for public_profile permissions when opening a session
@@ -206,11 +206,11 @@ CGFloat animatedDistance;
                                   if(signinStatus==1){
                                       
                                       NSLog(@"Signed up with facebook Successfully");
-                                      [self stopProcessing];
+                                      [SVProgressHUD dismiss];
                                       [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                                   }else{
                                       [global showAllertForAllreadySignedUp];
-                                      [self stopProcessing];
+                                      [SVProgressHUD dismiss];
                                   }
                               }
                               else{
@@ -221,14 +221,14 @@ CGFloat animatedDistance;
                      }
                  }
                  else{
-                     [self stopProcessing];
+                     [SVProgressHUD dismiss];
                  }
                  
              }];
         }
     }
     else{
-        [self stopProcessing];
+       [SVProgressHUD dismiss];
     }
     
 }
@@ -236,7 +236,7 @@ CGFloat animatedDistance;
 - (IBAction)signInBtn:(id)sender {
     //start spinner
     
-    [self startProcessing];
+   [SVProgressHUD dismiss];
     
     ssousing=@"SnachIt";
     if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
@@ -255,8 +255,7 @@ CGFloat animatedDistance;
         [global showAllertForEnterValidCredentials];
     }
     
-    [self stopProcessing];
-    
+    [SVProgressHUD dismiss];
 }
 
 -(int)performSignIn:(NSString*)username Password:(NSString*)password SSOUsing:(NSString*)ssoUsing{
@@ -311,23 +310,6 @@ CGFloat animatedDistance;
     
     return status;
 }
--(void)startProcessing{
-    
-    backView = [[UIView alloc] initWithFrame:self.view.frame];
-    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
-    [self.view addSubview:backView];
-    activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [backView addSubview:activitySpinner];
-    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
-    activitySpinner.hidesWhenStopped = YES;
-    [activitySpinner startAnimating];
-    
-}
--(void)stopProcessing{
-    
-    [activitySpinner stopAnimating];
-    [backView removeFromSuperview];
-}
 - (IBAction)signUpHereBtn:(id)sender {
     SnachitSignup *startscreen = [[SnachitSignup alloc]
                                   initWithNibName:@"SignUpScreen" bundle:nil];
@@ -347,7 +329,7 @@ CGFloat animatedDistance;
     
     if (error) {
         // Do some error handling here.
-        [self stopProcessing];
+        [SVProgressHUD dismiss];
     } else {
         [self refreshInterfaceBasedOnSignIn];
         
@@ -374,21 +356,21 @@ CGFloat animatedDistance;
                         
                         if([self performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
                             NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
-                            [self stopProcessing];
+                            [SVProgressHUD dismiss];
                             [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                             
                         }
                         else
-                            [self stopProcessing];
+                           [SVProgressHUD dismiss];
                     }
                     else
-                        [self stopProcessing];
+                        [SVProgressHUD dismiss];
                     
                     if (error) {
                         //Handle Error
-                        [self stopProcessing];
+                        [SVProgressHUD dismiss];
                     } else {
-                        [self stopProcessing];
+                        [SVProgressHUD dismiss];
                     }
                 }];
     }
@@ -442,12 +424,12 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)gPlusBtn:(id)sender {
-    [self startProcessing];
+   [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
     if([global isConnected]){
         [self googleSignIn];
     }
     else{
-        [self stopProcessing];
+       [SVProgressHUD dismiss];
     }
 }
 
@@ -516,13 +498,13 @@ CGFloat animatedDistance;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1 && alertView.tag==1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-        [self startProcessing];
+       [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
        __block NSData *jasonData;
          __block NSError *error = nil;
         dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
         [SVProgressHUD showWithStatus:@"Processing"];
         dispatch_async(anotherThreadQueue, ^{
-        NSString *url=[NSString stringWithFormat:@"%@reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
+        NSString *url=[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
         NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
        
         if([global isConnected]){
@@ -537,7 +519,7 @@ CGFloat animatedDistance;
             
         }
         dispatch_async(dispatch_get_main_queue(), ^{
-                  [self stopProcessing];
+                  [SVProgressHUD dismiss];
             
             if (jasonData) {
                 

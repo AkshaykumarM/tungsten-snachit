@@ -29,10 +29,13 @@ CGFloat animatedDistance;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
+
+
 -(void)viewDidAppear:(BOOL)animated{
-    self.view.frame=CGRectMake(20, 65, self.view.frame.size.width-40, self.view.frame.size.height-80);
+    //self.view.frame=CGRectMake(20, 65, self.view.frame.size.width-40, self.view.frame.size.height-80);
     
 }
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -57,6 +60,7 @@ CGFloat animatedDistance;
 */
 
 - (IBAction)saveAction:(id)sender {
+   
     if([self validate]==1){
         __block NSData *jasonData;
         __block NSError *error = nil;
@@ -73,7 +77,7 @@ CGFloat animatedDistance;
                 //getting the data
                 jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
                 //json parse
-                NSLog(@"\nRequest URL: %@",url);
+               
                 
                 
             }
@@ -83,7 +87,7 @@ CGFloat animatedDistance;
                 if (jasonData) {
                     
                     NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-                      NSLog(@"\nResponse:%@ ",response);
+                    
                   
                     if([[response objectForKey:@"success"] isEqual:@"true"])
                     {
@@ -94,11 +98,14 @@ CGFloat animatedDistance;
                                                   cancelButtonTitle:nil
                                                   otherButtonTitles:@"OK", nil];
                         [alertView show];
+                        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                        [defaults setObject:self.PasswordTXTF.text forKey:PASSWORD];
+                        [self dismissViewControllerAnimated:YES completion:nil];
                     }
                     else{
                         UIAlertView *alertView = [[UIAlertView alloc]
                                                   initWithTitle:@"Alert"
-                                                  message:[response objectForKey:@"message"]
+                                                  message:[response objectForKey:@"error_message"]
                                                   delegate:self
                                                   cancelButtonTitle:nil
                                                   otherButtonTitles:@"OK", nil];
@@ -117,22 +124,24 @@ CGFloat animatedDistance;
 
 -(int) validate{
     int status=0;
-    if(![self.currentPasswordTXTF hasText]&&![self.PasswordTXTF hasText]&&![self.confirmPasswordTXTF hasText])
+    NSString *confirmPass=self.confirmPasswordTXTF.text;
+    
+    if(![self.currentPasswordTXTF hasText]||![self.PasswordTXTF hasText]||![self.confirmPasswordTXTF hasText])
     { [global showAllertMsg:@"Alert" Message:@"All fields are mandatory"];
         status=0;
     }
-    else if(self.PasswordTXTF.text!=self.confirmPasswordTXTF.text)
+    else if(![confirmPass isEqualToString:self.PasswordTXTF.text])
     {
       [global showAllertMsg:@"Alert" Message:@"Password missmatch"];
         status=0;
     }
-    else if([self.currentPasswordTXTF hasText]&&[self.PasswordTXTF hasText]&&[self.confirmPasswordTXTF hasText]&&self.PasswordTXTF.text==self.confirmPasswordTXTF.text){
+    else if([self.currentPasswordTXTF hasText]&&[self.PasswordTXTF hasText]&&[self.confirmPasswordTXTF hasText]&&[confirmPass isEqualToString:self.PasswordTXTF.text]){
         status=1;
     }
     else{
         status=0;
     }
-    return 0;
+    return status;
 }
 - (IBAction)closeAction:(id)sender {
     
@@ -152,6 +161,11 @@ CGFloat animatedDistance;
 }
 
 
+//this function will end editing by dissmissing keyboard if user touches outside the textfields
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.view endEditing:YES];
+}
+
 -(BOOL)textFieldShouldReturn:(UITextField*)textField
 {
     if(textField.tag!=4){
@@ -169,7 +183,7 @@ CGFloat animatedDistance;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField{
-    if(textField.tag!=4){
+   
     CGRect textFieldRect =
     [self.view.window convertRect:textField.bounds fromView:textField];
     CGRect viewRect =
@@ -212,11 +226,12 @@ CGFloat animatedDistance;
     [self.view setFrame:viewFrame];
     
     [UIView commitAnimations];
-    }
+    
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textfield{
-    if(textfield.tag!=4){
+   
+    
     CGRect viewFrame = self.view.frame;
     viewFrame.origin.y += animatedDistance;
     
@@ -227,9 +242,12 @@ CGFloat animatedDistance;
     [self.view setFrame:viewFrame];
     
     [UIView commitAnimations];
-    }
+    
 }
+
+
 - (IBAction)forgotPassword:(id)sender {
+   [[self view] endEditing:YES];
     UIAlertView *alertView = [[UIAlertView alloc]
                               initWithTitle:@"Reset Password"
                               message:@"Please enter the email address associated with the account."
@@ -245,6 +263,8 @@ CGFloat animatedDistance;
     
     [alertView show];
 }
+
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1 && alertView.tag==1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
        
@@ -253,7 +273,7 @@ CGFloat animatedDistance;
         dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
         [SVProgressHUD showWithStatus:@"Processing" maskType:SVProgressHUDMaskTypeBlack];
         dispatch_async(anotherThreadQueue, ^{
-            NSString *url=[NSString stringWithFormat:@"%@reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
+            NSString *url=[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
             NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
             
             if([global isConnected]){
@@ -263,7 +283,6 @@ CGFloat animatedDistance;
                 //getting the data
                 jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
                 //json parse
-                NSLog(@"\nRequest URL: %@",url);
                 
                 
             }
@@ -273,7 +292,7 @@ CGFloat animatedDistance;
                 if (jasonData) {
                     
                     NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-                    NSLog(@"\nResponse:%@ ",response);
+                
                     
                     if([[response objectForKey:@"success"] isEqual:@"true"])
                     {
@@ -283,7 +302,9 @@ CGFloat animatedDistance;
                                                   delegate:self
                                                   cancelButtonTitle:nil
                                                   otherButtonTitles:@"OK", nil];
+                        
                         [alertView show];
+                        
                     }
                     else{
                         UIAlertView *alertView = [[UIAlertView alloc]
@@ -300,12 +321,11 @@ CGFloat animatedDistance;
                 
             });
         });
-        animatedDistance=0;
+       [[self view] endEditing:YES];
         
     }
     else{
-        animatedDistance=0;
-        
+       [[self view] endEditing:YES];
     }
 }
 

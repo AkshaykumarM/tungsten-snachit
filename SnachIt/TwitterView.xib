@@ -16,7 +16,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
-                <navigationBar contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="VJW-xu-Pmv">
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="VJW-xu-Pmv">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="7zM-ek-It7"/>
@@ -69,7 +69,10 @@
                 <constraint firstItem="Y42-91-njc" firstAttribute="top" secondItem="VJW-xu-Pmv" secondAttribute="bottom" id="U3o-fU-X2T"/>
                 <constraint firstAttribute="trailing" secondItem="Y42-91-njc" secondAttribute="trailing" id="W5J-zb-BMt"/>
                 <constraint firstItem="Y42-91-njc" firstAttribute="centerY" secondItem="Y4V-75-bQx" secondAttribute="centerY" constant="30" id="Y16-Ap-Pzs"/>
+                <constraint firstAttribute="trailing" secondItem="VJW-xu-Pmv" secondAttribute="trailing" id="YOS-ih-Pud"/>
+                <constraint firstItem="VJW-xu-Pmv" firstAttribute="leading" secondItem="U0N-Xz-ARk" secondAttribute="leading" id="amc-10-Y12"/>
                 <constraint firstAttribute="trailing" secondItem="VJW-xu-Pmv" secondAttribute="trailing" id="cEM-cQ-SHd"/>
+                <constraint firstItem="VJW-xu-Pmv" firstAttribute="top" secondItem="U0N-Xz-ARk" secondAttribute="top" id="fdJ-0O-5If"/>
                 <constraint firstAttribute="bottom" secondItem="Y42-91-njc" secondAttribute="bottom" id="fob-SM-evl"/>
                 <constraint firstItem="VJW-xu-Pmv" firstAttribute="top" secondItem="U0N-Xz-ARk" secondAttribute="top" id="zMw-8u-HMC">
                     <variation key="widthClass=compact" constant="15"/>

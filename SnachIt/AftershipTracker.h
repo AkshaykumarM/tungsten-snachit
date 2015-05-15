@@ -21,4 +21,5 @@
 @property (weak, nonatomic) IBOutlet NSString *trackingNo;
 @property (weak, nonatomic) IBOutlet NSString *slugname;
 @property (nonatomic, assign) id<AftershipTrackerDelegate> delegate;
+
 @end

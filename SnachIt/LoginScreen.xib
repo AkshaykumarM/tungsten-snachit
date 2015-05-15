@@ -140,8 +140,8 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cZp-gf-JNZ">
                     <rect key="frame" x="0.0" y="0.0" width="320" height="233"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="fwh-XZ-oyo">
-                            <rect key="frame" x="30" y="-19" width="140" height="140"/>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="snachitlogo.png" translatesAutoresizingMaskIntoConstraints="NO" id="fwh-XZ-oyo">
+                            <rect key="frame" x="90" y="47" width="140" height="140"/>
                             <constraints>
                                 <constraint firstAttribute="height" relation="lessThanOrEqual" constant="140" id="1CI-Hw-qdO"/>
                                 <constraint firstAttribute="width" relation="lessThanOrEqual" constant="140" id="Mze-aa-SMV"/>

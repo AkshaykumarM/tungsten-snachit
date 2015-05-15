@@ -114,8 +114,7 @@ CGFloat animatedDistance;
     //setting profile pic look
     cell.profilePicImageView.layer.cornerRadius=RADIOUS;
     cell.profilePicImageView.clipsToBounds=YES;
-    cell.profilePicImageView.layer.borderWidth=BORDERWIDTH;
-    cell.profilePicImageView.layer.borderColor=[UIColor whiteColor].CGColor;
+   
     [cell.profilePicImageView setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     
     //initializing the textfields
@@ -431,12 +430,12 @@ CGFloat animatedDistance;
 - (IBAction)changePassword:(id)sender {
     ChangePasswordViewController *changePassword = [[ChangePasswordViewController alloc]
                                   initWithNibName:@"ChangePassword" bundle:nil];
-    self.providesPresentationContextTransitionStyle = YES;
-    self.definesPresentationContext = YES;
-    [changePassword setModalPresentationStyle:UIModalPresentationOverCurrentContext];
-    self.modalPresentationStyle = UIModalPresentationFormSheet;
+//    self.providesPresentationContextTransitionStyle = YES;
+//    self.definesPresentationContext = YES;
+//    [changePassword setModalPresentationStyle:UIModalPresentationOverCurrentContext];
+//    self.modalPresentationStyle = UIModalPresentationFormSheet;
   
-    [self.navigationController presentViewController:changePassword animated:NO completion:nil];
+    [self.navigationController presentViewController:changePassword animated:YES completion:nil];
     
 }
 

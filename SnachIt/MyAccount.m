@@ -13,7 +13,8 @@
 #import "UserProfile.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "SVProgressHUD.h"
-#import "T&CViewController.h"
+#import "TandCViewController.h"
+#import "PrivacyViewController.h"
 @interface MyAccount ()<UINavigationControllerDelegate,UIImagePickerControllerDelegate>
 @property(nonatomic,strong) NSArray *options,*icons;
 
@@ -53,9 +54,7 @@
 
     self.profilePic.layer.cornerRadius= RADIOUS;
     self.profilePic.clipsToBounds = YES;
-    self.profilePic.layer.borderWidth = BORDERWIDTH;
-    self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
-
+    
 }
 -(void)viewDidAppear:(BOOL)animated{
     [super viewDidAppear:animated];
@@ -403,6 +402,18 @@
     [self getProPic];
     
     
+}
+
+- (IBAction)termAction:(id)sender {
+    TandCViewController *terms = [[TandCViewController alloc]
+                                                    initWithNibName:@"TermsAndConditions" bundle:nil];
+    [self presentViewController:terms animated:YES completion:nil];
+}
+
+- (IBAction)privacyAction:(id)sender {
+    PrivacyViewController *privacy = [[PrivacyViewController alloc]
+                                           initWithNibName:@"privacypolicy" bundle:nil];
+    [self presentViewController:privacy animated:YES completion:nil];
 }
 
 @end

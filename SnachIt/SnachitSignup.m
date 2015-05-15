@@ -17,6 +17,7 @@
 #import <GooglePlus/GooglePlus.h>
 #import "AppDelegate.h"
 #import "TwitterViewController.h"
+#import "SVProgressHUD.h"
 
 
 @interface SnachitSignup()<GPPSignInDelegate>
@@ -35,8 +36,7 @@ static const CGFloat PORTRAIT_KEYBOARD_HEIGHT = 216;
 static const CGFloat LANDSCAPE_KEYBOARD_HEIGHT = 162;
 
 NSInteger status=0;
-UIView *backView;
-UIActivityIndicatorView *activitySpinner;
+
 CGFloat animatedDistance;
 - (void)viewDidLoad
 {
@@ -165,7 +165,7 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)fbBtn:(id)sender {
-            [self startProcessing];
+    [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
      if([global isConnected]){
     ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
@@ -177,7 +177,7 @@ CGFloat animatedDistance;
         [FBSession.activeSession closeAndClearTokenInformation];
         
         // If the session state is not any of the two "open" states when the button is clicked
-        [self stopProcessing];
+        [SVProgressHUD dismiss];
     } else {
         // Open a session showing the user the login UI
         // You must ALWAYS ask for public_profile permissions when opening a session
@@ -221,16 +221,15 @@ CGFloat animatedDistance;
                               if(signinStatus==1){
                                   
                                   NSLog(@"Signed up with facebook Successfully");
-                                  [self stopProcessing];
+                                 [SVProgressHUD dismiss];
                                   [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                               }else{
                                   NSLog(@"Error occurred while signing in");
-                                    [self stopProcessing];
-                                  
+                                    [SVProgressHUD dismiss];
                               }
                           }
                           else{
-                              [self stopProcessing];
+                              [SVProgressHUD dismiss];
                               [global showAllertForAllreadySignedUp];
                               NSLog(@"Error occurred while sign up");
                           }
@@ -238,14 +237,14 @@ CGFloat animatedDistance;
                  }
              }
              else{
-                 [self stopProcessing];
+                [SVProgressHUD dismiss];
              }
              
          }];
     }
      }
      else{
-         [self stopProcessing];
+        [SVProgressHUD dismiss];
      }
 
 }
@@ -257,7 +256,7 @@ CGFloat animatedDistance;
     
     if (error) {
         // Do some error handling here.
-        [self stopProcessing];
+        [SVProgressHUD dismiss];
     } else {
         [self refreshInterfaceBasedOnSignIn];
         
@@ -284,25 +283,25 @@ CGFloat animatedDistance;
                         SnachItLogin *signin=[[SnachItLogin alloc]init];
                         if([signin performSignIn:[GPPSignIn sharedInstance].authentication.userEmail Password:person.identifier SSOUsing:ssousing]==1){
                             NSLog(@"While signin UserName:%@ Password: %@",[GPPSignIn sharedInstance].authentication.userEmail,person.identifier);
-                            [self stopProcessing];
+                            [SVProgressHUD dismiss];
                             [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
                             
                         }
                         else{
-                            [self stopProcessing];
+                           [SVProgressHUD dismiss];
                             [global showAllertMsg:@"Alert" Message:@"Problem occured while signup"];
                         }
                     }
                     else
                     {
                         
-                        [self stopProcessing];
+                        [SVProgressHUD dismiss];
                     }
                     if (error) {
                         //Handle Error
-                        [self stopProcessing];
+                        [SVProgressHUD dismiss];
                     } else {
-                        [self stopProcessing];
+                       [SVProgressHUD dismiss];
                     }
                 }];
     }
@@ -371,12 +370,12 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)gplusBtn:(id)sender {
-    [self startProcessing];
+    [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
      if([global isConnected]){
     [self googleSignIn];
      }
      else{
-    [self stopProcessing];
+    [SVProgressHUD dismiss];
      }
 }
 
@@ -490,23 +489,7 @@ CGFloat animatedDistance;
 //    [self presentViewController:startscreen animated:NO completion:nil];
 //}
 
--(void)startProcessing{
-    
-    backView = [[UIView alloc] initWithFrame:self.view.frame];
-    backView.backgroundColor = [[UIColor clearColor] colorWithAlphaComponent:0.3];
-    [self.view addSubview:backView];
-    activitySpinner=[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
-    [backView addSubview:activitySpinner];
-    activitySpinner.center = CGPointMake(self.view.center.x, self.view.center.y);
-    activitySpinner.hidesWhenStopped = YES;
-    [activitySpinner startAnimating];
-    
-}
--(void)stopProcessing{
-    
-    [activitySpinner stopAnimating];
-    [backView removeFromSuperview];
-}
+
 -(void)viewDidDisappear:(BOOL)animated{
       [super viewDidDisappear:YES];
 }

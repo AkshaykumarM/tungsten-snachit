@@ -11,6 +11,8 @@
 #import <Aftership.h>
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "global.h"
+#import "SVProgressHUD.h"
+
 @implementation AftershipTracker
 {
     NSMutableArray *trackings;
@@ -28,7 +30,7 @@
 -(void)viewDidLoad{
     
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
+    [btn setFrame:CGRectMake(0.0f, 0.0f, 35.0f, 35.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
     [btn setImage:[UIImage imageNamed:@"closeout_icon.png"] forState:UIControlStateNormal];
     btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
@@ -53,9 +55,20 @@
     return 80;
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    
-    return [trackings count];
+{int count=0;
+    @try{
+        count=(int)[trackings count];
+        if(count<=0)
+        {
+            [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+        }
+        else{
+            
+            [SVProgressHUD dismiss];
+            self.tableView.backgroundView=nil;
+        }
+    }@catch(NSException *e){}
+    return count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -205,9 +218,10 @@
                                                    // As this block of code is run in a background thread, we need to ensure the GUI
                                                    // update is executed in the main thread
                                                    [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+                                                   
                                                }
                                                if(error){
-                                                   
+                                                   [SVProgressHUD dismiss];
                                                    [global showAllertMsg:@"Error" Message:error.domain.description];
                                                }
                                            }];
@@ -216,13 +230,16 @@
 }
 - (void)reloadData
 {
+    
     NSArray* reversedArray = [[trackings reverseObjectEnumerator] allObjects];
     trackings=[reversedArray mutableCopy];
     [self.tableView reloadData];
     self.statusLBL.text=tag.uppercaseString;
     if([expected_delivery isKindOfClass:[NSNull class]]||expected_delivery==nil)
         expected_delivery=@"NA";
+    [SVProgressHUD dismiss];
     self.deliverBy.text=[NSString stringWithFormat:@"SCHEDULED: %@",expected_delivery];
+    
     [self.slugIMGV setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://ec2-52-1-195-249.compute-1.amazonaws.com/media/media/slugs/%@.jpg",slug]] placeholderImage:nil];
 }
 -(NSDictionary*)makeRequest:(NSData *)response{

@@ -16,5 +16,7 @@
 //@property (weak, nonatomic) IBOutlet UIImageView *defaultbackImg;
 - (IBAction)uploadMyProPic:(id)sender;
 
+- (IBAction)termAction:(id)sender;
+- (IBAction)privacyAction:(id)sender;
 
 @end

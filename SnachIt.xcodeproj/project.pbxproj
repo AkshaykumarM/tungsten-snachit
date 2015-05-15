@@ -72,7 +72,6 @@
 		87390A0B1AFCA13E005C83DB /* inflight_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87390A041AFCA13E005C83DB /* inflight_icon.png */; };
 		87390A0C1AFCA13E005C83DB /* outfordelivery_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87390A051AFCA13E005C83DB /* outfordelivery_icon.png */; };
 		87390A0D1AFCA13E005C83DB /* shipped_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87390A061AFCA13E005C83DB /* shipped_icon.png */; };
-		873AFC5D1B01BD8400F55436 /* T&CViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 873AFC5C1B01BD8400F55436 /* T&CViewController.m */; };
 		87460F011AE919DC007A32AF /* star.png in Resources */ = {isa = PBXBuildFile; fileRef = 87460F001AE919DC007A32AF /* star.png */; };
 		87460F051AE92096007A32AF /* check-mark.png in Resources */ = {isa = PBXBuildFile; fileRef = 87460F041AE92096007A32AF /* check-mark.png */; };
 		87460F071AE932E9007A32AF /* googleplus_ad.png in Resources */ = {isa = PBXBuildFile; fileRef = 87460F061AE932E9007A32AF /* googleplus_ad.png */; };
@@ -170,6 +169,8 @@
 		874FA5E11ADBD67C00664460 /* check2.png in Resources */ = {isa = PBXBuildFile; fileRef = 874FA5DF1ADBD67C00664460 /* check2.png */; };
 		874FA5E21ADBD67C00664460 /* cross.png in Resources */ = {isa = PBXBuildFile; fileRef = 874FA5E01ADBD67C00664460 /* cross.png */; };
 		87539EF51ABD897E00BB29EC /* forward1.png in Resources */ = {isa = PBXBuildFile; fileRef = 87539EF41ABD897E00BB29EC /* forward1.png */; };
+		8769E0F91B04F83D003963E7 /* TandCViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8769E0F81B04F83D003963E7 /* TandCViewController.m */; };
+		8769E0FB1B05002E003963E7 /* privacypolicy.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8769E0FA1B05002E003963E7 /* privacypolicy.xib */; };
 		876A8E5D1AD6B64E00FEB8FE /* SVIndefiniteAnimatedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 876A8E581AD6B64E00FEB8FE /* SVIndefiniteAnimatedView.m */; };
 		876A8E5E1AD6B64E00FEB8FE /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 876A8E5A1AD6B64E00FEB8FE /* SVProgressHUD.bundle */; };
 		876A8E5F1AD6B64E00FEB8FE /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 876A8E5C1AD6B64E00FEB8FE /* SVProgressHUD.m */; };
@@ -200,6 +201,7 @@
 		878B7CCF1AE4FD0C0015E1B5 /* SWUtilityButtonTapGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 878B7CC81AE4FD0C0015E1B5 /* SWUtilityButtonTapGestureRecognizer.m */; };
 		878B7CD01AE4FD0C0015E1B5 /* SWUtilityButtonView.m in Sources */ = {isa = PBXBuildFile; fileRef = 878B7CCA1AE4FD0C0015E1B5 /* SWUtilityButtonView.m */; };
 		878B7CD21AE527C50015E1B5 /* snachit.sql in Resources */ = {isa = PBXBuildFile; fileRef = 878B7CD11AE527C40015E1B5 /* snachit.sql */; };
+		878C23DE1B05D1EF00FDAAAE /* PrivacyViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 878C23DD1B05D1EF00FDAAAE /* PrivacyViewController.m */; };
 		87A9D3181B0326F800922F2D /* TermsAndConditions.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87A9D3171B0326F800922F2D /* TermsAndConditions.xib */; };
 		87A9D31A1B03374A00922F2D /* ChangePassword.xib in Resources */ = {isa = PBXBuildFile; fileRef = 87A9D3191B03374A00922F2D /* ChangePassword.xib */; };
 		87A9D31E1B03387F00922F2D /* close-out.png in Resources */ = {isa = PBXBuildFile; fileRef = 87A9D31C1B03387F00922F2D /* close-out.png */; };
@@ -340,8 +342,6 @@
 		87390A041AFCA13E005C83DB /* inflight_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = inflight_icon.png; sourceTree = "<group>"; };
 		87390A051AFCA13E005C83DB /* outfordelivery_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = outfordelivery_icon.png; sourceTree = "<group>"; };
 		87390A061AFCA13E005C83DB /* shipped_icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = shipped_icon.png; sourceTree = "<group>"; };
-		873AFC5B1B01BD8400F55436 /* T&CViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "T&CViewController.h"; sourceTree = "<group>"; };
-		873AFC5C1B01BD8400F55436 /* T&CViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "T&CViewController.m"; sourceTree = "<group>"; };
 		87460F001AE919DC007A32AF /* star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = star.png; sourceTree = "<group>"; };
 		87460F041AE92096007A32AF /* check-mark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "check-mark.png"; sourceTree = "<group>"; };
 		87460F061AE932E9007A32AF /* googleplus_ad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = googleplus_ad.png; sourceTree = "<group>"; };
@@ -492,6 +492,9 @@
 		874FA5DF1ADBD67C00664460 /* check2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = check2.png; sourceTree = "<group>"; };
 		874FA5E01ADBD67C00664460 /* cross.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cross.png; sourceTree = "<group>"; };
 		87539EF41ABD897E00BB29EC /* forward1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward1.png; sourceTree = "<group>"; };
+		8769E0F71B04F83D003963E7 /* TandCViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TandCViewController.h; sourceTree = "<group>"; };
+		8769E0F81B04F83D003963E7 /* TandCViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TandCViewController.m; sourceTree = "<group>"; };
+		8769E0FA1B05002E003963E7 /* privacypolicy.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = privacypolicy.xib; sourceTree = "<group>"; };
 		876A8E571AD6B64E00FEB8FE /* SVIndefiniteAnimatedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVIndefiniteAnimatedView.h; sourceTree = "<group>"; };
 		876A8E581AD6B64E00FEB8FE /* SVIndefiniteAnimatedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVIndefiniteAnimatedView.m; sourceTree = "<group>"; };
 		876A8E591AD6B64E00FEB8FE /* SVProgressHUD-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SVProgressHUD-Prefix.pch"; sourceTree = "<group>"; };
@@ -549,6 +552,8 @@
 		878B7CC91AE4FD0C0015E1B5 /* SWUtilityButtonView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWUtilityButtonView.h; sourceTree = "<group>"; };
 		878B7CCA1AE4FD0C0015E1B5 /* SWUtilityButtonView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SWUtilityButtonView.m; sourceTree = "<group>"; };
 		878B7CD11AE527C40015E1B5 /* snachit.sql */ = {isa = PBXFileReference; lastKnownFileType = file; path = snachit.sql; sourceTree = "<group>"; };
+		878C23DC1B05D1EF00FDAAAE /* PrivacyViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrivacyViewController.h; sourceTree = "<group>"; };
+		878C23DD1B05D1EF00FDAAAE /* PrivacyViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrivacyViewController.m; sourceTree = "<group>"; };
 		87A9D3171B0326F800922F2D /* TermsAndConditions.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TermsAndConditions.xib; sourceTree = "<group>"; };
 		87A9D3191B03374A00922F2D /* ChangePassword.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChangePassword.xib; sourceTree = "<group>"; };
 		87A9D31C1B03387F00922F2D /* close-out.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "close-out.png"; sourceTree = "<group>"; };
@@ -884,120 +889,32 @@
 		874A32C31A6CEC26004038D4 /* viewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				878C23F01B05F15A00FDAAAE /* Splash */,
+				878C23EB1B05EFAC00FDAAAE /* Shipping */,
+				878C23E71B05EEEF00FDAAAE /* Signup */,
+				878C23E31B05D98C00FDAAAE /* ScanCard */,
+				878C23E11B05D8E200FDAAAE /* SnachFeed */,
+				878C23E01B05D80A00FDAAAE /* TermsAndCondition */,
+				878C23F31B05F1D400FDAAAE /* Timeup */,
+				878C23F51B05F23F00FDAAAE /* TwitterLogin */,
+				878C23F11B05F18700FDAAAE /* Validations */,
+				878C23EC1B05F07C00FDAAAE /* Billing */,
+				878C23E41B05DEA300FDAAAE /* AppShare */,
+				878C23F41B05F1E900FDAAAE /* Common */,
+				878C23F21B05F1AC00FDAAAE /* Checkout */,
+				878C23EF1B05F12000FDAAAE /* Order */,
+				878C23EE1B05F0F600FDAAAE /* My Account */,
+				878C23ED1B05F0D300FDAAAE /* My Profile */,
+				878C23EA1B05EF6E00FDAAAE /* Aftership */,
+				878C23E81B05EF1800FDAAAE /* ChangePassword */,
+				878C23E61B05EECB00FDAAAE /* Login */,
+				878C23E51B05E05700FDAAAE /* SnachHistory */,
+				878C23E21B05D94E00FDAAAE /* AccountSetting */,
+				878C23DF1B05D7DD00FDAAAE /* PrivacyPolicy */,
 				87D7FAA41A7A2D73008A5819 /* CardIO */,
 				874A32CA1A6CEC77004038D4 /* SWRevealViewController */,
-				871E98631AD29C7A00D5A7BF /* Reachability.h */,
-				871E98641AD29C7A00D5A7BF /* Reachability.m */,
 				87355A471AAD647F00DA79D6 /* states-info.plist */,
 				874A33C91A6CF62B004038D4 /* SevenSwitch.swift */,
-				874A333C1A6CECEF004038D4 /* ShippingOverviewAddressCell.h */,
-				874A333D1A6CECEF004038D4 /* ShippingOverviewAddressCell.m */,
-				874A325E1A6CEC16004038D4 /* global.h */,
-				874A325F1A6CEC16004038D4 /* global.m */,
-				874A32601A6CEC16004038D4 /* AppDelegate.h */,
-				874A32611A6CEC16004038D4 /* AppDelegate.m */,
-				874A32621A6CEC16004038D4 /* PushNoAnimationSegue.h */,
-				874A32631A6CEC16004038D4 /* PushNoAnimationSegue.m */,
-				874A32641A6CEC16004038D4 /* TwitterViewController.h */,
-				874A32651A6CEC16004038D4 /* TwitterViewController.m */,
-				874A32661A6CEC16004038D4 /* ProductSnached.h */,
-				874A32671A6CEC16004038D4 /* ProductSnached.m */,
-				874A32681A6CEC16004038D4 /* OrderTotalCell.h */,
-				874A32691A6CEC16004038D4 /* OrderTotalCell.m */,
-				874A326A1A6CEC16004038D4 /* OrderTotalOverview.h */,
-				874A326B1A6CEC16004038D4 /* OrderTotalOverview.m */,
-				874A326C1A6CEC16004038D4 /* ShippingInfoOverview.h */,
-				874A326D1A6CEC16004038D4 /* ShippingInfoOverview.m */,
-				874A326E1A6CEC16004038D4 /* ShippingOverview.h */,
-				874A326F1A6CEC16004038D4 /* ShippingOverview.m */,
-				874A32701A6CEC16004038D4 /* BillingInfoOverview.h */,
-				874A32711A6CEC16004038D4 /* BillingInfoOverview.m */,
-				874A32721A6CEC16004038D4 /* ScanCard.h */,
-				874A32731A6CEC16004038D4 /* ScanCard.m */,
-				874A32741A6CEC16004038D4 /* SnachitSignup.h */,
-				874A32751A6CEC16004038D4 /* SnachitSignup.m */,
-				874A32761A6CEC16004038D4 /* SnachItLogin.h */,
-				874A32771A6CEC16004038D4 /* SnachItLogin.m */,
-				874A32781A6CEC16004038D4 /* SnachitStartScreen.h */,
-				874A32791A6CEC16004038D4 /* SnachitStartScreen.m */,
-				874A327A1A6CEC16004038D4 /* AddNewCardForm.h */,
-				874A327B1A6CEC16004038D4 /* AddNewCardForm.m */,
-				874A327C1A6CEC16004038D4 /* PaymentOverview.h */,
-				874A327D1A6CEC16004038D4 /* PaymentOverview.m */,
-				874A327E1A6CEC16004038D4 /* AddNewAddressForm.h */,
-				874A327F1A6CEC16004038D4 /* AddNewAddressForm.m */,
-				874A32801A6CEC16004038D4 /* SnachConfirmCell.h */,
-				874A32811A6CEC16004038D4 /* SnachConfirmCell.m */,
-				874A32821A6CEC16004038D4 /* SnachCheckDetails.h */,
-				874A32831A6CEC16004038D4 /* SnachCheckDetails.m */,
-				874A32841A6CEC16004038D4 /* SnatchTimeUp.h */,
-				874A32851A6CEC16004038D4 /* SnatchTimeUp.m */,
-				874A32861A6CEC16004038D4 /* SnachProductDetails.h */,
-				874A32871A6CEC16004038D4 /* SnachProductDetails.m */,
-				874A32881A6CEC16004038D4 /* SnatchFeedCell.h */,
-				874A32891A6CEC16004038D4 /* SnatchFeedCell.m */,
-				874A328A1A6CEC16004038D4 /* MyProfileSnachsCell.h */,
-				874A328B1A6CEC16004038D4 /* MyProfileSnachsCell.m */,
-				874A328C1A6CEC16004038D4 /* MyProfileBrandsCell.h */,
-				874A328D1A6CEC16004038D4 /* MyProfileBrandsCell.m */,
-				874A328E1A6CEC16004038D4 /* MyProfileFreindsCell.h */,
-				874A328F1A6CEC16004038D4 /* MyProfileFreindsCell.m */,
-				874A32901A6CEC16004038D4 /* SnatchHistory.h */,
-				874A32911A6CEC16004038D4 /* SnatchHistory.m */,
-				874A32921A6CEC16004038D4 /* ShippingInformation.h */,
-				874A32931A6CEC16004038D4 /* ShippingInformation.m */,
-				874A32941A6CEC16004038D4 /* BillingInformation.h */,
-				874A32951A6CEC16004038D4 /* BillingInformation.m */,
-				874A32961A6CEC16004038D4 /* AccountSetting.h */,
-				874A32971A6CEC16004038D4 /* AccountSetting.m */,
-				874A32981A6CEC16004038D4 /* MyProfile.h */,
-				874A32991A6CEC16004038D4 /* MyProfile.m */,
-				874A329A1A6CEC16004038D4 /* MyAccountOptions.h */,
-				874A329C1A6CEC16004038D4 /* MyAccountOptions.m */,
-				874A329D1A6CEC16004038D4 /* MyAccount.h */,
-				874A329E1A6CEC16004038D4 /* MyAccount.m */,
-				874A329F1A6CEC16004038D4 /* SnatchFeed.h */,
-				874A32A01A6CEC16004038D4 /* SnatchFeed.m */,
-				87CF75761A71035F00ADFD7A /* ShippingOverlay.h */,
-				87CF75771A71035F00ADFD7A /* ShippingOverlay.m */,
-				87CF75791A710B5B00ADFD7A /* shippingOverlayCell.h */,
-				87CF757A1A710B5B00ADFD7A /* shippingOverlayCell.m */,
-				871F7EE41A7285CF00808AB4 /* PaymentOverviewCell.h */,
-				871F7EE51A7285CF00808AB4 /* PaymentOverviewCell.m */,
-				87C3E7C31A779FA6008A7830 /* SnachHistoryCell.h */,
-				87C3E7C41A779FA6008A7830 /* SnachHistoryCell.m */,
-				87CEC22E1A7CBC59001956EA /* AppShare.h */,
-				87CEC22F1A7CBC59001956EA /* AppShare.m */,
-				87D173F01A8522B50028A2E4 /* TwitterEmailIdView.h */,
-				87D173F11A8522B50028A2E4 /* TwitterEmailIdView.m */,
-				87D9D2981A89D71C0082AA4C /* AccountSettingCell.h */,
-				87D9D2991A89D71C0082AA4C /* AccountSettingCell.m */,
-				87D9D29B1A8A11E50082AA4C /* BillingInfoCell.h */,
-				87D9D29C1A8A11E50082AA4C /* BillingInfoCell.m */,
-				87D9D29E1A8A4D5D0082AA4C /* BillingInfoScanCell.h */,
-				87D9D29F1A8A4D5D0082AA4C /* BillingInfoScanCell.m */,
-				87D9D2A11A8A60930082AA4C /* ShippingInfoCell.h */,
-				87D9D2A21A8A60930082AA4C /* ShippingInfoCell.m */,
-				87D9D2A41A8A7A830082AA4C /* ShippingInfoAddCell.h */,
-				87D9D2A51A8A7A830082AA4C /* ShippingInfoAddCell.m */,
-				87D5D5F91A8C8D82006869EF /* ShippingInfoTableCellcell.h */,
-				87D5D5FA1A8C8D82006869EF /* ShippingInfoTableCellcell.m */,
-				87D5D5FE1A8CB4CE006869EF /* BillingInformationCell.h */,
-				87D5D5FF1A8CB4CE006869EF /* BillingInformationCell.m */,
-				87D624D11A97449000D6D645 /* Common.h */,
-				87D624D21A97449000D6D645 /* Common.m */,
-				873559DF1AAD5CFA00DA79D6 /* RegexValidator.h */,
-				873559E01AAD5CFA00DA79D6 /* RegexValidator.m */,
-				8702C0671ABA98FD0095752A /* UIFont+UIFont_SytemFontOverride.h */,
-				8702C0681ABA98FD0095752A /* UIFont+UIFont_SytemFontOverride.m */,
-				873AFC5B1B01BD8400F55436 /* T&CViewController.h */,
-				873AFC5C1B01BD8400F55436 /* T&CViewController.m */,
-				871C37AF1AEA177D00729275 /* AftershipTracker.h */,
-				871C37B01AEA177D00729275 /* AftershipTracker.m */,
-				871C37B21AEA4B1C00729275 /* AftershipCell.h */,
-				871C37B31AEA4B1C00729275 /* AftershipCell.m */,
-				87A9D3211B0365B300922F2D /* ChangePasswordViewController.h */,
-				87A9D3221B0365B300922F2D /* ChangePasswordViewController.m */,
 			);
 			name = viewControllers;
 			sourceTree = "<group>";
@@ -1014,6 +931,7 @@
 				87D173EE1A851C110028A2E4 /* TwitterEmailId.xib */,
 				87A9D3171B0326F800922F2D /* TermsAndConditions.xib */,
 				87A9D3191B03374A00922F2D /* ChangePassword.xib */,
+				8769E0FA1B05002E003963E7 /* privacypolicy.xib */,
 			);
 			name = views;
 			sourceTree = "<group>";
@@ -1280,6 +1198,272 @@
 			path = SWTableViewCell;
 			sourceTree = "<group>";
 		};
+		878C23DF1B05D7DD00FDAAAE /* PrivacyPolicy */ = {
+			isa = PBXGroup;
+			children = (
+				878C23DC1B05D1EF00FDAAAE /* PrivacyViewController.h */,
+				878C23DD1B05D1EF00FDAAAE /* PrivacyViewController.m */,
+			);
+			name = PrivacyPolicy;
+			sourceTree = "<group>";
+		};
+		878C23E01B05D80A00FDAAAE /* TermsAndCondition */ = {
+			isa = PBXGroup;
+			children = (
+				8769E0F71B04F83D003963E7 /* TandCViewController.h */,
+				8769E0F81B04F83D003963E7 /* TandCViewController.m */,
+			);
+			name = TermsAndCondition;
+			sourceTree = "<group>";
+		};
+		878C23E11B05D8E200FDAAAE /* SnachFeed */ = {
+			isa = PBXGroup;
+			children = (
+				874A32881A6CEC16004038D4 /* SnatchFeedCell.h */,
+				874A32891A6CEC16004038D4 /* SnatchFeedCell.m */,
+				874A329F1A6CEC16004038D4 /* SnatchFeed.h */,
+				874A32A01A6CEC16004038D4 /* SnatchFeed.m */,
+			);
+			name = SnachFeed;
+			sourceTree = "<group>";
+		};
+		878C23E21B05D94E00FDAAAE /* AccountSetting */ = {
+			isa = PBXGroup;
+			children = (
+				874A32961A6CEC16004038D4 /* AccountSetting.h */,
+				874A32971A6CEC16004038D4 /* AccountSetting.m */,
+				87D9D2981A89D71C0082AA4C /* AccountSettingCell.h */,
+				87D9D2991A89D71C0082AA4C /* AccountSettingCell.m */,
+			);
+			name = AccountSetting;
+			sourceTree = "<group>";
+		};
+		878C23E31B05D98C00FDAAAE /* ScanCard */ = {
+			isa = PBXGroup;
+			children = (
+				874A32721A6CEC16004038D4 /* ScanCard.h */,
+				874A32731A6CEC16004038D4 /* ScanCard.m */,
+			);
+			name = ScanCard;
+			sourceTree = "<group>";
+		};
+		878C23E41B05DEA300FDAAAE /* AppShare */ = {
+			isa = PBXGroup;
+			children = (
+				87CEC22E1A7CBC59001956EA /* AppShare.h */,
+				87CEC22F1A7CBC59001956EA /* AppShare.m */,
+			);
+			name = AppShare;
+			sourceTree = "<group>";
+		};
+		878C23E51B05E05700FDAAAE /* SnachHistory */ = {
+			isa = PBXGroup;
+			children = (
+				874A32901A6CEC16004038D4 /* SnatchHistory.h */,
+				874A32911A6CEC16004038D4 /* SnatchHistory.m */,
+				87C3E7C31A779FA6008A7830 /* SnachHistoryCell.h */,
+				87C3E7C41A779FA6008A7830 /* SnachHistoryCell.m */,
+			);
+			name = SnachHistory;
+			sourceTree = "<group>";
+		};
+		878C23E61B05EECB00FDAAAE /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				874A32761A6CEC16004038D4 /* SnachItLogin.h */,
+				874A32771A6CEC16004038D4 /* SnachItLogin.m */,
+			);
+			name = Login;
+			sourceTree = "<group>";
+		};
+		878C23E71B05EEEF00FDAAAE /* Signup */ = {
+			isa = PBXGroup;
+			children = (
+				874A32741A6CEC16004038D4 /* SnachitSignup.h */,
+				874A32751A6CEC16004038D4 /* SnachitSignup.m */,
+			);
+			name = Signup;
+			sourceTree = "<group>";
+		};
+		878C23E81B05EF1800FDAAAE /* ChangePassword */ = {
+			isa = PBXGroup;
+			children = (
+				87A9D3211B0365B300922F2D /* ChangePasswordViewController.h */,
+				87A9D3221B0365B300922F2D /* ChangePasswordViewController.m */,
+			);
+			name = ChangePassword;
+			sourceTree = "<group>";
+		};
+		878C23EA1B05EF6E00FDAAAE /* Aftership */ = {
+			isa = PBXGroup;
+			children = (
+				871C37AF1AEA177D00729275 /* AftershipTracker.h */,
+				871C37B01AEA177D00729275 /* AftershipTracker.m */,
+				871C37B21AEA4B1C00729275 /* AftershipCell.h */,
+				871C37B31AEA4B1C00729275 /* AftershipCell.m */,
+			);
+			name = Aftership;
+			sourceTree = "<group>";
+		};
+		878C23EB1B05EFAC00FDAAAE /* Shipping */ = {
+			isa = PBXGroup;
+			children = (
+				874A327E1A6CEC16004038D4 /* AddNewAddressForm.h */,
+				874A327F1A6CEC16004038D4 /* AddNewAddressForm.m */,
+				874A32921A6CEC16004038D4 /* ShippingInformation.h */,
+				874A32931A6CEC16004038D4 /* ShippingInformation.m */,
+				874A333C1A6CECEF004038D4 /* ShippingOverviewAddressCell.h */,
+				874A333D1A6CECEF004038D4 /* ShippingOverviewAddressCell.m */,
+				874A326C1A6CEC16004038D4 /* ShippingInfoOverview.h */,
+				874A326D1A6CEC16004038D4 /* ShippingInfoOverview.m */,
+				874A326E1A6CEC16004038D4 /* ShippingOverview.h */,
+				874A326F1A6CEC16004038D4 /* ShippingOverview.m */,
+				87CF75761A71035F00ADFD7A /* ShippingOverlay.h */,
+				87CF75771A71035F00ADFD7A /* ShippingOverlay.m */,
+				87CF75791A710B5B00ADFD7A /* shippingOverlayCell.h */,
+				87CF757A1A710B5B00ADFD7A /* shippingOverlayCell.m */,
+				87D9D2A11A8A60930082AA4C /* ShippingInfoCell.h */,
+				87D9D2A21A8A60930082AA4C /* ShippingInfoCell.m */,
+				87D9D2A41A8A7A830082AA4C /* ShippingInfoAddCell.h */,
+				87D9D2A51A8A7A830082AA4C /* ShippingInfoAddCell.m */,
+				87D5D5F91A8C8D82006869EF /* ShippingInfoTableCellcell.h */,
+				87D5D5FA1A8C8D82006869EF /* ShippingInfoTableCellcell.m */,
+			);
+			name = Shipping;
+			sourceTree = "<group>";
+		};
+		878C23EC1B05F07C00FDAAAE /* Billing */ = {
+			isa = PBXGroup;
+			children = (
+				874A327A1A6CEC16004038D4 /* AddNewCardForm.h */,
+				874A327B1A6CEC16004038D4 /* AddNewCardForm.m */,
+				874A327C1A6CEC16004038D4 /* PaymentOverview.h */,
+				874A327D1A6CEC16004038D4 /* PaymentOverview.m */,
+				874A32701A6CEC16004038D4 /* BillingInfoOverview.h */,
+				874A32711A6CEC16004038D4 /* BillingInfoOverview.m */,
+				874A32941A6CEC16004038D4 /* BillingInformation.h */,
+				874A32951A6CEC16004038D4 /* BillingInformation.m */,
+				871F7EE41A7285CF00808AB4 /* PaymentOverviewCell.h */,
+				871F7EE51A7285CF00808AB4 /* PaymentOverviewCell.m */,
+				87D9D29B1A8A11E50082AA4C /* BillingInfoCell.h */,
+				87D9D29C1A8A11E50082AA4C /* BillingInfoCell.m */,
+				87D9D29E1A8A4D5D0082AA4C /* BillingInfoScanCell.h */,
+				87D9D29F1A8A4D5D0082AA4C /* BillingInfoScanCell.m */,
+				87D5D5FE1A8CB4CE006869EF /* BillingInformationCell.h */,
+				87D5D5FF1A8CB4CE006869EF /* BillingInformationCell.m */,
+			);
+			name = Billing;
+			sourceTree = "<group>";
+		};
+		878C23ED1B05F0D300FDAAAE /* My Profile */ = {
+			isa = PBXGroup;
+			children = (
+				874A328A1A6CEC16004038D4 /* MyProfileSnachsCell.h */,
+				874A328B1A6CEC16004038D4 /* MyProfileSnachsCell.m */,
+				874A328C1A6CEC16004038D4 /* MyProfileBrandsCell.h */,
+				874A328D1A6CEC16004038D4 /* MyProfileBrandsCell.m */,
+				874A328E1A6CEC16004038D4 /* MyProfileFreindsCell.h */,
+				874A328F1A6CEC16004038D4 /* MyProfileFreindsCell.m */,
+				874A32981A6CEC16004038D4 /* MyProfile.h */,
+				874A32991A6CEC16004038D4 /* MyProfile.m */,
+			);
+			name = "My Profile";
+			sourceTree = "<group>";
+		};
+		878C23EE1B05F0F600FDAAAE /* My Account */ = {
+			isa = PBXGroup;
+			children = (
+				874A329A1A6CEC16004038D4 /* MyAccountOptions.h */,
+				874A329C1A6CEC16004038D4 /* MyAccountOptions.m */,
+				874A329D1A6CEC16004038D4 /* MyAccount.h */,
+				874A329E1A6CEC16004038D4 /* MyAccount.m */,
+			);
+			name = "My Account";
+			sourceTree = "<group>";
+		};
+		878C23EF1B05F12000FDAAAE /* Order */ = {
+			isa = PBXGroup;
+			children = (
+				874A32681A6CEC16004038D4 /* OrderTotalCell.h */,
+				874A32691A6CEC16004038D4 /* OrderTotalCell.m */,
+				874A326A1A6CEC16004038D4 /* OrderTotalOverview.h */,
+				874A326B1A6CEC16004038D4 /* OrderTotalOverview.m */,
+			);
+			name = Order;
+			sourceTree = "<group>";
+		};
+		878C23F01B05F15A00FDAAAE /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				874A32781A6CEC16004038D4 /* SnachitStartScreen.h */,
+				874A32791A6CEC16004038D4 /* SnachitStartScreen.m */,
+			);
+			name = Splash;
+			sourceTree = "<group>";
+		};
+		878C23F11B05F18700FDAAAE /* Validations */ = {
+			isa = PBXGroup;
+			children = (
+				873559DF1AAD5CFA00DA79D6 /* RegexValidator.h */,
+				873559E01AAD5CFA00DA79D6 /* RegexValidator.m */,
+			);
+			name = Validations;
+			sourceTree = "<group>";
+		};
+		878C23F21B05F1AC00FDAAAE /* Checkout */ = {
+			isa = PBXGroup;
+			children = (
+				874A32661A6CEC16004038D4 /* ProductSnached.h */,
+				874A32671A6CEC16004038D4 /* ProductSnached.m */,
+				874A32861A6CEC16004038D4 /* SnachProductDetails.h */,
+				874A32871A6CEC16004038D4 /* SnachProductDetails.m */,
+				874A32801A6CEC16004038D4 /* SnachConfirmCell.h */,
+				874A32811A6CEC16004038D4 /* SnachConfirmCell.m */,
+				874A32821A6CEC16004038D4 /* SnachCheckDetails.h */,
+				874A32831A6CEC16004038D4 /* SnachCheckDetails.m */,
+			);
+			name = Checkout;
+			sourceTree = "<group>";
+		};
+		878C23F31B05F1D400FDAAAE /* Timeup */ = {
+			isa = PBXGroup;
+			children = (
+				874A32841A6CEC16004038D4 /* SnatchTimeUp.h */,
+				874A32851A6CEC16004038D4 /* SnatchTimeUp.m */,
+			);
+			name = Timeup;
+			sourceTree = "<group>";
+		};
+		878C23F41B05F1E900FDAAAE /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				874A32621A6CEC16004038D4 /* PushNoAnimationSegue.h */,
+				874A32631A6CEC16004038D4 /* PushNoAnimationSegue.m */,
+				871E98631AD29C7A00D5A7BF /* Reachability.h */,
+				871E98641AD29C7A00D5A7BF /* Reachability.m */,
+				874A325E1A6CEC16004038D4 /* global.h */,
+				874A325F1A6CEC16004038D4 /* global.m */,
+				874A32601A6CEC16004038D4 /* AppDelegate.h */,
+				874A32611A6CEC16004038D4 /* AppDelegate.m */,
+				87D624D11A97449000D6D645 /* Common.h */,
+				87D624D21A97449000D6D645 /* Common.m */,
+				8702C0671ABA98FD0095752A /* UIFont+UIFont_SytemFontOverride.h */,
+				8702C0681ABA98FD0095752A /* UIFont+UIFont_SytemFontOverride.m */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
+		878C23F51B05F23F00FDAAAE /* TwitterLogin */ = {
+			isa = PBXGroup;
+			children = (
+				874A32641A6CEC16004038D4 /* TwitterViewController.h */,
+				874A32651A6CEC16004038D4 /* TwitterViewController.m */,
+				87D173F01A8522B50028A2E4 /* TwitterEmailIdView.h */,
+				87D173F11A8522B50028A2E4 /* TwitterEmailIdView.m */,
+			);
+			name = TwitterLogin;
+			sourceTree = "<group>";
+		};
 		87C651A51A7BD1FB00B3ED11 /* TextFieldValidator */ = {
 			isa = PBXGroup;
 			children = (
@@ -1465,6 +1649,7 @@
 				874A33221A6CECD8004038D4 /* cameraIcon.png in Resources */,
 				87390A071AFCA13E005C83DB /* closeout_icon.png in Resources */,
 				87C76B531ACAE8E9001AE47A /* placeholder.png in Resources */,
+				8769E0FB1B05002E003963E7 /* privacypolicy.xib in Resources */,
 				874A33261A6CECD8004038D4 /* deliveredIcon.png in Resources */,
 				87C670F01A78AF5A0035A1BB /* gplus.png in Resources */,
 				87307F2B1AB2E13E00CD5888 /* snach_feed_icon.png in Resources */,
@@ -1584,6 +1769,7 @@
 				874A32BD1A6CEC16004038D4 /* AccountSetting.m in Sources */,
 				87D9D29D1A8A11E50082AA4C /* BillingInfoCell.m in Sources */,
 				871C37BC1AEA72B000729275 /* Checkpoints.m in Sources */,
+				878C23DE1B05D1EF00FDAAAE /* PrivacyViewController.m in Sources */,
 				87C77A891A95DA5A000CDED0 /* Brand.m in Sources */,
 				87C3E7C51A779FA6008A7830 /* SnachHistoryCell.m in Sources */,
 				872BB2911A7385B9009C3E2D /* SnoopingUserDetails.m in Sources */,
@@ -1629,13 +1815,13 @@
 				878B7CD01AE4FD0C0015E1B5 /* SWUtilityButtonView.m in Sources */,
 				874A32C11A6CEC16004038D4 /* MyAccount.m in Sources */,
 				878644A81A8DDF130038EC46 /* Product.m in Sources */,
-				873AFC5D1B01BD8400F55436 /* T&CViewController.m in Sources */,
 				871C37B11AEA177D00729275 /* AftershipTracker.m in Sources */,
 				87A9D3231B0365B300922F2D /* ChangePasswordViewController.m in Sources */,
 				874A32BC1A6CEC16004038D4 /* BillingInformation.m in Sources */,
 				87D9D2A61A8A7A830082AA4C /* ShippingInfoAddCell.m in Sources */,
 				8776492B1AB803CB00FEEB05 /* OAProblemTW.m in Sources */,
 				874A32B51A6CEC16004038D4 /* SnachProductDetails.m in Sources */,
+				8769E0F91B04F83D003963E7 /* TandCViewController.m in Sources */,
 				874A32B01A6CEC16004038D4 /* PaymentOverview.m in Sources */,
 				877649251AB803CB00FEEB05 /* OACallTW.m in Sources */,
 				874A32B61A6CEC16004038D4 /* SnatchFeedCell.m in Sources */,

@@ -157,8 +157,6 @@ CGFloat animatedDistance;
     BillingInfoScanCell *cell = (BillingInfoScanCell *)[tableView dequeueReusableCellWithIdentifier:@"billingInfoScanCell" forIndexPath:indexPath];
     cell.profilePicImg.layer.cornerRadius=RADIOUS;
     cell.profilePicImg.clipsToBounds=YES;
-    cell.profilePicImg.layer.borderWidth=BORDERWIDTH;
-    cell.profilePicImg.layer.borderColor=[UIColor whiteColor].CGColor;
     if(![user.fullName isKindOfClass:[NSNull class]])
         cell.fullnameLbl.text=[[NSString stringWithFormat:@"%@",user.fullName] uppercaseString];
     

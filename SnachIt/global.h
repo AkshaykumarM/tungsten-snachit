@@ -10,6 +10,7 @@
 #import <UIKit/UIKit.h>
 #define DEFAULT_SNOOPTIME 30
 //#define ec2maschineIP @"http://192.168.0.121:8000/"
+
 #define ec2maschineIP @"http://ec2-52-1-195-249.compute-1.amazonaws.com/"
 #define SSOUSING @"SSOUsing"
 #define USERNAME @"Username"
