@@ -3,15 +3,133 @@
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="OpenSans-Bold.ttf">
+            <string>OpenSans-Bold</string>
+        </mutableArray>
+        <mutableArray key="OpenSans-Regular.ttf">
+            <string>OpenSans</string>
+            <string>OpenSans</string>
+            <string>OpenSans</string>
+        </mutableArray>
+        <mutableArray key="OpenSans-Semibold.ttf">
+            <string>OpenSans-Semibold</string>
+        </mutableArray>
+    </customFonts>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="TandCViewController">
+            <connections>
+                <outlet property="view" destination="iN0-l3-epB" id="JN3-KD-JbR"/>
+            </connections>
+        </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view contentMode="scaleToFill" id="iN0-l3-epB">
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SNACH.IT TERMS &amp; CONDITIONS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkK-Ov-UNx">
+                    <rect key="frame" x="0.0" y="90" width="320" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="NNP-kV-yW2"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="14"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                    <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="urA-Uc-buf">
+                    <rect key="frame" x="26" y="126" width="268" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="268" id="45g-lI-MDi"/>
+                        <constraint firstAttribute="height" constant="18" id="qYb-ui-Gd2"/>
+                    </constraints>
+                    <string key="text">(Last Updated 3 May 2015)
+</string>
+                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="OMm-P4-L3s">
+                    <rect key="frame" x="26" y="144" width="268" height="247"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" priority="750" constant="210" id="7Bo-kH-iuS"/>
+                    </constraints>
+                    <string key="text">The Snach.it Application (“App”) is owned by and provided to you by Snachit, LLC (“Company”).  These Terms &amp; Conditions (“Terms”) govern your use of the App.  By downloading or using the App you agree to all of the provisions in these Terms.  If you do not agree with all of the provisions in these Terms, please do not download or use the App.  We periodically change, add, modify and delete portions of these Terms.  It is your responsibility to review these Terms each time you use the App.
+</string>
+                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ordering" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fjA-nk-VNH">
+                    <rect key="frame" x="26" y="391" width="69" height="20"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="20" id="j0v-gg-23s"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="16"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="Q1J-ho-mrA">
+                    <rect key="frame" x="26" y="411" width="268" height="150"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="150" id="CgZ-T0-Ydb"/>
+                    </constraints>
+                    <string key="text">To place your order, click the snach.it button for the item you want to purchase from the snach feed. You will have 30 seconds to click the buy button or the offer will disappear. Once you click on the buy button, you will be provided additional time </string>
+                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="14"/>
+                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                </textView>
+                <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ChD-pA-4GA">
+                    <rect key="frame" x="0.0" y="16" width="320" height="44"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="44" id="G1D-lE-2hs"/>
+                    </constraints>
+                    <items>
+                        <navigationItem title="terms &amp; conditions" id="D9A-HH-oDC">
+                            <barButtonItem key="leftBarButtonItem" style="plain" id="jwC-17-wXI">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ATm-LC-6eF">
+                                    <rect key="frame" x="16" y="6" width="30" height="30"/>
+                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <state key="normal" image="close-out_pink.png">
+                                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                    </state>
+                                    <connections>
+                                        <action selector="close:" destination="-1" eventType="touchUpInside" id="9rE-HV-LUT"/>
+                                    </connections>
+                                </button>
+                                <color key="tintColor" red="0.61568627450000002" green="0.1019607843" blue="0.47058823529999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </barButtonItem>
+                        </navigationItem>
+                    </items>
+                </navigationBar>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="OMm-P4-L3s" firstAttribute="top" secondItem="urA-Uc-buf" secondAttribute="bottom" id="4nT-qv-KQA"/>
+                <constraint firstItem="urA-Uc-buf" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="26" id="8I0-oC-F1F"/>
+                <constraint firstItem="WkK-Ov-UNx" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ahn-3E-KvH"/>
+                <constraint firstItem="fjA-nk-VNH" firstAttribute="top" secondItem="OMm-P4-L3s" secondAttribute="bottom" id="CFa-Xo-JqN"/>
+                <constraint firstItem="WkK-Ov-UNx" firstAttribute="top" secondItem="ChD-pA-4GA" secondAttribute="bottom" constant="30" id="Cj9-ts-Ei0"/>
+                <constraint firstItem="Q1J-ho-mrA" firstAttribute="width" secondItem="OMm-P4-L3s" secondAttribute="width" id="E8Z-4W-zCa"/>
+                <constraint firstItem="urA-Uc-buf" firstAttribute="leading" secondItem="fjA-nk-VNH" secondAttribute="leading" id="FQG-gz-nWK"/>
+                <constraint firstItem="Q1J-ho-mrA" firstAttribute="width" secondItem="OMm-P4-L3s" secondAttribute="width" id="I95-Wd-XK8"/>
+                <constraint firstItem="ChD-pA-4GA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Kna-v3-0gv"/>
+                <constraint firstAttribute="trailing" secondItem="ChD-pA-4GA" secondAttribute="trailing" id="MCW-7j-tf0"/>
+                <constraint firstAttribute="trailing" secondItem="WkK-Ov-UNx" secondAttribute="trailing" id="Ora-qt-dgn"/>
+                <constraint firstItem="ChD-pA-4GA" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="TAw-6l-rNK"/>
+                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Q1J-ho-mrA" secondAttribute="bottom" constant="5" id="XO1-eV-vft"/>
+                <constraint firstItem="Q1J-ho-mrA" firstAttribute="top" secondItem="fjA-nk-VNH" secondAttribute="bottom" id="YJi-ZJ-qrq"/>
+                <constraint firstItem="OMm-P4-L3s" firstAttribute="width" secondItem="WkK-Ov-UNx" secondAttribute="width" constant="-52" id="fvW-Nu-SuK"/>
+                <constraint firstItem="OMm-P4-L3s" firstAttribute="centerX" secondItem="WkK-Ov-UNx" secondAttribute="centerX" id="hud-7I-nhR"/>
+                <constraint firstItem="urA-Uc-buf" firstAttribute="top" secondItem="WkK-Ov-UNx" secondAttribute="bottom" constant="15" id="iWq-Bj-bBf"/>
+                <constraint firstAttribute="trailing" secondItem="urA-Uc-buf" secondAttribute="trailing" constant="26" id="kUg-Q5-UJ5"/>
+                <constraint firstItem="Q1J-ho-mrA" firstAttribute="centerX" secondItem="OMm-P4-L3s" secondAttribute="centerX" id="sFx-0z-1mY"/>
+            </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="248" y="301"/>
+            <point key="canvasLocation" x="272" y="301"/>
         </view>
     </objects>
+    <resources>
+        <image name="close-out_pink.png" width="48" height="48"/>
+    </resources>
 </document>
