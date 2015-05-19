@@ -279,6 +279,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 }
 
 
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown && interfaceOrientation == UIInterfaceOrientationPortrait);
