@@ -13,4 +13,5 @@
 - (IBAction)closeBtn:(id)sender;
 
 @property (weak, nonatomic) IBOutlet UIView *scanView;
+
 @end

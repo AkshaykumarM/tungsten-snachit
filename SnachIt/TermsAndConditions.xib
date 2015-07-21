@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <customFonts key="customFonts">
-        <mutableArray key="OpenSans-Bold.ttf">
-            <string>OpenSans-Bold</string>
-        </mutableArray>
         <mutableArray key="OpenSans-Regular.ttf">
             <string>OpenSans</string>
         </mutableArray>
         <mutableArray key="OpenSans-Semibold.ttf">
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
             <string>OpenSans-Semibold</string>
         </mutableArray>
     </customFonts>
@@ -25,49 +36,6 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SNACH.IT TERMS &amp; CONDITIONS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WkK-Ov-UNx">
-                    <rect key="frame" x="0.0" y="90" width="320" height="21"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="21" id="NNP-kV-yW2"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans-Bold" family="Open Sans" pointSize="14"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                    <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="urA-Uc-buf">
-                    <rect key="frame" x="26" y="126" width="268" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="268" id="45g-lI-MDi"/>
-                        <constraint firstAttribute="height" constant="18" id="qYb-ui-Gd2"/>
-                    </constraints>
-                    <string key="text">(Last Updated 3 May 2015)
-</string>
-                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="OMm-P4-L3s">
-                    <rect key="frame" x="26" y="144" width="268" height="218"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="height" priority="750" constant="210" id="7Bo-kH-iuS"/>
-                    </constraints>
-                    <string key="text">The Snach.it Application (“App”) is owned by and provided to you by Snachit, LLC (“Company”).  These Terms &amp; Conditions (“Terms”) govern your use of the App.  By downloading or using the App you agree to all of the provisions in these Terms.  If you do not agree with all of the provisions in these Terms, please do not download or use the App.  We periodically change, add, modify and delete portions of these Terms.  It is your responsibility to review these Terms each time you use the App.
-</string>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                </textView>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="Q1J-ho-mrA">
-                    <rect key="frame" x="26" y="382" width="268" height="150"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="150" id="CgZ-T0-Ydb"/>
-                    </constraints>
-                    <string key="text">To place your order, click the snach.it button for the item you want to purchase from the snach feed. You will have 30 seconds to click the buy button or the offer will disappear. Once you click on the buy button, you will be provided additional time </string>
-                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                </textView>
                 <navigationBar contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ChD-pA-4GA">
                     <rect key="frame" x="0.0" y="16" width="320" height="44"/>
                     <constraints>
@@ -79,7 +47,7 @@
                                 <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="ATm-LC-6eF">
                                     <rect key="frame" x="16" y="7" width="28" height="28"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" image="closeout_icon.png">
+                                    <state key="normal" image="purpleClose">
                                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                     </state>
                                     <connections>
@@ -91,43 +59,354 @@
                         </navigationItem>
                     </items>
                 </navigationBar>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ordering" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fjA-nk-VNH">
-                    <rect key="frame" x="26" y="362" width="69" height="20"/>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="utx-M7-Yja">
+                    <rect key="frame" x="0.0" y="60" width="320" height="508"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y2g-o4-qRu">
+                            <rect key="frame" x="0.0" y="-1800" width="320" height="3800"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="SNACH.IT TERMS &amp; CONDITIONS" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="d5Z-lC-E8f">
+                                    <rect key="frame" x="0.0" y="8" width="320" height="21"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                    <color key="shadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sKU-PG-GN2">
+                                    <rect key="frame" x="16" y="37" width="288" height="18"/>
+                                    <string key="text">(Last Updated 3 May 2015)
+</string>
+                                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="J8w-Z6-dKM">
+                                    <rect key="frame" x="16" y="63" width="288" height="218"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">The Snach.it Application (“App”) is owned by and provided to you by Snachit, LLC (“Company”). These Terms &amp; Conditions (“Terms”) govern your use of the App. By downloading or using the App you agree to all of the provisions in these Terms. If you do not agree with all of the provisions in these Terms, please do not download or use the App. We periodically change, add, modify and delete portions of these Terms. It is your responsibility to review these Terms each time you use the App.
+</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Ordering" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FCo-4K-j6M">
+                                    <rect key="frame" x="16" y="291" width="61" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="xms-ol-Uhd">
+                                    <rect key="frame" x="16" y="311" width="288" height="133"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">To place your order, click the snach.it button for the item you want to purchase from the snach feed.You will have 30 seconds to click the buy button or the offer will disappear.Once you click on the buy button, you will be provided additional time.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Payment" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mvz-HQ-cOC">
+                                    <rect key="frame" x="16" y="454" width="61" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="ZGQ-0O-nr9">
+                                    <rect key="frame" x="16" y="474" width="288" height="110"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">You agree to pay for your items and any applicable taxes, shipping or handling as such costs are specified in the App at the time you submit your order.Payment must be made prior to delivery of your order and by such methods as permitted within the App.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Shipping" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6cy-7i-Im5">
+                                    <rect key="frame" x="16" y="594" width="59" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="CQk-66-Tss">
+                                    <rect key="frame" x="16" y="614" width="288" height="234"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">Items ordered through the App ship direct to you via UPS, USPS, FedEx or other reputable carrier.Please allow up to 7 business days to receive your order.Our goal is to exceed our shipping estimate, but sometimes unforeseen issues cause shipping delays.We typically dispatch your order the business day following our receipt of your order.Unless we make a mistake with your order, we do not refund or credit shipping charges.If we make a mistake with your order, we will permit you to return the item and we will pay the cost of return shipping.  Unfortunately, we only ship to United States addresses at this time.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Billing Errors" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hcD-uR-g09">
+                                    <rect key="frame" x="16" y="858" width="87" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="NkJ-Vp-x4h">
+                                    <rect key="frame" x="16" y="878" width="288" height="110"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">If you believe that you have been billed in error, please notify us immediately.If we do not hear from you within 30 days after such billing error first appears on any count statement, the billing will be deemed 
+accepted by you.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Customer Service" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OsD-a1-qcg">
+                                    <rect key="frame" x="16" y="998" width="118" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="moa-OG-02T">
+                                    <rect key="frame" x="16" y="1018" width="288" height="94"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">Our goal is to provide you with the best possible customer experience.If you have any questions, you may contact us by emailing us at support@snach.it. We will do our best to resolve any concerns you have.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Representations" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xAQ-gl-zho">
+                                    <rect key="frame" x="16" y="1122" width="146" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="5Uj-sY-ZlB">
+                                    <rect key="frame" x="16" y="1142" width="288" height="172"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">You represent that you are at least 18 years of age and have attained legal majority in the jurisdiction in which you reside and that you will not permit a person under 18 to place orders through the App.You are responsible for maintaining and promptly updating your account information with us and keeping such information (and any passwords given to you for the purposes of accessing the App) secure against unauthorized access.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disclaimer" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Unr-dd-QhF">
+                                    <rect key="frame" x="16" y="1324" width="72" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="cPG-Kr-UEw">
+                                    <rect key="frame" x="16" y="1344" width="288" height="203"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">The App is provided on an “as is” basis.  We make no warranties that the App will be error-free or uninterrupted.Except as otherwise provided for by the manufacturer of the item(s) in your order, the item(s) you order through the App are provided to you with no warranty.  All express and implied warranties with respect to the App and the items you order through the App are disclaimed, including but not limited to the implied warranties of merchantability, fitness for a particular purpose and non-infringement.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Limitation of Liability" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="r2w-7J-S2h">
+                                    <rect key="frame" x="16" y="1557" width="144" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="hi8-F3-RjY">
+                                    <rect key="frame" x="16" y="1577" width="288" height="187"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">OUR AGGREGATE LIABILITY TO YOU FOR ANY AND ALL CLAIMS (INCLUDING, BUT NOT LIMITED TO CLAIMS IN CONTRACT, TORT OR ANY OTHER LEGAL THEORY) SHALL NOT EVENT EXCEED THE HIGHEST COST OF ANY ORDER WITH US IN THE 12 MONTH PERIOD PRECEEDING THE ARISE OF YOUR CLAIM.UNDER NO CIRCUMSTANCES SHALL WE BE LIABLE TO YOU FOR SPECIAL, INCIDENTAL, INDIRECT OR CONSEQUENTIAL DAMAGES.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Indemnification" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="iYB-gs-2wn">
+                                    <rect key="frame" x="16" y="1774" width="108" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="OiH-uD-Ggn">
+                                    <rect key="frame" x="16" y="1794" width="288" height="327"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">You agree to indemnify, defend and hold harmless Company, its officers, directors, shareholders, employees, independent contractors, telecommunication providers, agents, and affiliates from and against any and all claims, actions, loss, liabilities, expenses, inquiries, fines, fees, penalties, costs, or demands, including without limitation legal fees and accounting fees, for all damages directly, indirectly, and/or consequentially resulting or allegedly resulting from your use of the App contrary to these Terms, your acts or omissions, or your breach of any of the provision of these Terms.We will promptly notify you by electronic mail of any such claim or suit, and cooperate fully (at your expense) in the defense of such claim or suit.  If we do not hear from you promptly, we reserve the right to defend such claim or suit and seek full recompense from you.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Notices" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DkB-4p-Wei">
+                                    <rect key="frame" x="16" y="2131" width="51" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="i0m-fi-GGL">
+                                    <rect key="frame" x="16" y="2151" width="288" height="249"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">Any notice or other communications between us shall be given by sending an e-mail to Company’s customer service email (if notice by you) or to your last known email address you have on file with us (if notice by us).Such notices or communications (where properly addressed) shall be considered received on the earliest of (i) the email being knowledged by the recipient as received; (ii) receipt by the sender of an automated message indicating successful delivery or the email having been opened; or (iii) the expiry of forty-eight (48) hours after transmission, provided that the sender has not received notification of unsuccessful transmission.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Termination" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="mEH-zk-rTk">
+                                    <rect key="frame" x="16" y="2410" width="83" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="vVh-3a-8wC">
+                                    <rect key="frame" x="16" y="2430" width="288" height="141"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We reserve the right to terminate your access to the App should we believe that you have violated any of the provision of these Terms or if we believe you have initiated fraudulent chargebacks, excessive returns, ineligible discounts or any other conduct designed to injure, harass or disrupt the App or the Company’s business operations.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fraud" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zJA-L0-uaP">
+                                    <rect key="frame" x="16" y="2581" width="45" height="21"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="nID-Cx-vnT">
+                                    <rect key="frame" x="16" y="2602" width="288" height="373"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We reserve the right, but undertake no obligation, to actively report and prosecute actual and suspected credit card fraud.We may, in our discretion, require further authorization from you such as a telephone confirmation of your order and other information.We reserve the right to cancel, delay, refuse to ship, or recall from the shipper any order if fraud is suspected.  We capture certain information during the order process, including time, date, IP address, and other information that will be used to locate and identify individuals committing fraud of any kind, which includes the use of multiple accounts which is strictly prohibited.If any order is suspected to be fraudulent, we reserve the right, but undertake no obligation, to submit all records, with or without a subpoena, to all law enforcement agencies and to the credit card company for fraud investigation.We reserve the right to cooperate with authorities to prosecute offenders to the fullest extent of the law.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sales Tax" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5in-ZW-wvv">
+                                    <rect key="frame" x="16" y="2985" width="61" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="b2Z-3r-wW8">
+                                    <rect key="frame" x="16" y="3005" width="288" height="125"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">You are solely responsible for paying any sales tax indicated within the App.If no tax is indicated within the App, depending on the jurisdiction in which you reside, you may be required to remit use tax on your purchases to the applicable tax authorities in the jurisdiction in which you reside.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Intellectual Property Rights" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RRZ-bV-4NI">
+                                    <rect key="frame" x="16" y="3140" width="184" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="Kf4-9E-3hS">
+                                    <rect key="frame" x="16" y="3160" width="288" height="249"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">The App and all content appearing therein, are the sole and exclusive property of the Company or its licensors.No license or ownership rights in or to any content within the App are conveyed to you by reason of these Terms or your purchase of items through the App.The App and its content are protected under the laws of copyright and trademark.Unless otherwise permitted by law, you may not copy, republish or transmit any portion of the App without Company’s prior written consent.We respect and take seriously the intellectual property of others, please feel to contact us at legal@snach.it with any questions or concerns.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Miscellaneous" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WyQ-VW-mfj">
+                                    <rect key="frame" x="16" y="3419" width="96" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="cgo-mK-zA9">
+                                    <rect key="frame" x="16" y="3439" width="288" height="342"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">These Terms are governed by the law of the state of Utah, without application of conflicts of law principles.All disputes between you and the Company shall be brought exclusively in the state or federal courts located in Salt Lake County, Utah.The prevailing party to any dispute shall be entitled to recover its costs, expenses and reasonable attorney fees from the non-prevailing party.If for any reason a court finds any provision of these Terms to be unenforceable, that provision will be enforced to the maximum extent permissible and the remainder of these Terms will continue in full force and effect.The non-enforcement of any provision of these Terms by Company shall not be deemed a waiver.These Terms constitute the entire agreement and understanding between the parties with respect to your access to and use of the App and supersedes all prior agreements and understandings between the parties.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="width" secondItem="NkJ-Vp-x4h" secondAttribute="width" id="2Ap-c8-RVM"/>
+                                <constraint firstItem="vVh-3a-8wC" firstAttribute="width" secondItem="nID-Cx-vnT" secondAttribute="width" id="2bs-1X-M1K"/>
+                                <constraint firstItem="r2w-7J-S2h" firstAttribute="leading" secondItem="cPG-Kr-UEw" secondAttribute="leading" id="3MW-z0-t6a"/>
+                                <constraint firstItem="Kf4-9E-3hS" firstAttribute="top" secondItem="RRZ-bV-4NI" secondAttribute="bottom" id="4nI-nH-dCS"/>
+                                <constraint firstItem="5Uj-sY-ZlB" firstAttribute="top" secondItem="xAQ-gl-zho" secondAttribute="bottom" id="5Dd-9k-60A"/>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="width" secondItem="5Uj-sY-ZlB" secondAttribute="width" id="6Cb-S1-WTX"/>
+                                <constraint firstItem="sKU-PG-GN2" firstAttribute="width" secondItem="J8w-Z6-dKM" secondAttribute="width" id="6D2-h1-bgK"/>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="leading" secondItem="xAQ-gl-zho" secondAttribute="leading" id="6HI-Sj-9GS"/>
+                                <constraint firstItem="sKU-PG-GN2" firstAttribute="top" secondItem="d5Z-lC-E8f" secondAttribute="bottom" constant="8" id="6Zd-R9-dOM"/>
+                                <constraint firstItem="d5Z-lC-E8f" firstAttribute="top" secondItem="Y2g-o4-qRu" secondAttribute="top" constant="8" id="7Ax-5P-oOm"/>
+                                <constraint firstItem="vVh-3a-8wC" firstAttribute="top" secondItem="mEH-zk-rTk" secondAttribute="bottom" id="7iQ-Zq-tsp"/>
+                                <constraint firstItem="nID-Cx-vnT" firstAttribute="top" secondItem="zJA-L0-uaP" secondAttribute="bottom" id="87a-b0-QYV"/>
+                                <constraint firstItem="OiH-uD-Ggn" firstAttribute="width" secondItem="i0m-fi-GGL" secondAttribute="width" id="8ML-gz-A3K"/>
+                                <constraint firstItem="OiH-uD-Ggn" firstAttribute="centerX" secondItem="i0m-fi-GGL" secondAttribute="centerX" id="A7i-I9-r59"/>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="top" secondItem="OsD-a1-qcg" secondAttribute="bottom" id="Afz-kZ-2gU"/>
+                                <constraint firstItem="d5Z-lC-E8f" firstAttribute="leading" secondItem="Y2g-o4-qRu" secondAttribute="leading" id="DL2-LO-8mm"/>
+                                <constraint firstItem="cgo-mK-zA9" firstAttribute="top" secondItem="WyQ-VW-mfj" secondAttribute="bottom" id="GGR-Ie-9IS"/>
+                                <constraint firstItem="Kf4-9E-3hS" firstAttribute="leading" secondItem="WyQ-VW-mfj" secondAttribute="leading" id="HUE-8V-aST"/>
+                                <constraint firstItem="FCo-4K-j6M" firstAttribute="top" secondItem="J8w-Z6-dKM" secondAttribute="bottom" constant="10" id="IWO-8K-GZs"/>
+                                <constraint firstItem="5in-ZW-wvv" firstAttribute="leading" secondItem="nID-Cx-vnT" secondAttribute="leading" id="Jq9-r9-FYC"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="top" secondItem="6cy-7i-Im5" secondAttribute="bottom" id="KFj-vw-ih1"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="centerX" secondItem="ZGQ-0O-nr9" secondAttribute="centerX" id="MVl-V6-bcS"/>
+                                <constraint firstItem="J8w-Z6-dKM" firstAttribute="top" secondItem="sKU-PG-GN2" secondAttribute="bottom" constant="8" id="NQz-qY-ERE"/>
+                                <constraint firstItem="i0m-fi-GGL" firstAttribute="top" secondItem="DkB-4p-Wei" secondAttribute="bottom" id="NT3-rR-sQh"/>
+                                <constraint firstItem="cPG-Kr-UEw" firstAttribute="width" secondItem="hi8-F3-RjY" secondAttribute="width" id="NYD-B9-Qzw"/>
+                                <constraint firstItem="cPG-Kr-UEw" firstAttribute="centerX" secondItem="hi8-F3-RjY" secondAttribute="centerX" id="OyN-HC-wrl"/>
+                                <constraint firstItem="iYB-gs-2wn" firstAttribute="top" secondItem="hi8-F3-RjY" secondAttribute="bottom" constant="10" id="Pwm-ef-H6J"/>
+                                <constraint firstItem="Unr-dd-QhF" firstAttribute="leading" secondItem="5Uj-sY-ZlB" secondAttribute="leading" id="QQY-fh-LXq"/>
+                                <constraint firstItem="FCo-4K-j6M" firstAttribute="leading" secondItem="J8w-Z6-dKM" secondAttribute="leading" id="RYB-XE-0pg"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="leading" secondItem="Mvz-HQ-cOC" secondAttribute="leading" id="Rz5-m9-nka"/>
+                                <constraint firstItem="Unr-dd-QhF" firstAttribute="top" secondItem="5Uj-sY-ZlB" secondAttribute="bottom" constant="10" id="Thg-Dy-9lg"/>
+                                <constraint firstItem="hcD-uR-g09" firstAttribute="top" secondItem="CQk-66-Tss" secondAttribute="bottom" constant="10" id="Tzx-iI-Nxp"/>
+                                <constraint firstItem="cgo-mK-zA9" firstAttribute="centerX" secondItem="Kf4-9E-3hS" secondAttribute="centerX" id="UDj-s9-bhu"/>
+                                <constraint firstItem="i0m-fi-GGL" firstAttribute="width" secondItem="vVh-3a-8wC" secondAttribute="width" id="UPP-Lp-mHd"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="centerX" secondItem="ZGQ-0O-nr9" secondAttribute="centerX" id="Us1-pZ-tUu"/>
+                                <constraint firstAttribute="trailing" secondItem="sKU-PG-GN2" secondAttribute="trailing" constant="16" id="X3l-D1-NK9"/>
+                                <constraint firstAttribute="bottom" secondItem="cgo-mK-zA9" secondAttribute="bottom" constant="19" id="XZU-yM-hhn"/>
+                                <constraint firstItem="OsD-a1-qcg" firstAttribute="leading" secondItem="NkJ-Vp-x4h" secondAttribute="leading" id="Xgo-8L-Juq"/>
+                                <constraint firstItem="mEH-zk-rTk" firstAttribute="leading" secondItem="i0m-fi-GGL" secondAttribute="leading" id="Y9v-9X-mKH"/>
+                                <constraint firstItem="OiH-uD-Ggn" firstAttribute="top" secondItem="iYB-gs-2wn" secondAttribute="bottom" id="ZJi-SO-iUZ"/>
+                                <constraint firstAttribute="height" relation="lessThanOrEqual" priority="750" constant="3800" id="Zak-OZ-d5z"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="width" secondItem="ZGQ-0O-nr9" secondAttribute="width" id="ZmS-Q1-AiK"/>
+                                <constraint firstAttribute="trailing" secondItem="d5Z-lC-E8f" secondAttribute="trailing" id="b46-zr-xbK"/>
+                                <constraint firstItem="i0m-fi-GGL" firstAttribute="centerX" secondItem="vVh-3a-8wC" secondAttribute="centerX" id="bCh-fl-6db"/>
+                                <constraint firstItem="NkJ-Vp-x4h" firstAttribute="top" secondItem="hcD-uR-g09" secondAttribute="bottom" id="bkg-Ki-dXA"/>
+                                <constraint firstItem="6cy-7i-Im5" firstAttribute="leading" secondItem="ZGQ-0O-nr9" secondAttribute="leading" id="cWS-rd-Vnz"/>
+                                <constraint firstItem="cPG-Kr-UEw" firstAttribute="top" secondItem="Unr-dd-QhF" secondAttribute="bottom" id="cpS-Og-dnK"/>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="centerX" secondItem="NkJ-Vp-x4h" secondAttribute="centerX" id="cu1-9g-l7l"/>
+                                <constraint firstItem="Kf4-9E-3hS" firstAttribute="width" secondItem="b2Z-3r-wW8" secondAttribute="width" id="cyb-4n-Vxe"/>
+                                <constraint firstItem="6cy-7i-Im5" firstAttribute="top" secondItem="ZGQ-0O-nr9" secondAttribute="bottom" constant="10" id="dsp-96-tXj"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="width" secondItem="J8w-Z6-dKM" secondAttribute="width" id="dyu-iB-cDr"/>
+                                <constraint firstItem="RRZ-bV-4NI" firstAttribute="top" secondItem="b2Z-3r-wW8" secondAttribute="bottom" constant="10" id="f45-Lr-9ZJ"/>
+                                <constraint firstItem="sKU-PG-GN2" firstAttribute="leading" secondItem="Y2g-o4-qRu" secondAttribute="leading" constant="16" id="fxc-yD-DVx"/>
+                                <constraint firstItem="cPG-Kr-UEw" firstAttribute="width" secondItem="5Uj-sY-ZlB" secondAttribute="width" id="h7e-LQ-gRK"/>
+                                <constraint firstItem="OiH-uD-Ggn" firstAttribute="leading" secondItem="DkB-4p-Wei" secondAttribute="leading" id="hLL-RA-POS"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="centerX" secondItem="NkJ-Vp-x4h" secondAttribute="centerX" id="hSk-2M-PpG"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="width" secondItem="NkJ-Vp-x4h" secondAttribute="width" id="hVW-7x-k59"/>
+                                <constraint firstItem="WyQ-VW-mfj" firstAttribute="top" secondItem="Kf4-9E-3hS" secondAttribute="bottom" constant="10" id="ink-n6-GVc"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="top" secondItem="FCo-4K-j6M" secondAttribute="bottom" id="jMe-pT-jWE"/>
+                                <constraint firstItem="vVh-3a-8wC" firstAttribute="centerX" secondItem="nID-Cx-vnT" secondAttribute="centerX" id="jX5-fw-33t"/>
+                                <constraint firstItem="b2Z-3r-wW8" firstAttribute="leading" secondItem="RRZ-bV-4NI" secondAttribute="leading" id="jgD-zg-zQV"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="leading" secondItem="hcD-uR-g09" secondAttribute="leading" id="jwR-Yh-jHn"/>
+                                <constraint firstItem="r2w-7J-S2h" firstAttribute="top" secondItem="cPG-Kr-UEw" secondAttribute="bottom" constant="10" id="lGR-jd-ezv"/>
+                                <constraint firstItem="xms-ol-Uhd" firstAttribute="centerX" secondItem="J8w-Z6-dKM" secondAttribute="centerX" id="lYw-6x-nqk"/>
+                                <constraint firstItem="DkB-4p-Wei" firstAttribute="top" secondItem="OiH-uD-Ggn" secondAttribute="bottom" constant="10" id="lvi-xy-eEB"/>
+                                <constraint firstItem="OsD-a1-qcg" firstAttribute="top" secondItem="NkJ-Vp-x4h" secondAttribute="bottom" constant="10" id="m5g-U3-8Oz"/>
+                                <constraint firstItem="cgo-mK-zA9" firstAttribute="width" secondItem="Kf4-9E-3hS" secondAttribute="width" id="nOE-k2-6aA"/>
+                                <constraint firstItem="zJA-L0-uaP" firstAttribute="top" secondItem="vVh-3a-8wC" secondAttribute="bottom" constant="10" id="oBg-0s-ReW"/>
+                                <constraint firstItem="vVh-3a-8wC" firstAttribute="leading" secondItem="zJA-L0-uaP" secondAttribute="leading" id="od8-yB-rg6"/>
+                                <constraint firstItem="mEH-zk-rTk" firstAttribute="top" secondItem="i0m-fi-GGL" secondAttribute="bottom" constant="10" id="ohe-64-9gZ"/>
+                                <constraint firstItem="CQk-66-Tss" firstAttribute="width" secondItem="ZGQ-0O-nr9" secondAttribute="width" id="pO7-sz-510"/>
+                                <constraint firstItem="cPG-Kr-UEw" firstAttribute="centerX" secondItem="5Uj-sY-ZlB" secondAttribute="centerX" id="pda-8K-i9Z"/>
+                                <constraint firstItem="Mvz-HQ-cOC" firstAttribute="top" secondItem="xms-ol-Uhd" secondAttribute="bottom" constant="10" id="r4s-nh-6yI"/>
+                                <constraint firstItem="iYB-gs-2wn" firstAttribute="leading" secondItem="hi8-F3-RjY" secondAttribute="leading" id="rRq-lq-S1H"/>
+                                <constraint firstItem="xAQ-gl-zho" firstAttribute="top" secondItem="moa-OG-02T" secondAttribute="bottom" constant="10" id="tNt-94-v3M"/>
+                                <constraint firstItem="b2Z-3r-wW8" firstAttribute="centerX" secondItem="nID-Cx-vnT" secondAttribute="centerX" id="tTr-5Q-YBR"/>
+                                <constraint firstItem="sKU-PG-GN2" firstAttribute="centerX" secondItem="J8w-Z6-dKM" secondAttribute="centerX" id="uMB-ZL-wzF"/>
+                                <constraint firstItem="ZGQ-0O-nr9" firstAttribute="top" secondItem="Mvz-HQ-cOC" secondAttribute="bottom" id="uWd-rb-Khz"/>
+                                <constraint firstItem="hi8-F3-RjY" firstAttribute="top" secondItem="r2w-7J-S2h" secondAttribute="bottom" id="uis-Q3-qyY"/>
+                                <constraint firstItem="b2Z-3r-wW8" firstAttribute="top" secondItem="5in-ZW-wvv" secondAttribute="bottom" id="uoO-aG-bUy"/>
+                                <constraint firstItem="b2Z-3r-wW8" firstAttribute="width" secondItem="nID-Cx-vnT" secondAttribute="width" id="uru-AC-seO"/>
+                                <constraint firstItem="hi8-F3-RjY" firstAttribute="centerX" secondItem="OiH-uD-Ggn" secondAttribute="centerX" id="vdJ-Iz-5ZR"/>
+                                <constraint firstItem="hi8-F3-RjY" firstAttribute="width" secondItem="OiH-uD-Ggn" secondAttribute="width" id="vo8-ZD-Zyc"/>
+                                <constraint firstItem="Kf4-9E-3hS" firstAttribute="centerX" secondItem="b2Z-3r-wW8" secondAttribute="centerX" id="wa5-Bx-NFL"/>
+                                <constraint firstItem="5in-ZW-wvv" firstAttribute="top" secondItem="nID-Cx-vnT" secondAttribute="bottom" constant="10" id="ynq-uU-eA0"/>
+                                <constraint firstItem="moa-OG-02T" firstAttribute="centerX" secondItem="5Uj-sY-ZlB" secondAttribute="centerX" id="zyU-26-FkG"/>
+                            </constraints>
+                        </view>
+                    </subviews>
                     <constraints>
-                        <constraint firstAttribute="height" constant="20" id="j0v-gg-23s"/>
+                        <constraint firstItem="Y2g-o4-qRu" firstAttribute="top" secondItem="utx-M7-Yja" secondAttribute="top" id="D68-dW-F6l"/>
+                        <constraint firstAttribute="centerX" secondItem="Y2g-o4-qRu" secondAttribute="centerX" id="D8H-Lv-MTV"/>
+                        <constraint firstAttribute="bottom" secondItem="Y2g-o4-qRu" secondAttribute="bottom" id="EWW-R7-1O3"/>
+                        <constraint firstItem="Y2g-o4-qRu" firstAttribute="leading" secondItem="utx-M7-Yja" secondAttribute="leading" id="JuS-dx-xhs"/>
+                        <constraint firstAttribute="trailing" secondItem="Y2g-o4-qRu" secondAttribute="trailing" id="nqh-Mp-mN1"/>
                     </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="16"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
+                </scrollView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="OMm-P4-L3s" firstAttribute="top" secondItem="urA-Uc-buf" secondAttribute="bottom" id="4nT-qv-KQA"/>
-                <constraint firstItem="urA-Uc-buf" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="26" id="8I0-oC-F1F"/>
-                <constraint firstItem="WkK-Ov-UNx" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Ahn-3E-KvH"/>
-                <constraint firstItem="fjA-nk-VNH" firstAttribute="top" secondItem="OMm-P4-L3s" secondAttribute="bottom" id="CFa-Xo-JqN"/>
-                <constraint firstItem="WkK-Ov-UNx" firstAttribute="top" secondItem="ChD-pA-4GA" secondAttribute="bottom" constant="30" id="Cj9-ts-Ei0"/>
-                <constraint firstItem="Q1J-ho-mrA" firstAttribute="width" secondItem="OMm-P4-L3s" secondAttribute="width" id="E8Z-4W-zCa"/>
-                <constraint firstItem="urA-Uc-buf" firstAttribute="leading" secondItem="fjA-nk-VNH" secondAttribute="leading" id="FQG-gz-nWK"/>
-                <constraint firstItem="Q1J-ho-mrA" firstAttribute="width" secondItem="OMm-P4-L3s" secondAttribute="width" id="I95-Wd-XK8"/>
+                <constraint firstItem="utx-M7-Yja" firstAttribute="top" secondItem="ChD-pA-4GA" secondAttribute="bottom" id="F3L-6M-OtF"/>
+                <constraint firstItem="utx-M7-Yja" firstAttribute="leading" secondItem="ChD-pA-4GA" secondAttribute="leading" id="GTm-8r-FWJ"/>
                 <constraint firstItem="ChD-pA-4GA" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="Kna-v3-0gv"/>
                 <constraint firstAttribute="trailing" secondItem="ChD-pA-4GA" secondAttribute="trailing" id="MCW-7j-tf0"/>
-                <constraint firstAttribute="trailing" secondItem="WkK-Ov-UNx" secondAttribute="trailing" id="Ora-qt-dgn"/>
                 <constraint firstItem="ChD-pA-4GA" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="TAw-6l-rNK"/>
-                <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="Q1J-ho-mrA" secondAttribute="bottom" constant="5" id="XO1-eV-vft"/>
-                <constraint firstItem="Q1J-ho-mrA" firstAttribute="top" secondItem="fjA-nk-VNH" secondAttribute="bottom" id="YJi-ZJ-qrq"/>
-                <constraint firstItem="OMm-P4-L3s" firstAttribute="width" secondItem="WkK-Ov-UNx" secondAttribute="width" constant="-52" id="fvW-Nu-SuK"/>
-                <constraint firstItem="OMm-P4-L3s" firstAttribute="centerX" secondItem="WkK-Ov-UNx" secondAttribute="centerX" id="hud-7I-nhR"/>
-                <constraint firstItem="urA-Uc-buf" firstAttribute="top" secondItem="WkK-Ov-UNx" secondAttribute="bottom" constant="15" id="iWq-Bj-bBf"/>
-                <constraint firstAttribute="trailing" secondItem="urA-Uc-buf" secondAttribute="trailing" constant="26" id="kUg-Q5-UJ5"/>
-                <constraint firstItem="Q1J-ho-mrA" firstAttribute="centerX" secondItem="OMm-P4-L3s" secondAttribute="centerX" id="sFx-0z-1mY"/>
+                <constraint firstItem="utx-M7-Yja" firstAttribute="trailing" secondItem="ChD-pA-4GA" secondAttribute="trailing" id="ekQ-F4-YyA"/>
+                <constraint firstAttribute="bottom" secondItem="utx-M7-Yja" secondAttribute="bottom" id="xB7-t5-4nV"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="272" y="301"/>
+            <point key="canvasLocation" x="-73" y="291"/>
         </view>
     </objects>
     <resources>
-        <image name="closeout_icon.png" width="48" height="48"/>
+        <image name="purpleClose" width="32" height="32"/>
     </resources>
 </document>

@@ -31,10 +31,6 @@ CGFloat animatedDistance;
 }
 
 
--(void)viewDidAppear:(BOOL)animated{
-    //self.view.frame=CGRectMake(20, 65, self.view.frame.size.width-40, self.view.frame.size.height-80);
-    
-}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -65,10 +61,10 @@ CGFloat animatedDistance;
         __block NSData *jasonData;
         __block NSError *error = nil;
         dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-        [SVProgressHUD showWithStatus:@"Processing" maskType:SVProgressHUDMaskTypeBlack];
+        [SVProgressHUD showWithStatus:@"Please wait" maskType:SVProgressHUDMaskTypeBlack];
         dispatch_async(anotherThreadQueue, ^{
             NSString *url=[NSString stringWithFormat:@"%@change-password/?customer_id=%@&old_password=%@&new_password=%@",ec2maschineIP,USERID,self.currentPasswordTXTF.text,self.PasswordTXTF.text];
-            NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+            NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
             
             if([global isConnected]){
                 NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
@@ -91,6 +87,7 @@ CGFloat animatedDistance;
                   
                     if([[response objectForKey:@"success"] isEqual:@"true"])
                     {
+                        [SVProgressHUD dismiss];;
                         UIAlertView *alertView = [[UIAlertView alloc]
                                                   initWithTitle:@"Success"
                                                   message:@"Password changed successfully"
@@ -266,69 +263,94 @@ CGFloat animatedDistance;
 
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if (buttonIndex == 1 && alertView.tag==1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-       
-        __block NSData *jasonData;
-        __block NSError *error = nil;
-        dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-        [SVProgressHUD showWithStatus:@"Processing" maskType:SVProgressHUDMaskTypeBlack];
-        dispatch_async(anotherThreadQueue, ^{
-            NSString *url=[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
-            NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+
+     if (buttonIndex == 1 && alertView.tag==1) {
+    if([global isConnected]){
+           [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
+        @try{
             
-            if([global isConnected]){
-                NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
-                NSURLResponse *response = nil;
-                
-                //getting the data
-                jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-                //json parse
-                
-                
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                
-                
-                if (jasonData) {
+            [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@&ssoUsing=%@",ec2maschineIP,emailrecovery.text,SSOUSING]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                if (!error) {
                     
-                    NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+                    NSDictionary *responseDic = [self fetchData:data];
                 
+                    NSLog(@"Dictionary %@",[self fetchData:data]);
                     
-                    if([[response objectForKey:@"success"] isEqual:@"true"])
-                    {
-                        UIAlertView *alertView = [[UIAlertView alloc]
-                                                  initWithTitle:@"Thanks"
-                                                  message:@"An email has been sent to this address containing the password reset instructions."
-                                                  delegate:self
-                                                  cancelButtonTitle:nil
-                                                  otherButtonTitles:@"OK", nil];
-                        
-                        [alertView show];
+                    if (responseDic) {
+                        @try{
+                            [SVProgressHUD dismiss];
+                        }
+                        @catch(NSException *e){
+                            [SVProgressHUD dismiss];
+                        }
                         
                     }
-                    else{
-                        UIAlertView *alertView = [[UIAlertView alloc]
-                                                  initWithTitle:@"Alert"
-                                                  message:[response objectForKey:@"message"]
-                                                  delegate:self
-                                                  cancelButtonTitle:nil
-                                                  otherButtonTitles:@"OK", nil];
-                        [alertView show];
-                        
-                    }
+                    [SVProgressHUD dismiss];
+                    // As this block of code is run in a background thread, we need to ensure the GUI
+                    // update is executed in the main thread
+                    [self performSelectorOnMainThread:@selector(doneForgotResponse:) withObject:responseDic waitUntilDone:NO];
+                    
                 }
-                [SVProgressHUD dismiss];;
+                else{
+                    NSLog(@"Error: %@", error.description);
+                }
                 
-            });
-        });
-       [[self view] endEditing:YES];
+            }];
+        }
+        @catch(NSException *e){
+            NSLog(@"Exception: %@",e);
+        }
+    }
+     }
+     else{
+         [self.view endEditing:YES];
+     }
+}
+
+-(void)doneForgotResponse:(NSDictionary*)response
+{
+    [SVProgressHUD dismiss];
+    if(response!=nil){
+    if([[response objectForKey:@"success"] isEqual:@"true"])
+    {[SVProgressHUD dismiss];
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:@"Thanks"
+                                  message:@"An email has been sent to this address containing the password reset instructions."
+                                  delegate:self
+                                  cancelButtonTitle:nil
+                                  otherButtonTitles:@"OK", nil];
+        
+        [alertView show];
         
     }
     else{
-       [[self view] endEditing:YES];
+        [SVProgressHUD dismiss];
+        UIAlertView *alertView = [[UIAlertView alloc]
+                                  initWithTitle:@"Alert"
+                                  message:[response objectForKey:@"message"]
+                                  delegate:self
+                                  cancelButtonTitle:nil
+                                  otherButtonTitles:@"OK", nil];
+        [alertView show];
+        
     }
-}
+    }
+    [SVProgressHUD dismiss];
 
+}
+- (NSDictionary *)fetchData:(NSData *)response
+{
+    NSError *error = nil;
+    NSDictionary* latestBookings = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
+    if (error != nil) {
+        NSLog(@"Error: %@", error.description);
+        return nil;
+    }
+    
+    
+    return latestBookings;
+}
 
 - (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
 {

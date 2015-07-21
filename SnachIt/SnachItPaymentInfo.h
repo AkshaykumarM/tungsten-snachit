@@ -33,6 +33,7 @@
 @property (nonatomic, copy) NSString *cardnumber;
 @property (nonatomic, copy) NSString *cardexpdate;
 @property (nonatomic, assign) int cvv;
+@property(assign)BOOL selected;
 
 - (id)initWithUniqueId:(int)uniqueId CardName:(NSString*)cardname CardNumber:(NSString*)cardNumber CardExpDate:(NSString*)expdate CardCVV:(int)cardcvv name:(NSString *)name street:(NSString*)street city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phone:(NSString*)phone;
 

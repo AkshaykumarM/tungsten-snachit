@@ -16,7 +16,7 @@
 
 
 
--(int)updateUserProfile;
+-(void)updateUserProfile;
 -(NSDictionary*)getProfileUpdateValues;
 @property (weak, nonatomic) IBOutlet UITableView *tableViewsetting;
 - (IBAction)save:(id)sender;

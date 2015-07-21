@@ -137,6 +137,7 @@ CGFloat animatedDistance;
         if([self IsEmailValid:username])
         {
             if([password length]>=6){
+        
             NSInteger status=[self getSignUp:@"" LastName:@"" FullName:@"" EmailId:username Username:username Password:password Profilepic:@"" PhoneNo:@"" APNSToken:APNSTOKEN SignUpVia:@"SnachIt" DOB:@""];
          
             if(status==1 ){
@@ -150,7 +151,7 @@ CGFloat animatedDistance;
             }
             }
             else{
-                [global showAllertMsg:@"Alert" Message:@"Password must be atleast of 6 charactors."];
+                [global showAllertMsg:@"Alert" Message:@"Password must be atleast of 6 characters."];
             }
             
         }
@@ -165,7 +166,7 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)fbBtn:(id)sender {
-    [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
      if([global isConnected]){
     ssousing=@"FB";
     // If the session state is any of the two "open" states when the button is clicked
@@ -370,7 +371,7 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)gplusBtn:(id)sender {
-    [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
      if([global isConnected]){
     [self googleSignIn];
      }
@@ -417,7 +418,7 @@ CGFloat animatedDistance;
     NSString *url;
     
         url=[NSString stringWithFormat:@"%@signUpFromMobile/?firstName=%@&lastName=%@&fullName=%@&emailid=%@&username=%@&password=%@&profile_pic=%@&phoneNo=%@&apnsToken=%@&signUpVia=%@",ec2maschineIP,firstName,lastName,fullname,emailid,username,password,profile_pic,phoneNo,apnsToken,signUpVia];
-    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
      if([global isConnected]){
     NSLog(@"Request URL: %@",url);
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
@@ -426,29 +427,38 @@ CGFloat animatedDistance;
     NSError *error = nil;
     //getting the data
     NSData *jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    
-    if (jasonData) {
-        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-        NSLog(@"RESPONSE:%@",response );
+         
+         NSUserDefaults *prefs = [NSUserDefaults standardUserDefaults];
+         [prefs setObject:apnsToken forKey:TOKEN];
+         
+         if(jasonData!=nil){
+            NSDictionary *responsedata= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
+             if (![responsedata isKindOfClass:[NSNull class]] &&![responsedata isEqual:@""]) {
+                 NSLog(@"RESPONSE:%@",responsedata );
                    
-        if([[response valueForKey:@"success"] isEqual:@"true"])
-        {
-             //[global showAllertMsg:@"Signed up successfully"];
-            status=1;
-        }
-        if([[response valueForKey:@"error_code"] integerValue]==2){
+                 if([[responsedata valueForKey:@"success"] isEqual:@"true"])
+                 {
+                     //[global showAllertMsg:@"Signed up successfully"];
+                     status=1;
+                 }
+                 if([[responsedata valueForKey:@"error_code"] integerValue]==2){
             
-            status=1;
-        }
-        if([[response valueForKey:@"error_code"] integerValue]==3){
-            [global showAllertMsg:@"Alert" Message:[response valueForKey:@"error_message"]];
-            status=2;
-        }
-    }
-    else{
-        [global showAllertMsg:@"Alert" Message:@"Server not responding"];
-        status=0;
-    }
+                     status=1;
+                 }
+                 if([[responsedata valueForKey:@"error_code"] integerValue]==3){
+                     [global showAllertMsg:@"Alert" Message:[responsedata valueForKey:@"error_message"]];
+                    status=2;
+                 }
+             }
+             else{
+                [global showAllertMsg:@"Alert" Message:@"Server not responding"];
+                 status=0;
+             }
+         }
+         else{
+             [global showAllertMsg:@"Alert" Message:@"Server not responding"];
+             status=0;
+         }
      }
      else{
          status=0;

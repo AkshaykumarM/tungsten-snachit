@@ -84,8 +84,8 @@ CGFloat animatedDistance;
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(backBtn) forControlEvents:UIControlEventTouchUpInside];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     
@@ -282,7 +282,7 @@ CGFloat animatedDistance;
 {
     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if (textField==cell.phoneTextField) {
-        if (range.location == 12) {
+        if (range.location == 10) {
             return NO;
         }
         return YES;
@@ -298,15 +298,18 @@ CGFloat animatedDistance;
 
 -(void)setupAlerts{
     ShippingInfoAddCell *cell = (ShippingInfoAddCell*)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [cell.firstNameTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid first name"];
-    [cell.lastNameTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid last name"];
-    [cell.postalCodeTextField addRegx:REGEX_ZIP_CODE withMsg:@"Please enter valid zip code"];
-    [cell.cityTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid city"];
-    [cell.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:@"Please enter valid phone no"];
+    [cell.firstNameTextField addRegx:REGEX_NAME withMsg:EROOR_FIRSTNAME];
+    [cell.lastNameTextField addRegx:REGEX_NAME withMsg:EROOR_LASTNAME];
+    [cell.postalCodeTextField addRegx:REGEX_ZIP_CODE withMsg:ERROR_ZIPCODE];
+    [cell.cityTextField addRegx:REGEX_CITY withMsg:ERROR_CITY];
+    [cell.stateTextField addRegx:REGEX_STATE withMsg:ERROR_STATE];
+    [cell.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:ERROR_PHONE];
+    [cell.addressTextField addRegx:REGEX_ADDRESS withMsg:EROOR_ADDRESS];
     
     cell.firstNameTextField.validateOnResign=YES;
     cell.lastNameTextField.isMandatory=YES;
     cell.cityTextField.isMandatory=YES;
+    cell.addressTextField.isMandatory=YES;
     cell.stateTextField.isMandatory=YES;
     cell.postalCodeTextField.isMandatory=YES;
     cell.phoneTextField.isMandatory=YES;
@@ -333,7 +336,7 @@ CGFloat animatedDistance;
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[info valueForKey:@"lastrow"] intValue];
              }
              else{
-                 RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.recordIDToEdit;
+                 RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.lastCheckedRecord;
              }
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];

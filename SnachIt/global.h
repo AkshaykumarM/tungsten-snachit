@@ -9,9 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 #define DEFAULT_SNOOPTIME 30
-//#define ec2maschineIP @"http://192.168.0.121:8000/"
-
-#define ec2maschineIP @"http://ec2-52-1-195-249.compute-1.amazonaws.com/"
+//#define ec2maschineIP @"http://192.168.0.121:8082/"
+#define ec2maschineIP @"http://ec2-52-4-216-171.compute-1.amazonaws.com/"
 #define SSOUSING @"SSOUsing"
 #define USERNAME @"Username"
 #define PASSWORD @"Password"
@@ -23,6 +22,11 @@
 #define checkInternetConnection @"You are not connected to internet, Please check connection."
 #define RADIOUS 50.0f //to make profile pic circular
 #define BORDERWIDTH 5.0f
+#define BACKARROW @"backwardArrow"
+#define NOTRESPONDING @"Server Not Responding"
+#define CHECKMARK_ICON @"checkmark"
+#define TOKEN @"apnsToken"
+
 extern NSString * APNSTOKEN;
 extern NSString *screenName;
 
@@ -52,7 +56,7 @@ extern NSString *screenName;
  This method will make post request and will return the response
  */
 +(NSData*)makePostRequest:(NSData*)body requestURL:(NSString*)url;
-+(BOOL)isValidUrl:(NSURL *)urlString;
+
 +(void)showAllertForAllreadySignedUp;
 +(void)showAllertForInvalidCredentials;
 +(void)showAllertForEnterValidCredentials;

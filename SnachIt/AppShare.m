@@ -12,12 +12,11 @@
 #import <FacebookSDK/FacebookSDK.h>
 #import <GooglePlus/GooglePlus.h>
 #import <GoogleOpenSource/GoogleOpenSource.h>
-
-
+#import <SDWebImage/UIImageView+WebCache.h>
 #import <Social/Social.h>
 #import "global.h"
 #import "Common.h"
-
+#import "Reachability.h"
 #import "SnachItDB.h"
 #import "SnoopedProduct.h"
 #import "SnatchFeed.h"
@@ -32,7 +31,7 @@ int linkedinsharetracker;
 @implementation AppShare
 {
     UserProfile *user;
-    UIButton *topProfileBtn;
+    UIImageView *topProfileBtn;
     UIView *backView;
     NSString *sharingMsg;
     NSString *sharingURL;
@@ -40,6 +39,13 @@ int linkedinsharetracker;
     NSString *referalCode;
     SnoopedProduct *product;
     
+}
+
+- (BOOL)connected
+{
+    Reachability *reachability = [Reachability reachabilityForInternetConnection];
+    NetworkStatus networkStatus = [reachability currentReachabilityStatus];
+    return networkStatus != NotReachable;
 }
 
 
@@ -54,28 +60,32 @@ int linkedinsharetracker;
     screenName=nil;
     // Set the gesture
     
-    appiconURL=@"http://ec2-52-1-195-249.compute-1.amazonaws.com/media/media/";
+    appiconURL=[NSString stringWithFormat:@"%@media/media",ec2maschineIP ];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     [self setupProfilePic];
     NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-    if(![[defaults valueForKey:@"referalCodeStatus"] isEqual:@"1"])
+    NSString *str=[defaults valueForKey:@"referalCode"];
+    NSLog(@"referal code%@",str);
+    if(referalCode == NULL)
     {
         referalCode=[NSString stringWithFormat:@"%@%@",user.userID,[Common getRandomStringWithLength:6]];
         [self sendReferalCode];
+        NSLog(@"generate code");
     }
     else{
-        referalCode=[defaults valueForKey:@"referalCode"];
+        
+         referalCode=[defaults valueForKey:@"referalCode"];
+        NSLog(@"not generating");
     }
     sharingURL=[self generateSharingURL];
     sharingMsg=@"Hey friends! You gotta download this app. It’s absolutely amazing and a quick way to shop for all those products you want…";
     linkedinsharetracker=0;
     
+    
 }
 
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
+   
     [super viewDidDisappear:YES];
 }
 -(void)viewWillAppear:(BOOL)animated{
@@ -86,42 +96,59 @@ int linkedinsharetracker;
 
 
 - (IBAction)fbBtn:(id)sender {
-    // Put together the dialog parameters
-   if([global isConnected]){
-        
-        SLComposeViewController *fbsheet = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-    
-    fbsheet.completionHandler = ^(SLComposeViewControllerResult result) {
-        switch(result) {
-                //  This means the user cancelled without sending the Tweet
-            case SLComposeViewControllerResultCancelled:
-                break;
-                //  This means the user hit 'Send'
-            case SLComposeViewControllerResultDone:
-                [self resetSnoopTime];
-                [self AskToViewDealNow];
-                break;
-        }
-        
-        //  dismiss the Tweet Sheet
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self dismissViewControllerAnimated:NO completion:^{
-              
-            }];
-        });
-    };
+    [FBSession openActiveSessionWithReadPermissions:nil allowLoginUI:YES completionHandler:^(FBSession *session,FBSessionState state, NSError *error)
+     {
+         if (error)
+         {
+             UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:error.localizedDescription delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+             [alertView show];
+         }
+         else if(session.isOpen)
+         {
 
-        [fbsheet setInitialText:[NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
-       if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
-            [fbsheet addURL:[NSURL URLWithString:@"snach.it"]];
-       }
-       
-    [fbsheet addImage:[UIImage imageNamed:@"facebook_ad.png"]];
-    
-    [self presentViewController:fbsheet animated:NO completion:^{
-        
-    }];
-   }
+             
+             NSDictionary *params = @{
+                                      @"name" :[NSString stringWithFormat:@"snach.it"],
+                                      @"caption" : @"A fun + simple way to snach things.",
+                                      @"description" :[NSString stringWithFormat:@"Hey friends! You gotta download this app. It’s absolutely amazing and a quick way to shop for all those products you want…"],
+                                      @"picture" : [NSString stringWithFormat:@"%@/facebook_ad_2.png",appiconURL],
+                                    @"link" :[NSString stringWithFormat:@"%@",sharingURL],
+                                      };
+             // Invoke the dialog
+             NSLog(@"----%@----",appiconURL);
+             
+             [FBWebDialogs presentFeedDialogModallyWithSession:nil
+                                                    parameters:params
+                                                       handler:
+              ^(FBWebDialogResult result, NSURL *resultURL, NSError *error1) {
+                  if (error) {
+                      //NSLog(@"Error publishing story.");
+                      [global showAllertMsg:@"Opp's" Message:@"Something happened wrong while posting."];
+                  } else {
+                      NSLog(@"RESULT : %lu",(unsigned long)result);
+                      if (result == FBWebDialogResultDialogNotCompleted) {
+                          NSLog(@"User canceled story publishing.");
+                          
+                      }
+                      else {
+                          // Handle the send request callback
+                          NSDictionary *urlParams = [self parseURLParams:[resultURL query]];
+                          NSLog(@"URL Params %@",urlParams);
+                          if ([urlParams count]==0) {
+                              // User clicked the Cancel button
+                              NSLog(@"User canceled request.");
+                          } else if(![[urlParams valueForKey:@"post_id"] isEqual:@""] && ![[urlParams valueForKey:@"post_id"] isKindOfClass:[NSNull class]]){
+                              // User clicked the Send button
+                              [self resetSnoopTime];
+                              [self AskToViewDealNow];
+                          }
+                          
+                      }
+                  }}];
+         }
+         
+     }];
+
 }
 
 
@@ -164,50 +191,68 @@ int linkedinsharetracker;
 
 
 - (IBAction)twBtn:(id)sender {
-   if([global isConnected]){
+    if([global isConnected]){
         SLComposeViewController *tweetSheet = [SLComposeViewController
                                                composeViewControllerForServiceType:SLServiceTypeTwitter];
-    // Sets the completion handler.  Note that we don't know which thread the
-    // block will be called on, so we need to ensure that any UI updates occur
-    // on the main queue
-   
-
-    tweetSheet.completionHandler = ^(SLComposeViewControllerResult result) {
-        switch(result) {
-                //  This means the user cancelled without sending the Tweet
-            case SLComposeViewControllerResultCancelled:
-                 break;
-                //  This means the user hit 'Send'
-            case SLComposeViewControllerResultDone:
-                 [self resetSnoopTime];
-                [self AskToViewDealNow];
-                 break;
-        }
+        // Sets the completion handler.  Note that we don't know which thread the
+        // block will be called on, so we need to ensure that any UI updates occur
+        // on the main queue
         
-        //  dismiss the Tweet Sheet
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [self dismissViewControllerAnimated:NO completion:^{
-                
-            }];
-        });
-    };
+        
+        tweetSheet.completionHandler = ^(SLComposeViewControllerResult result) {
+            NSLog(@"Twitter result----%ld----",(long)result);
+                     
+            switch (result)
+            {
+                case SLComposeViewControllerResultCancelled:
+                    
+                    break;
+                case SLComposeViewControllerResultDone:
+                {
+                    
+                    if ([self connected]) {
+                        // Show success message
+                        [self resetSnoopTime];
+                        [self AskToViewDealNow];
+                    }
+                    else {
+                        // Show internet is not available message
+                    }
+                    
+                }
+                    break;
+                default:
+                    break;
+            }
+            
+            
+            
+            
+            //  dismiss the Tweet Sheet
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self dismissViewControllerAnimated:YES completion:^{
+                    
+                }];
+            });
+        };
+        
+        //  Set the initial body of the Tweet
+        [tweetSheet setInitialText: [NSString stringWithFormat:@"Hey friends! You gotta download this app. Discover great offers on the products you want… %@ ",sharingURL]];
+        if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
+            [tweetSheet addURL:[NSURL URLWithString:@"snach.it"]];
+        }
+        [tweetSheet addImage:[UIImage imageNamed:@"twitter_ad.png"]];
+        //  Adds an image to the Tweet.  For demo purposes, assume we have an
+        //  image named 'larry.png' that we wish to attach
+        
+        
+        //  Presents the Tweet Sheet to the user
+        [self presentViewController:tweetSheet animated:NO completion:^{
+            
+        }];
+        
+    }
     
-    //  Set the initial body of the Tweet
-    [tweetSheet setInitialText: [NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
-       if (!SYSTEM_VERSION_GREATER_THAN_OR_EQUAL_TO(@"8.0")) {
-    [tweetSheet addURL:[NSURL URLWithString:@"snach.it"]];
-       }
-    [tweetSheet addImage:[UIImage imageNamed:@"twitter_ad.png"]];
-    //  Adds an image to the Tweet.  For demo purposes, assume we have an
-    //  image named 'larry.png' that we wish to attach
-
-    
-    //  Presents the Tweet Sheet to the user
-    [self presentViewController:tweetSheet animated:NO completion:^{
-       
-    }];
-    
-   }
     
 }
 
@@ -272,9 +317,9 @@ int linkedinsharetracker;
                                     NSError *error) {
                   
                     id<GPPNativeShareBuilder> shareBuilder = [[GPPShare sharedInstance] nativeShareDialog];
-                    [shareBuilder setPrefillText:[NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
-                    //[shareBuilder setTitle:@"snach.it" description:sharingMsg thumbnailURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@googleplus_ad.png",appiconURL]]];
+                   
                     [shareBuilder attachImage:[UIImage imageNamed:@"googleplus_ad.png"]];
+                     [shareBuilder setPrefillText:[NSString stringWithFormat:@"%@ %@",sharingMsg,sharingURL]];
                     [shareBuilder open];
                     
                     if (error) {
@@ -350,12 +395,12 @@ int linkedinsharetracker;
     
     //here i am setting the frame of profile pic and assigning it to a button
     CGRect frameimg = CGRectMake(0, 0, 40, 40);
-    topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
+    topProfileBtn = [[UIImageView alloc] initWithFrame:frameimg];
     
     //assigning the default background image
-    [topProfileBtn setBackgroundImage:[UIImage imageNamed:DEFAULTPLACEHOLDER] forState:UIControlStateNormal];
+    [topProfileBtn setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     topProfileBtn.clipsToBounds=YES;
-    [topProfileBtn setShowsTouchWhenHighlighted:YES];
+   
     
     //setting up corner radious, border and border color width to make it circular
     topProfileBtn.layer.cornerRadius = 20.0f;
@@ -363,7 +408,9 @@ int linkedinsharetracker;
     topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
      [topProfileBtn setContentMode:UIViewContentModeScaleAspectFill];
     // setting action to the button
-    [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
+    UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self.revealViewController action:@selector(revealToggle:)];
+    tapped.numberOfTapsRequired = 1;
+    [topProfileBtn addGestureRecognizer:tapped];
     
     //assigning button to top bar iterm
     UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:topProfileBtn];
@@ -374,12 +421,6 @@ int linkedinsharetracker;
     //checking if profile pic url is nil else download the image and assign it to imageview
     [self.navigationBar setItems:@[self.navigationItem]];
     
-    if([global isValidUrl:user.profilePicUrl]){
-        
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
-        }];}
-    
 }
 
 //this method generates referal code with combination of userid and 6 digit random text
@@ -387,6 +428,7 @@ int linkedinsharetracker;
     
     NSString *tempURL=[Common getTinyUrlForLink:[NSString stringWithFormat:@"%@snachit-referal-encode/?referal_cd=%@",ec2maschineIP,referalCode]];
     return tempURL;
+    
 }
 
 //this method sends referal code to the backend
@@ -394,7 +436,7 @@ int linkedinsharetracker;
       NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
     NSString *url=[NSString stringWithFormat:@"%@store-user-referal-code/?customer_id=%@&referal_code=%@",ec2maschineIP,user.userID,referalCode];
     
-    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     NSURLResponse *response = nil;
     NSError *error = nil;
@@ -410,6 +452,7 @@ int linkedinsharetracker;
            {
             [defaults setObject:@"1" forKey:@"referalCodeStatus"];
             [defaults setObject:referalCode forKey:@"referalCode"];
+               NSLog(@"referal%@",referalCode);
            }
         else
             [defaults setObject:@"0" forKey:@"referalCodeStatus"];

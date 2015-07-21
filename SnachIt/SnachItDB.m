@@ -482,12 +482,12 @@ static SnachItDB *_database;
             NSLog(@"Delete failed: %s", sqlite3_errmsg(_database));
             status=false;
         }
-        sqlite3_finalize(statement);
     }
+        sqlite3_finalize(statement);
+        sqlite3_close(_database);
     }
     @catch(NSException *e){}
-    sqlite3_finalize(statement);
-    sqlite3_close(_database);
+   
     return status;
 }
 
@@ -511,12 +511,12 @@ static SnachItDB *_database;
             NSLog(@"Delete failed: %s", sqlite3_errmsg(_database));
             status=false;
         }
-        sqlite3_finalize(statement);
     }
-    }
-    @catch(NSException *e){}
     sqlite3_finalize(statement);
     sqlite3_close(_database);
+    }
+    @catch(NSException *e){}
+   
     return status;
 }
 -(BOOL)bindString:(NSString *)value column:(NSInteger)column statement:(sqlite3_stmt *)statement

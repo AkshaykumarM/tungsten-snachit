@@ -34,7 +34,6 @@
 @property (weak, nonatomic) IBOutlet TextFieldValidator *zipTextField;
 @property (weak, nonatomic) IBOutlet TextFieldValidator *phoneTextField;
 @property (nonatomic) int recordIDToEdit;
-
+@property (nonatomic) int lastCheckedRecord;
 @property (nonatomic, strong) id<AddressInfoControllerDelegate> delegate;
-
 @end

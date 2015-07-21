@@ -65,19 +65,19 @@ double orderTotal;
     [self initCheckoutDetails];
     CURRENTDB=SnoopTimeDBFile;
     
-   
+    
     
 }
 -(void)initCheckoutDetails{
     CURRENTDB=SnachItDBFile;
     NSUserDefaults *df=[NSUserDefaults standardUserDefaults];
     if([[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue]!=-1){
-    pinfo=[[SnachItDB database] snachItPaymentDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue] UserId:user.userID];
-    userdetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:pinfo.cardname withPaymentCardNumber:pinfo.cardnumber withpaymentCardExpDate:pinfo.expdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",pinfo.cvv] withPaymentFullName:pinfo.name withPaymentStreetName:pinfo.address  withPaymentCity:pinfo.city withPaymentState:pinfo.state withPaymentZipCode:pinfo.zip withPaymentPhoneNumber: pinfo.phoneNumber];
+        pinfo=[[SnachItDB database] snachItPaymentDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue] UserId:user.userID];
+        userdetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:pinfo.cardname withPaymentCardNumber:pinfo.cardnumber withpaymentCardExpDate:pinfo.expdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",pinfo.cvv] withPaymentFullName:pinfo.name withPaymentStreetName:pinfo.address  withPaymentCity:pinfo.city withPaymentState:pinfo.state withPaymentZipCode:pinfo.zip withPaymentPhoneNumber: pinfo.phoneNumber];
     }
     if([[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue]!=-1){
-    ainfo=[[SnachItDB database] snachItAddressDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue] UserId:user.userID];
-    userdetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:ainfo.name withShipStreetName:ainfo.address withShipCity:ainfo.city withShipState:ainfo.state withShipZipCode:ainfo.zip withShipPhoneNumber:ainfo.phoneNumber];
+        ainfo=[[SnachItDB database] snachItAddressDetails:[[df valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] intValue] UserId:user.userID];
+        userdetails=[[SnoopingUserDetails sharedInstance] initWithUserId:user.userID withShipFullName:ainfo.name withShipStreetName:ainfo.address withShipCity:ainfo.city withShipState:ainfo.state withShipZipCode:ainfo.zip withShipPhoneNumber:ainfo.phoneNumber];
     }
 }
 -(void)viewDidAppear:(BOOL)animated{
@@ -257,38 +257,9 @@ double orderTotal;
 }
 
 - (void)snachIt:(id)sender {
- 
-    [SVProgressHUD showWithStatus:@"Processing"];
-    [self.view setUserInteractionEnabled:NO];
-    if([global isConnected]){
-        @try{
-            if([self snachProduct]==1){
-                [SVProgressHUD dismiss];
-                [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
-                product.productImageData=nil;
-                product.brandImageData=nil;
-                product.brandId=nil;
-                product.brandImageURL=nil;
-                product.brandName=nil;
-                product.snachId=nil;
-                product.productId=nil;product.productImageURL=nil;product.productName=nil;product.productSalesTax=nil;product.productShippingSpeed=nil;product.productShippingSpeed=nil;
-                [self performSegueWithIdentifier:STP_SEGUE sender:self];
-                
-            }
-            else{
-                [SVProgressHUD dismiss];
-                [self.view setUserInteractionEnabled:YES];
-            }
-        }@catch(NSException *e){
-            [self.view setUserInteractionEnabled:YES];
-        }
-    }
-    else{
-        [SVProgressHUD dismiss];
-        [self.view setUserInteractionEnabled:YES];
-        
-    }
     
+    [SVProgressHUD showWithStatus:@"Please wait" maskType:SVProgressHUDMaskTypeBlack];
+    [self snachProduct];
 }
 
 - (void)viewDidUnload
@@ -332,31 +303,62 @@ double orderTotal;
 /*
  This method will snach the current product(The product selected by user)
  */
--(int)snachProduct{
+-(void)snachProduct{
+    
     NSError *error;
-    int status=0;
-    NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getOrderDetails] options:NSJSONWritingPrettyPrinted error:&error];
-    NSData *responseData=[global makePostRequest:orderJson requestURL:@"getPlacedOrderByCustomer/" ];
-    if (responseData) {
-        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
+    if([global isConnected]){
+        [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
+        NSString *strurl=[NSString stringWithFormat:@"%@getPlacedOrderByCustomer/",ec2maschineIP];
+        NSData *data=[NSJSONSerialization dataWithJSONObject:[self getOrderDetails] options:NSJSONWritingPrettyPrinted error:&error];
+        NSString *strpostlength=[NSString stringWithFormat:@"%lu",(unsigned long)[data length]];
+        NSMutableURLRequest *urlrequest=[[NSMutableURLRequest alloc]init];
+        [urlrequest setURL:[NSURL URLWithString:strurl]];
+        [urlrequest setHTTPMethod:@"POST"];
+        [urlrequest setValue:strpostlength forHTTPHeaderField:@"Content-Length"];
+        [urlrequest setHTTPBody:data];
         
-        if([[response objectForKey:@"success"] isEqual:@"true"])
-            status=1;
-        else
-        {
-            @try{
-                [global showAllertMsg:@"Alert" Message:[response objectForKey:@"error_message"]];
-                status=0;
-            }
-            @catch(NSException *e){
-                NSLog(@"Error %@",e);
-            }
-        }
+        [NSURLConnection sendAsynchronousRequest:urlrequest queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+         {
+             NSError *error1;
+             NSDictionary *res=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error1];
+             if(!error1){
+                 NSLog(@"%@",res);
+                 
+                 [self performSelectorOnMainThread:@selector(snachedProduct:) withObject:res waitUntilDone:NO];
+             }
+             else{
+                 [global showAllertMsg:@"Opp's" Message:@"Error occured while snaching product"];
+             }
+             
+         }];
     }
     
-    return status;
+    
 }
 
+-(void)snachedProduct:(NSDictionary*)response{
+    if(![response isKindOfClass:[NSNull class]]){
+        if([[response valueForKey:@"success"] isEqual:@"true"]){
+            [SVProgressHUD dismiss];
+            [[SnachItDB database] updatetime:USERID SnachId:[product.snachId intValue] SnachTime:0];
+            product.productImageData=nil;
+            product.brandImageData=nil;
+            product.brandId=nil;
+            product.brandImageURL=nil;
+            product.brandName=nil;
+            product.snachId=nil;
+            product.productId=nil;product.productImageURL=nil;product.productName=nil;product.productSalesTax=nil;product.productShippingSpeed=nil;product.productShippingSpeed=nil;
+            [self performSegueWithIdentifier:STP_SEGUE sender:self];
+        }
+        else{
+            [SVProgressHUD dismiss];
+            [SVProgressHUD showErrorWithStatus:[response valueForKey:@"error_message"]];
+        }
+    }
+    else{
+        [global showAllertMsg:@"Opp's" Message:@"Error occured while snaching product"];
+    }
+}
 
 
 -(void)initializeOrder{

@@ -9,8 +9,7 @@
 #import "AppDelegate.h"
 #import "SnachItLogin.h"
 #import "global.h"
-
-
+#import "SnatchFeed.h"
 #import "SnachItDB.h"
 #import "SnachItAddressInfo.h"
 static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tnn8k.apps.googleusercontent.com";
@@ -25,12 +24,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     // Override point for customization after application launch.
     // color selected text ---> Pink
     
-    UIUserNotificationSettings *settings =
-    [UIUserNotificationSettings settingsForTypes:UIUserNotificationTypeAlert |
-     UIUserNotificationTypeBadge |
-     UIUserNotificationTypeSound
-                                      categories:nil];
-    [[UIApplication sharedApplication] registerUserNotificationSettings:settings];
+ 
     [[UIApplication sharedApplication] registerForRemoteNotifications];
 
         UIImage *navBackgroundImage = [UIImage imageNamed:@"nav_bg.png"];
@@ -67,14 +61,10 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
     [GPPSignIn sharedInstance].clientID = kClientId;
     [GPPDeepLink setDelegate:self];
     [GPPDeepLink readDeepLinkAfterInstall];
-    UILocalNotification *notification = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
     
-    if (notification)
-    {
-        NSLog(@"Notification");
-    }
 
     return YES;
+   
 }
 
 
@@ -214,7 +204,7 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
          annotation:(id)annotation
 {
     //Handling with google+ url handler
-    if([[url absoluteString] hasPrefix:@"com.tungsten.snachit:"])
+    if([[url absoluteString] hasPrefix:@"com.zerimarventures.snachit:"])
     {
       return  [GPPURLHandler handleURL:url sourceApplication:sourceApplication annotation:annotation];
     }
@@ -249,9 +239,10 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
- 
+   
      [FBAppCall handleDidBecomeActive];
-
+    [[UIApplication sharedApplication] setApplicationIconBadgeNumber: 0];
+    [[UIApplication sharedApplication] cancelAllLocalNotifications];
     
 
 }
@@ -274,16 +265,23 @@ static NSString * const kClientId = @"332999389045-5ua94fad3hdmun0t3b713g35br0tn
 - (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
 {
     APNSTOKEN=[[[[NSString stringWithFormat:@"%@",deviceToken] stringByReplacingOccurrencesOfString:@" " withString:@""] stringByReplacingOccurrencesOfString:@">" withString:@""] stringByReplacingOccurrencesOfString:@"<" withString:@""];
-   
+    NSLog(@"APNS Token: %@",APNSTOKEN);
+    
+    // Post a notification to loginComplete
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"recievedNotification" object:nil];
+
+    
+    
     
 }
-
 
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     return (interfaceOrientation == UIInterfaceOrientationPortraitUpsideDown && interfaceOrientation == UIInterfaceOrientationPortrait);
 }
+
+    
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
 {
     APNSTOKEN=@"";

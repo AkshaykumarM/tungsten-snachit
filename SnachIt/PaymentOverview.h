@@ -24,5 +24,8 @@
 - (IBAction)addNewCardBtn:(id)sender;
 
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
+
+
 @property (nonatomic,retain)NSIndexPath * lastchecked ;
+@property (nonatomic,assign)int lastcheckeckedcelltag;
 @end

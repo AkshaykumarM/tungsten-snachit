@@ -13,7 +13,7 @@
 @interface SnatchFeed : UITableViewController
 
 
-
+-(void)alertSnach:(NSNotification *)note;
 @property (weak, nonatomic) IBOutlet UIImageView *profilePic;
 
 @end

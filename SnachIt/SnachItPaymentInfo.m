@@ -21,7 +21,7 @@
 @synthesize cardexpdate=_cardexpdate;
 @synthesize cvv=_cvv;
 
-- (id)initWithUniqueId:(int)uniqueId CardName:(NSString *)cardname CardNumber:(NSString *)cardNumber CardExpDate:(NSString *)expdate CardCVV:(int)cardcvv name:(NSString *)name street:(NSString *)street city:(NSString *)city state:(NSString *)state zip:(int)zip phone:(NSString*)phone {
+- (id)initWithUniqueId:(int)uniqueId CardName:(NSString *)cardname CardNumber:(NSString *)cardNumber CardExpDate:(NSString *)expdate CardCVV:(int)cardcvv name:(NSString *)name street:(NSString *)street city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phone:(NSString*)phone {
     if ((self = [super init])) {
         
         self.uniqueId = uniqueId;

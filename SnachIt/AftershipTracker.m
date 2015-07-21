@@ -16,6 +16,7 @@
 @implementation AftershipTracker
 {
     NSMutableArray *trackings;
+    NSMutableArray *tracks;
     NSString *slug;
     NSString *tracking_number;
     NSString *tag;
@@ -32,8 +33,8 @@
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 35.0f, 35.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
-    [btn setImage:[UIImage imageNamed:@"closeout_icon.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:@"purpleClose"] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *nav_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = nav_btn;
     formatter = [[NSDateFormatter alloc] init];
@@ -60,7 +61,7 @@
         count=(int)[trackings count];
         if(count<=0)
         {
-            [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+            [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
         }
         else{
             
@@ -82,13 +83,14 @@
     @try{
         Checkpoints *check=[trackings objectAtIndex:indexPath.row];
         
-        [formatter setDateFormat:@"MMM dd',' yyyy"];
+      
+              [formatter setDateFormat:@"MMM dd',' yyyy"];
         dformat = [[NSDateFormatter alloc]init];
         [dformat setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss"];
         cell.checkPointDate.text=[formatter stringFromDate:[NSDate date]];
         [formatter setDateFormat:@"hh:mm a"];
         cell.checkPointTime.text = [formatter stringFromDate:[dformat dateFromString:check.checkpoint_time]];
-        cell.messageLbl.text = [check.message capitalizedString];
+        cell.messageLbl.text=[check.message capitalizedString];
         [cell.tagImgView setImage:[UIImage imageNamed:[self getIconForStatus:[self getStatusNoForStatus:check.tag]]]];
         [cell.tagImgView setBackgroundColor:[UIColor whiteColor]];
         
@@ -104,8 +106,9 @@
             cell.cityStateZip.text=check.city;
         else
             cell.cityStateZip.text=[NSString stringWithFormat:@"%@, %@ %@",check.city,check.state,check.zip];
-        
-    }
+    
+    
+}
     @catch(NSException *e){}
     return cell;
 }
@@ -113,22 +116,22 @@
     NSString *imgName;
     switch (statusNo) {
         case 1:
-            imgName=@"shipped_icon.png";
+            imgName=@"shipped";
             break;
         case 2:
-            imgName=@"inflight_icon.png";
+            imgName=@"inflight";
             break;
         case 3:
-            imgName=@"outfordelivery_icon.png";
+            imgName=@"outforDelivery";
             break;
         case 4:
-            imgName=@"failedattempt_icon.png";
+            imgName=@"errorG";
             break;
         case 5:
-            imgName=@"delivered_icon.png";
+            imgName=@"delivered";
             break;
         case 6:
-            imgName=@"exception_icon.png";
+            imgName=@"exception";
             break;
         case 7:
             imgName=nil;
@@ -144,6 +147,7 @@
 }
 
 -(int)getStatusNoForStatus:(NSString*)status{
+    NSLog(@"%@",status);
     if([status isEqual:@"InfoReceived"])
     {
         return 1;
@@ -156,7 +160,7 @@
     {
         return 3;
     }
-    else if([status isEqual:@"FailedAttempt"])
+    else if([status isEqual:@"AttemptFail"])
     {
         return 4;
     }
@@ -201,28 +205,39 @@
                                                    expected_delivery=tracking.expectedDeliveryDate;
                                                    trackings = [NSMutableArray arrayWithCapacity:10];
                                                    
-                                                   for (int i=0;i<[tracking.checkpoints count];i++) {
-                                                       Checkpoints *checkpoints = [[Checkpoints alloc] init];
-                                                       checkpoints.slug=[tracking.checkpoints[i] valueForKey:@"slug"];
-                                                       checkpoints.city=[tracking.checkpoints[i] valueForKey:@"city"];
-                                                       checkpoints.created_at=[tracking.checkpoints[i] valueForKey:@"createTime"];
-                                                       checkpoints.country_name=[tracking.checkpoints[i] valueForKey:@"countryName"];
-                                                       checkpoints.message=[tracking.checkpoints[i] valueForKey:@"message"];
-                                                       checkpoints.country_iso3=[tracking.checkpoints[i] valueForKey:@"countryCode"];
-                                                       checkpoints.tag=[tracking.checkpoints[i] valueForKey:@"tag"];
-                                                       checkpoints.checkpoint_time=[tracking.checkpoints[i] valueForKey:@"checkpointTime"];
-                                                       checkpoints.state=[tracking.checkpoints[i] valueForKey:@"state"];
-                                                       checkpoints.zip=[tracking.checkpoints[i] valueForKey:@"zip"];
-                                                       [trackings addObject:checkpoints];
-                                                   }
+        for (int i=0;i<[tracking.checkpoints count];i++) {
+        Checkpoints *checkpoints = [[Checkpoints alloc] init];
+        checkpoints.slug=[tracking.checkpoints[i] valueForKey:@"slug"];
+        checkpoints.city=[tracking.checkpoints[i] valueForKey:@"city"];
+        checkpoints.created_at=[tracking.checkpoints[i] valueForKey:@"createTime"];
+        checkpoints.country_name=[tracking.checkpoints[i] valueForKey:@"countryName"];
+     checkpoints.message=[tracking.checkpoints[i] valueForKey:@"message"];
+        checkpoints.country_iso3=[tracking.checkpoints[i] valueForKey:@"countryCode"];
+    checkpoints.tag=[tracking.checkpoints[i] valueForKey:@"tag"];
+        checkpoints.checkpoint_time=[tracking.checkpoints[i] valueForKey:@"checkpointTime"];
+        checkpoints.state=[tracking.checkpoints[i] valueForKey:@"state"];
+        checkpoints.zip=[tracking.checkpoints[i] valueForKey:@"zip"];
+            NSLog(@"Message:%@ ",checkpoints.message);
+            
+if ([checkpoints.message isEqualToString:@"Delivery status not updated"])
+            {
+                NSLog(@"No Status");
+            }
+            else
+            {
+                [trackings addObject:checkpoints];
+            
+}
+           // [trackings addObject:checkpoints];
+        }
                                                    // As this block of code is run in a background thread, we need to ensure the GUI
                                                    // update is executed in the main thread
-                                                   [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(reloadData) withObject:nil waitUntilDone:NO];
                                                    
-                                               }
-                                               if(error){
-                                                   [SVProgressHUD dismiss];
-                                                   [global showAllertMsg:@"Error" Message:error.domain.description];
+        }
+        if(error){
+            [SVProgressHUD dismiss];
+            [global showAllertMsg:@"Error" Message:@"Invalid Tracking No or Slug"];
                                                }
                                            }];
     [client executeRequest:aftershipGetTrackingRequest];
@@ -240,7 +255,7 @@
     [SVProgressHUD dismiss];
     self.deliverBy.text=[NSString stringWithFormat:@"SCHEDULED: %@",expected_delivery];
     
-    [self.slugIMGV setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"http://ec2-52-1-195-249.compute-1.amazonaws.com/media/media/slugs/%@.jpg",slug]] placeholderImage:nil];
+    [self.slugIMGV setImageWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@media/media/slugs/%@.jpg",ec2maschineIP,slug]] placeholderImage:nil];
 }
 -(NSDictionary*)makeRequest:(NSData *)response{
     NSError *error = nil;

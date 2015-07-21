@@ -23,6 +23,7 @@
 #import "Product.h"
 #import "Common.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "SVProgressHUD.h"
 
 NSString * const SNACH_CELL=@"snachsCell";
 NSString * const FRIEND_CELL=@"friendsCell";
@@ -148,13 +149,7 @@ UIView* backView ;
     //self.profilePic.layer.borderWidth = BORDERWIDTH;
     //self.profilePic.layer.borderColor = [UIColor whiteColor].CGColor;
   
-    cellId=FRIEND_CELL;
-    subCellId=HISTORY_ALL;
     
-    
-    
-    [_subTabSelect setHidden:YES];//hiding the sub tab
-    [_lastLine setHidden:YES];
     self.myImage = [UIImage imageNamed:@"profile.png"];
     
    
@@ -166,8 +161,8 @@ UIView* backView ;
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     
@@ -184,20 +179,34 @@ UIView* backView ;
     user=[UserProfile sharedInstance];
 }
 -(void)viewDidAppear:(BOOL)animated{
+   
     
-    [self initialLize];
-    [self getMYLatestSnachs];
-    [self getLatestFriendsSnachs];
-    [self getLatestFollowedBrandsProducts];
-    [self.tableView reloadData];
-    [self.tabSelect setSelectedSegmentIndex:0];
-    
+    if(cellId==SNACH_CELL)
+    {
+        cellId=SNACH_CELL;
+        subCellId=HISTORY_ALL;
+        [_subTabSelect setHidden:NO];//hiding the sub tab
+        [_lastLine setHidden:YES];
+        [self initialLize];
+        [self getMYLatestSnachs];
+        [self.tableView reloadData];
+        
+    }
+    else{
+        subCellId=HISTORY_ALL;
+        [self initialLize];
+        [self getMYLatestSnachs];
+        [self getLatestFriendsSnachs];
+        [self getLatestFollowedBrandsProducts];
+        [self.tableView reloadData];
+        
+    }
     [super viewDidAppear:YES];
     
     
 }
 -(void)viewDidLayoutSubviews{
-    self.tableView.frame=CGRectMake(0, yfortable, self.view.frame.size.width, self.view.frame.size.height-yfortable);
+    self.tableView.frame=CGRectMake(-8, yfortable, self.view.frame.size.width+16, self.view.frame.size.height-yfortable);
     [super viewDidLayoutSubviews];
 }
 -(void)initialLize{
@@ -345,6 +354,7 @@ UIView* backView ;
             cell = [[MyProfileFreindsCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:simpleTableIdentifier];
             
         }
+        
         cell.layoutMargins = UIEdgeInsetsZero;
         cell.preservesSuperviewLayoutMargins = NO;
         [cell.friendPic setImageWithURL:[NSURL URLWithString:snaches.freindProfilePic] placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
@@ -356,6 +366,7 @@ UIView* backView ;
         cell.friendName.text = friendName;
         
         int scrollWidth = 100;
+        
         @try{
         int snachedProductCount=(int)[snachedProducts count];
         if(snachedProductCount==0){
@@ -783,7 +794,7 @@ UIView* backView ;
     
 }
 - (IBAction)indexChanged:(id)sender {
-    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:1 inSection:0];
+ 
     @try{
     switch (self.tabSelect.selectedSegmentIndex)
     {
@@ -794,7 +805,7 @@ UIView* backView ;
             yfortable=320;
             [self viewDidLayoutSubviews];
              [_tableView reloadData];
-            [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+          
            
             break;
         case 1:
@@ -804,7 +815,7 @@ UIView* backView ;
              yfortable=320;
               [self viewDidLayoutSubviews];
              [_tableView reloadData];
-             [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+            
             
             break;
         case 2:
@@ -814,7 +825,7 @@ UIView* backView ;
              yfortable=354;
             [self viewDidLayoutSubviews];
             [_tableView reloadData];
-            [_tableView scrollToRowAtIndexPath:indexPath atScrollPosition:0 animated:YES];
+           
             break;
     }
     }
@@ -926,10 +937,12 @@ UIView* backView ;
                                     snached.snachId=[NSString stringWithFormat:@"%@",[tempSnachDic objectForKey:PRODUCTS_SNACHID]];
                                     snached.productImage=[tempSnachDic objectForKey:PRODUCTS_IMAGE];
                                     snached.snachStatus=[[tempSnachDic objectForKey:PRODUCTS_SNACHSTATUS] intValue];
+                                    if(snached.productImage!=nil &&![snached.productImage isEqual:@""])
                                     [snachs addObject:snached];
                                 }
                             }
                             fSnachs.snachedProducts=snachs;
+                            if(fSnachs.friendName!=nil && ![fSnachs.friendName isEqual:@""])
                             [friendsSnachs addObject:fSnachs];
                         }
                     }
@@ -970,6 +983,7 @@ UIView* backView ;
                             followed.snachId=[NSString stringWithFormat:@"%@",[tempFollowDic objectForKey:PRODUCTS_SNACHID] ];
                             followed.productImage=[tempFollowDic objectForKey:PRODUCTS_IMAGE];
                             followed.snachStatus=1;
+                             if(followed.productImage!=nil && ![followed.productImage isEqual:@""])
                             [brandProducts addObject:followed];
                         }
                     }
@@ -1010,9 +1024,9 @@ UIView* backView ;
                     snachhistory.trackingNo=[tempDic objectForKey:HISTORY_TRACKING_NO];
                     snachhistory.slug=[tempDic objectForKey:HISTORY_SLUG];
                     if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
-                    {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
+                    {snachhistory.statusIcon=@"inflight"; [myLetestINFSnachs addObject:snachhistory];}
                     else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])
-                    {snachhistory.statusIcon=@"deliveredIcon.png";[myLetestDELSnachs addObject:snachhistory];}
+                    {snachhistory.statusIcon=@"delivered";[myLetestDELSnachs addObject:snachhistory];}
                     
                     [myLetestALLSnachs addObject:snachhistory];
                 }
@@ -1038,9 +1052,8 @@ UIView* backView ;
                                                                     forKey:NSForegroundColorAttributeName];
         NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
         refreshControl.attributedTitle = attributedTitle;
-        
-        [refreshControl endRefreshing];
     }
+    [refreshControl endRefreshing];
 }
 
 
@@ -1074,8 +1087,9 @@ UIView* backView ;
 -(void)getproductForSnachId:(NSString*)snachid{
     NSString *url;
     
+    [SVProgressHUD showWithMaskType:SVProgressHUDMaskTypeBlack];
     url=[NSString stringWithFormat:@"%@get-snach-deal/?snach_id=%@",ec2maschineIP,snachid];
-    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     
     NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
     
@@ -1090,9 +1104,6 @@ UIView* backView ;
         NSLog(@"Response: %@",response);
         if (!error) {
             NSDictionary *prodDic = response;
-            
-            
-            
             if (prodDic) {
                 
                 Product *prod = [[Product alloc] init];
@@ -1114,16 +1125,21 @@ UIView* backView ;
             
             // As this block of code is run in a background thread, we need to ensure the GUI
             // update is executed in the main thread
-            
+            [self performSelectorOnMainThread:@selector(done) withObject:nil waitUntilDone:NO];
             
         }
         else{
-            NSLog(@"ERROR :%@",error);
-        }
+           [SVProgressHUD showErrorWithStatus:@"Snach not available"];
+            
+            [_freindsPopupView removeFromSuperview];
+            [backView removeFromSuperview];
+            }
     }
     
 }
-
+-(void)done{
+    [SVProgressHUD dismiss];
+}
 - (IBAction)followBrand:(id)sender {
     
              
@@ -1181,7 +1197,6 @@ UIView* backView ;
             
         }
     }
-    
     
 }
 

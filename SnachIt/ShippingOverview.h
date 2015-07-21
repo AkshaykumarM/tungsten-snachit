@@ -25,4 +25,8 @@
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
 @property (weak, nonatomic) IBOutlet UIView *subview;
 
+
+
+@property (nonatomic,assign)int lastcheckeckedcelltag;
+
 @end

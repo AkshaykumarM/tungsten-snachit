@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <customFonts key="customFonts">
         <mutableArray key="1105886371.ttf">
@@ -34,8 +34,7 @@
                     <rect key="frame" x="90" y="224" width="90" height="40"/>
                     <color key="backgroundColor" red="0.94955413509999997" green="0.77620295770000003" blue="0.17249000149999999" alpha="1" colorSpace="calibratedRGB"/>
                     <color key="tintColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                    <inset key="contentEdgeInsets" minX="0.0" minY="5" maxX="0.0" maxY="5"/>
-                    <state key="normal" image="star.png">
+                    <state key="normal" image="star">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                     <connections>
@@ -46,8 +45,7 @@
                     <rect key="frame" x="0.0" y="225" width="90" height="39"/>
                     <color key="backgroundColor" red="0.1296963404" green="0.74332129940000002" blue="0.91354955810000005" alpha="1" colorSpace="calibratedRGB"/>
                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                    <inset key="contentEdgeInsets" minX="13" minY="7" maxX="13" maxY="2"/>
-                    <state key="normal" image="friends_count.png">
+                    <state key="normal" image="user">
                         <color key="titleShadowColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </state>
                 </button>
@@ -77,13 +75,13 @@
                         <action selector="snoopButton:" destination="-1" eventType="touchUpInside" id="Th2-QE-gJy"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vqe-5e-f3B">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vqe-5e-f3B">
                     <rect key="frame" x="-23" y="-15" width="46" height="30"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="30" id="E7e-Dq-CSo"/>
                         <constraint firstAttribute="width" constant="30" id="Qxg-tf-xhj"/>
                     </constraints>
-                    <state key="normal" title="X">
+                    <state key="normal" image="greyClose">
                         <color key="titleColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                     </state>
@@ -106,7 +104,7 @@
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="V97-dh-RkE">
                     <rect key="frame" x="0.0" y="-21" width="42" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qY7-P9-w4u">
@@ -210,10 +208,14 @@
                 <constraint firstAttribute="trailing" secondItem="PZm-WT-BJw" secondAttribute="trailing" id="OZp-Oc-Fal"/>
                 <constraint firstAttribute="bottom" secondItem="XLx-Si-7DK" secondAttribute="bottom" id="OwE-UM-qIj"/>
                 <constraint firstAttribute="trailing" secondItem="w0S-bg-kRB" secondAttribute="trailing" id="R8b-M5-Uob"/>
-                <constraint firstItem="Vqe-5e-f3B" firstAttribute="top" secondItem="Bnc-qO-6Un" secondAttribute="top" id="XQH-DL-hCn"/>
+                <constraint firstItem="Vqe-5e-f3B" firstAttribute="top" secondItem="Bnc-qO-6Un" secondAttribute="top" id="XQH-DL-hCn">
+                    <variation key="widthClass=compact" constant="2"/>
+                </constraint>
                 <constraint firstAttribute="bottom" secondItem="PZm-WT-BJw" secondAttribute="bottom" id="YWY-11-6fV"/>
                 <constraint firstItem="RAb-q5-klt" firstAttribute="top" secondItem="Bnc-qO-6Un" secondAttribute="top" constant="20" id="d6p-ER-yh3"/>
-                <constraint firstAttribute="trailing" secondItem="Vqe-5e-f3B" secondAttribute="trailing" id="gKm-1W-eTD"/>
+                <constraint firstAttribute="trailing" secondItem="Vqe-5e-f3B" secondAttribute="trailing" id="gKm-1W-eTD">
+                    <variation key="widthClass=compact" constant="2"/>
+                </constraint>
                 <constraint firstItem="PZm-WT-BJw" firstAttribute="top" secondItem="qY7-P9-w4u" secondAttribute="bottom" id="glN-Kl-MhI"/>
                 <constraint firstItem="PZm-WT-BJw" firstAttribute="height" secondItem="V97-dh-RkE" secondAttribute="height" id="juY-ue-mJv"/>
                 <constraint firstAttribute="bottom" secondItem="lus-SG-3Kg" secondAttribute="bottom" id="lgG-kj-gYl"/>
@@ -318,11 +320,12 @@
                     <include reference="w57-lj-rjM"/>
                 </mask>
             </variation>
-            <point key="canvasLocation" x="217" y="186"/>
+            <point key="canvasLocation" x="158" y="180"/>
         </view>
     </objects>
     <resources>
-        <image name="friends_count.png" width="41" height="44"/>
-        <image name="star.png" width="48" height="48"/>
+        <image name="greyClose" width="32" height="32"/>
+        <image name="star" width="32" height="32"/>
+        <image name="user" width="32" height="32"/>
     </resources>
 </document>

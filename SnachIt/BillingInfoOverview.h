@@ -22,5 +22,6 @@
 
 @property (nonatomic, strong) id<BillingInfoControllerDelegate> delegate;
 - (IBAction)saveBtn:(id)sender;
+@property (nonatomic) int lastCheckedRecord;
 
 @end

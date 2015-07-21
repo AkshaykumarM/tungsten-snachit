@@ -206,12 +206,8 @@ import QuartzCore
     /*
     *   Initialization
     */
-    override init() {
-        super.init(frame: CGRectMake(0, 0, 50, 30))
-        
-        self.setup()
-    }
-    
+  
+   
     required init(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         

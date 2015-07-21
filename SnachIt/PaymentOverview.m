@@ -35,13 +35,13 @@
     int i;
     NSIndexPath *deletepath;
     UserProfile *user;
+    BOOL hasaccessoryview;
 }
-@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath,lastchecked;
-
+@synthesize brandImg,productImg,productPriceBtn,productDesc,productNameLbl,checkedIndexPath,lastchecked,lastcheckeckedcelltag;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+    hasaccessoryview=false;
     defaults=[NSUserDefaults standardUserDefaults];
     screenName=@"po";
     
@@ -76,8 +76,8 @@
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     UIBezierPath *shadowPath = [UIBezierPath bezierPathWithRect: self.subview.bounds];
@@ -142,19 +142,20 @@
     
    
     int rowid=info.uniqueId;
+   
     cell.tag=rowid;
-    //for auto selection
+      //for auto selection
     NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
     RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[def valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]] intValue];
     
     if(rowid==RECENTLY_ADDED_PAYMENT_INFO_TRACKER ){
         @try{
-            if(i==0){
-        [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
-        self.checkedIndexPath=indexPath;
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName:info.name withPaymentStreetName:info.street  withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:info.zip withPaymentPhoneNumber: info.phone];
-                i++;
-            }
+          
+        [cell.checkmarkImgView setHighlighted:YES];
+            self.checkedIndexPath=indexPath;
+             lastcheckeckedcelltag=cell.tag;
+            userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate  withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName:info.name withPaymentStreetName:info.street  withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:info.zip withPaymentPhoneNumber: info.phone];
+            
         }
         @catch(NSException *e){
             
@@ -162,7 +163,7 @@
         
     }else{
     cell.selectionStyle=UITableViewCellSelectionStyleNone;
-    cell.accessoryView=nil;
+    [cell.checkmarkImgView setHighlighted:NO];
     }
     
     return cell;
@@ -170,43 +171,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
-    UITableViewCell *tmp = [tableView cellForRowAtIndexPath:self.checkedIndexPath];
-    tmp.accessoryView=nil;
-  
-    if(self.checkedIndexPath)
-    {
-        UITableViewCell* uncheckCell = [tableView
-                                        cellForRowAtIndexPath:self.checkedIndexPath];
-        uncheckCell.accessoryView=nil;
-        [self clearPaymentDetails];
-    }
-    if([self.checkedIndexPath isEqual:indexPath])
-    {
-        self.checkedIndexPath = nil;
-        [self clearPaymentDetails];
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
-        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
+    PaymentOverviewCell *scell = (PaymentOverviewCell*)[tableView cellForRowAtIndexPath:self.checkedIndexPath];
+    [scell.checkmarkImgView setHighlighted:NO];
+    
+    PaymentOverviewCell *cell = (PaymentOverviewCell*)[tableView cellForRowAtIndexPath:indexPath];
+    [cell.checkmarkImgView setHighlighted:!cell.checkmarkImgView.isHighlighted];
+    SnachItPaymentInfo *obj=[snachItPaymentInfo objectAtIndex:indexPath.row];
+    obj.selected=!obj.selected;
+      lastcheckeckedcelltag=cell.tag;
+    self.checkedIndexPath=indexPath;
+    RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
+    NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
+    [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
 
-    }
-    else
-    {
-        
-        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]];
-       [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
-         cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
-        checkedIndexPath=indexPath;
-        SnachItPaymentInfo *info=[snachItPaymentInfo objectAtIndex:indexPath.row];
-        // initializing address details
-        userDetails=[[SnoopingUserDetails sharedInstance] initWithPaymentCardName:info.cardname withPaymentCardNumber:info.cardnumber withpaymentCardExpDate:info.cardexpdate withPaymentCardCvv:[NSString stringWithFormat:@"%d",info.cvv] withPaymentFullName: info.name withPaymentStreetName:info.street withPaymentCity:info.city withPaymentState:info.state withPaymentZipCode:info.zip withPaymentPhoneNumber:info.phone];
-
-        RECENTLY_ADDED_PAYMENT_INFO_TRACKER=cell.tag;
-        NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-        [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
-    }
-
+    
 }
 
 -(void)clearPaymentDetails{
@@ -215,7 +193,7 @@
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
     
     if (cell.isSelected) {
-        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]]; // No reason to create a new one every time, right?
+        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:CHECKMARK_ICON]]; // No reason to create a new one every time, right?
         [cell.accessoryView setFrame:CGRectMake(0, 0, 25, 25)];
          cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
             }
@@ -229,7 +207,7 @@
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
      UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
-    if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Yes"]) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
           @try{
        
         CURRENTDB=SnachItDBFile;
@@ -237,9 +215,15 @@
         if(status){
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
             [self clearPaymentDetails];
+            [tbl beginUpdates];
+            @try{
+                [snachItPaymentInfo removeObjectAtIndex: deletepath.row];
+            }
+            @catch(NSException *e){
+            }
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationFade];
+            [tbl endUpdates];
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-            [snachItPaymentInfo removeObjectAtIndex:deletepath.row];
-            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
             
             deletepath=nil;
@@ -282,7 +266,11 @@
 {
     switch (state) {
         case 0:
-            
+            if(hasaccessoryview){
+                cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:CHECKMARK_ICON]];
+                [cell.accessoryView setFrame:CGRectMake(0, 0, 24, 24)];
+                cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
+            }
             break;
         case 1:
             
@@ -290,8 +278,12 @@
         case 2:
             if(cell.accessoryView!=nil)
             {
+                hasaccessoryview=true;
                 cell.accessoryView=nil;
-                RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+                //RECENTLY_ADDED_PAYMENT_INFO_TRACKER=-1;
+            }
+            else{
+                hasaccessoryview=false;
             }
             break;
         default:
@@ -305,6 +297,7 @@
         AddNewCardForm *editInfoViewController = [segue destinationViewController];
         editInfoViewController.delegate = self;
         editInfoViewController.recordIDToEdit = self.recordIDToEdit;
+        editInfoViewController.lastCheckedRecord=lastcheckeckedcelltag;
     }
     if([[segue identifier] isEqualToString:ADDNEW]){
         AddNewCardForm *editInfoViewController = [segue destinationViewController];

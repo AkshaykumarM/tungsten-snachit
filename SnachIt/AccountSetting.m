@@ -20,16 +20,10 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "SVProgressHUD.h"
 #import "ChangePasswordViewController.h"
+#import "RegexValidator.h"
 
-#define REGEX_USERNAME @"[a-zA-Z\\s]*"
-#define REGEX_USER_NAME_LIMIT @"^.{3,10}$"
-#define REGEX_USER_NAME @"[A-Za-z0-9]{3,10}"
-#define REGEX_EMAIL @"[A-Z0-9a-z._%+-]{3,}+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"
-#define REGEX_PASSWORD_LIMIT @"^.{6,20}$"
-#define REGEX_PASSWORD @"[A-Za-z0-9]{6,20}"
-#define REGEX_PHONE_DEFAULT @"([1-9][0-9]{9})||([1-9][0-9]{11})"
-#define checkmark @"check2.png"
-#define uncheckmark @"cross.png"
+#define checkmark @"check"
+#define uncheckmark @"cross"
 @interface AccountSetting()<UITextFieldDelegate>
 
 @end
@@ -210,8 +204,8 @@ CGFloat animatedDistance;
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
 }
@@ -290,35 +284,61 @@ CGFloat animatedDistance;
 }
 -(void)setupAlerts{
     AccountSettingCell *tableCell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
-    [tableCell.nameTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid name"];
-    [tableCell.emailTextField addRegx:REGEX_EMAIL withMsg:@"Please enter valid email"];
-    [tableCell.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:@"Please enter valid phone no"];
+    [tableCell.nameTextField addRegx:REGEX_USERNAME withMsg:ERROR_USERNAME];
+    [tableCell.emailTextField addRegx:REGEX_EMAIL withMsg:ERROR_EMAILID];
+    [tableCell.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:ERROR_PHONE];
     tableCell.nameTextField.validateOnResign=NO;
-    tableCell.nameTextField.isMandatory=NO;
-    tableCell.emailTextField.isMandatory=NO;
+    tableCell.nameTextField.isMandatory=YES;
+    tableCell.emailTextField.isMandatory=YES;
     tableCell.phoneTextField.isMandatory=NO;
 }
 
 
--(int)updateUserProfile{
-    NSError *error;
+-(void)updateUserProfile{
+     NSError *error;
+    NSString *strurl=[NSString stringWithFormat:@"%@updateCustomerProfile/",ec2maschineIP];
+    NSData *data=[NSJSONSerialization dataWithJSONObject:[self getProfileUpdateValues] options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *strpostlength=[NSString stringWithFormat:@"%lu",(unsigned long)[data length]];
+    NSMutableURLRequest *urlrequest=[[NSMutableURLRequest alloc]init];
+    [urlrequest setURL:[NSURL URLWithString:strurl]];
+    [urlrequest setHTTPMethod:@"POST"];
+    [urlrequest setValue:strpostlength forHTTPHeaderField:@"Content-Length"];
+    [urlrequest setHTTPBody:data];
     
-    NSData *orderJson = [NSJSONSerialization dataWithJSONObject:[self getProfileUpdateValues] options:NSJSONWritingPrettyPrinted error:&error];
-    int status=0;
-    NSData *responseData=[global makePostRequest:orderJson requestURL:@"updateCustomerProfile/" ];
-    
-    if (responseData) {
-        NSDictionary *response= [NSJSONSerialization JSONObjectWithData:responseData options:NSJSONReadingMutableContainers error: &error];
-        if([[response objectForKey:@"success"] isEqual:@"true"]){
-            SnachItLogin *login=[[SnachItLogin alloc] init];
-            [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"]  withJoiningDate:[response valueForKey:@"JoiningDate"] withSnoopTime:[[response valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[response valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[response valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[response valueForKey:@"email_alerts"] intValue] withBackgroundURL:[NSURL URLWithString:[response valueForKey:@"headerImgURL"]]];
-            status=1;
-        }
-        else
-            status=0;
-    }
-    return status;
+    [NSURLConnection sendAsynchronousRequest:urlrequest queue:[NSOperationQueue currentQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error)
+     {
+         NSError *error1;
+         if(data !=nil){
+             NSDictionary *res=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableLeaves error:&error1];
+             if(!error1){
+                 NSLog(@"%@",res);
+                 [self performSelectorOnMainThread:@selector(doneUpdate:) withObject:res waitUntilDone:NO];
+             }
+             else{
+                 [SVProgressHUD showInfoWithStatus:error1.description];
+             }
+         }
+         else{
+             [global showAllertMsg:@"Alert" Message:NOTRESPONDING];
+         }
+         
+     }];
 }
+
+-(void)doneUpdate:(NSDictionary*)response{
+    
+    
+    if([[response objectForKey:@"success"] isEqual:@"true"]){
+        SnachItLogin *login=[[SnachItLogin alloc] init];
+        [login setuserInfo:[response valueForKey:@"CustomerId"] withUserName:[response valueForKey:@"UserName"] withEmailId:[response valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[response valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[response valueForKey:@"PhoneNumber"] withFirstName:[response valueForKey:@"FirstName"] withLastName:[response valueForKey:@"LastName"] withFullName:[response valueForKey:@"FullName"]  withJoiningDate:[response valueForKey:@"JoiningDate"] withSnoopTime:[[response valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[response valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[response valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[response valueForKey:@"email_alerts"] intValue] withBackgroundURL:nil];
+        [SVProgressHUD dismiss];
+    }
+    else{
+        [SVProgressHUD dismiss];
+    }
+}
+
+
 - (void)appAllertSwitchChanged:(SevenSwitch *)sender {
     
     appAlerts=  sender.on ? @"False" : @"True";
@@ -404,24 +424,9 @@ CGFloat animatedDistance;
     
     
     if([tableCell.nameTextField validate] & [tableCell.emailTextField validate]&[tableCell.phoneTextField validate]){
-        [SVProgressHUD showWithStatus:@"Updating"];
-        int status=[self updateUserProfile];
+        [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
+        [self updateUserProfile];
         
-        if(status==1){
-//            NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
-//            [defaults setValue:appAlerts forKey:appAlerts];
-//            [defaults setValue:emailAlerts forKey:emailAlerts];
-//            [defaults setValue:smsAlerts forKey:smsAlerts];
-            [self.tableViewsetting reloadData];
-            
-            [SVProgressHUD showSuccessWithStatus:@"Updated Successfully"];
-           
-        }
-        else{
-           
-            [SVProgressHUD showErrorWithStatus:@"Error Occurred"];
-            
-        }
     }
     
 }
@@ -446,7 +451,7 @@ CGFloat animatedDistance;
 {
     AccountSettingCell  *cell = (AccountSettingCell*)[self.tableViewsetting cellForRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0]];
     if (textField==cell.phoneTextField) {
-        if (range.location == 12) {
+        if (range.location == 10) {
             return NO;
         }
         return YES;

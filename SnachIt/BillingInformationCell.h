@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *CardTypeLbl;
 @property (weak, nonatomic) IBOutlet UILabel *cvvLbl;
 @property (weak, nonatomic) IBOutlet UIImageView *cardImg;
+@property (weak, nonatomic) IBOutlet UIImageView *checkmarkImgView;
 
 @end

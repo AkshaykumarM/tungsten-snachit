@@ -25,7 +25,7 @@
 @property (nonatomic, copy) NSString *state;
 @property (nonatomic, copy) NSString *zip;
 @property (nonatomic, copy) NSString *phone;
-
+@property(assign)BOOL selected;
 - (id)initWithUniqueId:(int)uniqueId name:(NSString *)name street:(NSString*)street city:(NSString *)city state:(NSString *)state zip:(NSString *)zip phone:(NSString*)phone;
 
 @end

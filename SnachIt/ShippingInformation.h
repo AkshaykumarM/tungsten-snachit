@@ -16,6 +16,6 @@
 
 
 @property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
-
+@property (nonatomic,assign)int lastcheckeckedcelltag;
 
 @end

@@ -49,8 +49,8 @@ UIRefreshControl *refreshControl;
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     
@@ -296,9 +296,9 @@ UIRefreshControl *refreshControl;
                     snachhistory.trackingNo=[tempDic objectForKey:HISTORY_TRACKING_NO];
                     snachhistory.slug=[tempDic objectForKey:HISTORY_SLUG];
                     if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_INFLIGHT])
-                    {snachhistory.statusIcon=@"inflightIcon.png"; [myLetestINFSnachs addObject:snachhistory];}
+                    {snachhistory.statusIcon=@"inflight"; [myLetestINFSnachs addObject:snachhistory];}
                     else if([[tempDic valueForKey:HISTORY_PRODUCT_STATUS] isEqual:HISTORY_DELIVERED])
-                    {snachhistory.statusIcon=@"deliveredIcon.png";[myLetestDELSnachs addObject:snachhistory];}
+                    {snachhistory.statusIcon=@"delivered";[myLetestDELSnachs addObject:snachhistory];}
                     
                     [myLetestALLSnachs addObject:snachhistory];
                 }
@@ -325,8 +325,9 @@ UIRefreshControl *refreshControl;
         NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
         refreshControl.attributedTitle = attributedTitle;
         
-        [refreshControl endRefreshing];
+       
     }
+     [refreshControl endRefreshing];
 }
 
 

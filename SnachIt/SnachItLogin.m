@@ -151,7 +151,7 @@ CGFloat animatedDistance;
     [super viewDidUnload];
 }
 - (IBAction)fbBtn:(id)sender {
-  [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+  [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
     if([global isConnected]){
         ssousing=@"FB";
         // If the session state is any of the two "open" states when the button is clicked
@@ -242,7 +242,6 @@ CGFloat animatedDistance;
     if([self.emailTfield hasText]&&[self.passwordTfield hasText]){
         if([self performSignIn:self.emailTfield.text Password:self.passwordTfield.text SSOUsing:ssousing]==1){
             
-            
             [self.view.window.rootViewController dismissViewControllerAnimated:YES completion:nil];
             
             
@@ -261,7 +260,7 @@ CGFloat animatedDistance;
 -(int)performSignIn:(NSString*)username Password:(NSString*)password SSOUsing:(NSString*)ssoUsing{
     
     NSString *url=[NSString stringWithFormat:@"%@signInFromMobile/?username=%@&password=%@",ec2maschineIP,username,password];
-    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
+    NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]];
     int status=0;
     if([global isConnected]){
         NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
@@ -280,10 +279,11 @@ CGFloat animatedDistance;
                 
                 NSDictionary *userprofile=[response objectForKey:@"userProfile"];
                 @try{
-                    
+                    USERID=[userprofile valueForKey:@"CustomerId"];
                     [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue] withBackgroundURL:[NSURL URLWithString:[userprofile valueForKey:@"headerImgURL"]]];
                 }
                 @catch(NSException *e){
+                    USERID=[userprofile valueForKey:@"CustomerId"];
                     [self setuserInfo:[userprofile valueForKey:@"CustomerId"] withUserName:[userprofile valueForKey:@"UserName"] withEmailId:[userprofile valueForKey:@"EmailID"] withProfilePicURL:[NSURL URLWithString:[userprofile valueForKey:@"ProfilePicUrl"]] withPhoneNumber:[userprofile valueForKey:@"PhoneNumber"] withFirstName:[userprofile valueForKey:@"FirstName"] withLastName:[userprofile valueForKey:@"LastName"] withFullName:[userprofile valueForKey:@"FullName"]   withJoiningDate:[userprofile valueForKey:@"JoiningDate"] withSnoopTime:[[userprofile valueForKey:@"snoop_time_limit"] intValue] withAppAlerts:[[userprofile valueForKey:@"app_alerts"] intValue] withSMSAlerts:[[userprofile valueForKey:@"sms_alerts"] intValue] withEmailAlerts:[[userprofile valueForKey:@"email_alerts"] intValue] withBackgroundURL:[NSURL URLWithString:@""]];
                     
                 }
@@ -295,6 +295,9 @@ CGFloat animatedDistance;
                 [defaults setObject:@"1" forKey:LOGGEDIN];
                 isAllreadyTried=TRUE;
                 [defaults synchronize];
+                
+                
+                
                 status=1;
             }
             else{
@@ -310,6 +313,17 @@ CGFloat animatedDistance;
     
     return status;
 }
+
+
+
+
+
+
+
+
+
+
+
 - (IBAction)signUpHereBtn:(id)sender {
     SnachitSignup *startscreen = [[SnachitSignup alloc]
                                   initWithNibName:@"SignUpScreen" bundle:nil];
@@ -424,7 +438,7 @@ CGFloat animatedDistance;
 }
 
 - (IBAction)gPlusBtn:(id)sender {
-   [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
+   [SVProgressHUD showWithStatus:@"Please wait" maskType:SVProgressHUDMaskTypeBlack];
     if([global isConnected]){
         [self googleSignIn];
     }
@@ -498,63 +512,100 @@ CGFloat animatedDistance;
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
     if (buttonIndex == 1 && alertView.tag==1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
-       [SVProgressHUD showWithStatus:nil maskType:SVProgressHUDMaskTypeBlack];
-       __block NSData *jasonData;
-         __block NSError *error = nil;
-        dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-        [SVProgressHUD showWithStatus:@"Processing"];
-        dispatch_async(anotherThreadQueue, ^{
-        NSString *url=[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@",ec2maschineIP,emailrecovery.text];
-        NSURL *webURL = [[NSURL alloc] initWithString:[url stringByAddingPercentEscapesUsingEncoding:NSASCIIStringEncoding]];
-       
         if([global isConnected]){
-            NSURLRequest *request = [NSURLRequest requestWithURL:webURL];
-            NSURLResponse *response = nil;
-            
-            //getting the data
-            jasonData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-            //json parse
-            NSLog(@"\nRequest URL: %@",url);
-            
+            [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
+            @try{
+                NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+                
+                [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@request-to-reset-password/?email=%@&ssoUsing=%@",ec2maschineIP,emailrecovery.text,[defaults valueForKey:SSOUSING]]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+                    if (!error) {
+                        
+                        NSDictionary *responseDic = [self fetchData:data];
+                        
+                        NSLog(@"Dictionary %@",[self fetchData:data]);
+                        
+                        if (responseDic) {
+                            @try{
+                                    [SVProgressHUD dismiss];
+                            }
+                            @catch(NSException *e){
+                                    [SVProgressHUD dismiss];
+                            }
+                            
+                        }
+                            [SVProgressHUD dismiss];
+                        // As this block of code is run in a background thread, we need to ensure the GUI
+                        // update is executed in the main thread
+                        [self performSelectorOnMainThread:@selector(doneForgotResponse:) withObject:responseDic waitUntilDone:NO];
+                       
+                    }
+                    else{
+                        NSLog(@"Error: %@", error.description);
+                    }
+                                   }];
+                           }
+            @catch(NSException *e){
+                NSLog(@"Exception: %@",e);
+            }
+           // [SVProgressHUD dismiss];
+        }
+        [SVProgressHUD dismiss];
+    }
+    
+       else{
+           
+        [self.view endEditing:YES];
+           }
+    
+}
+
+-(void)doneForgotResponse:(NSDictionary*)response
+{
+   
+    if(response!=nil){
+        
+        if([[response objectForKey:@"success"] isEqual:@"true"])
+        {
+           
+            UIAlertView *alertView = [[UIAlertView alloc]
+                                      initWithTitle:@"Thanks"
+                                      message:@"An email has been sent to this address containing the password reset instructions."
+                                      delegate:self
+                                      cancelButtonTitle:nil
+                                      otherButtonTitles:@"OK", nil];
+          
+            [alertView show];
             
         }
-        dispatch_async(dispatch_get_main_queue(), ^{
-                  [SVProgressHUD dismiss];
+        else{
+            UIAlertView *alertView = [[UIAlertView alloc]
+                                      initWithTitle:@"Alert"
+                                      message:[response objectForKey:@"message"]
+                                      delegate:self
+                                      cancelButtonTitle:nil
+                                      otherButtonTitles:@"OK", nil];
+            [alertView show];
             
-            if (jasonData) {
-                
-                NSDictionary *response= [NSJSONSerialization JSONObjectWithData:jasonData options:NSJSONReadingMutableContainers error: &error];
-                NSLog(@"\nResponse:%@ ",response);
-                
-                if([[response objectForKey:@"success"] isEqual:@"true"])
-                {
-                    UIAlertView *alertView = [[UIAlertView alloc]
-                                              initWithTitle:@"Thanks"
-                                              message:@"An email has been sent to this address containing the password reset instructions."
-                                              delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-                    [alertView show];
-                }
-                else{
-                    UIAlertView *alertView = [[UIAlertView alloc]
-                                              initWithTitle:@"Alert"
-                                              message:[response objectForKey:@"message"]
-                                              delegate:self
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:@"OK", nil];
-                    [alertView show];
-                    
-                }
-            }
-                [SVProgressHUD dismiss];;
-                
-            });
-        });
-      
-    
+        }
     }
+   
+    
 }
+
+- (NSDictionary *)fetchData:(NSData *)response
+{
+    NSError *error = nil;
+    NSDictionary* latestBookings = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
+    if (error != nil) {
+        NSLog(@"Error: %@", error.description);
+        return nil;
+    }
+    
+    
+    return latestBookings;
+}
+
 
 - (BOOL)alertViewShouldEnableFirstOtherButton:(UIAlertView *)alertView
 {
@@ -572,6 +623,7 @@ CGFloat animatedDistance;
     }
     return YES;
 }
+
 -(void)setuserInfo:(NSString*)userId withUserName:(NSString*)username withEmailId:(NSString*)emailId withProfilePicURL:(NSURL*)profilePicURL withPhoneNumber:(NSString*)phoneNumber withFirstName:(NSString*)firstName withLastName:(NSString*)lastName withFullName:(NSString*)fullName withJoiningDate:(NSString*)joiningDate withSnoopTime:(int)snoopTime withAppAlerts:(int)appAlerts withSMSAlerts:(int)SMSAlerts withEmailAlerts:(int)emailAlerts withBackgroundURL:(NSURL*)backgroundURL{
     
     UserProfile *profile=[[UserProfile

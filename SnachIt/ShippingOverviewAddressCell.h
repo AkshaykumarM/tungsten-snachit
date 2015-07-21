@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *nameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *streetNameLbl;
 @property (weak, nonatomic) IBOutlet UILabel *cityStateZipLbl;
+@property (weak, nonatomic) IBOutlet UIImageView *checkmarkImgView;
 
 @end

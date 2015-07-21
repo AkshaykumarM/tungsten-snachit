@@ -38,6 +38,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *cameraBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *cardtypeImageView;
 @property (nonatomic) int recordIDToEdit;
+@property (nonatomic) int lastCheckedRecord;
 
 @property (nonatomic, strong) id<PaymentInfoControllerDelegate> delegate;
 

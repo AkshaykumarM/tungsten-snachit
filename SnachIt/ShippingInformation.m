@@ -30,8 +30,9 @@
     NSMutableArray *snachItAddressInfo;
     int i;
     NSIndexPath *deletepath;
+    BOOL hasAccessoryview;
     }
-@synthesize checkedIndexPath;
+@synthesize checkedIndexPath,lastcheckeckedcelltag;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
@@ -42,7 +43,7 @@
     UITableView *tb1=(UITableView *)[self.view viewWithTag:1];
     tb1.estimatedRowHeight = 600; // for example. Set your average height
     defaults=[NSUserDefaults standardUserDefaults];
-    
+    hasAccessoryview=false;
 }
 -(void)viewWillAppear:(BOOL)animated{
     [super viewWillAppear:YES];
@@ -63,8 +64,8 @@
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     
@@ -150,23 +151,17 @@
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=[[def valueForKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]] integerValue];
         int rowid=info.uniqueId;
         cell.tag=rowid;
+        
         if(rowid==RECENTLY_ADDED_SHIPPING_INFO_TRACKER){
-            @try{
-            if(i==0){
-            [tableView selectRowAtIndexPath:indexPath animated:TRUE scrollPosition:UITableViewScrollPositionNone];
-            self.checkedIndexPath=indexPath;
             
-                i++;
-            }}
-            @catch(NSException *e){
-                
-            }
+                [cell.checkmarkImgView setHighlighted:YES];
+                self.checkedIndexPath=indexPath;
+                lastcheckeckedcelltag=cell.tag;
         }
-
     
         else{
             cell.selectionStyle=UITableViewCellSelectionStyleNone;
-            cell.accessoryView=nil;
+            [cell.checkmarkImgView setHighlighted:NO];
         }
         return cell;
     }
@@ -175,66 +170,41 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
    
     if(tableView.tag!=1){
-        [tableView deselectRowAtIndexPath:self.checkedIndexPath animated:NO];
-        UITableViewCell *tmp = [tableView cellForRowAtIndexPath:checkedIndexPath];
-        tmp.accessoryView=nil;
-        self.checkedIndexPath = nil;
-    if(self.checkedIndexPath)
-    {
-        UITableViewCell* uncheckCell = [tableView
-                                        cellForRowAtIndexPath:self.checkedIndexPath];
-        uncheckCell.accessoryView=nil;
-    }
-    if([self.checkedIndexPath isEqual:indexPath])
-    {
-        self.checkedIndexPath = nil;
-    }
-    else
-    {
-        UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
-        cell.accessoryView=[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]];
-        self.checkedIndexPath = indexPath;
-       [cell.accessoryView setFrame:CGRectMake(0, 0, 24, 24)];
-        cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
+       
+       ShippingInfoTableCellcell *scell = (ShippingInfoTableCellcell*)[tableView cellForRowAtIndexPath:self.checkedIndexPath];
+        [scell.checkmarkImgView setHighlighted:NO];
+        
+        ShippingInfoTableCellcell *cell = (ShippingInfoTableCellcell*)[tableView cellForRowAtIndexPath:indexPath];
+        [cell.checkmarkImgView setHighlighted:!cell.checkmarkImgView.isHighlighted];
+        SnachItAddressInfo *obj=[snachItAddressInfo objectAtIndex:indexPath.row];
+        obj.selected=!obj.selected;
+        lastcheckeckedcelltag=cell.tag;
+        self.checkedIndexPath=indexPath;
         RECENTLY_ADDED_SHIPPING_INFO_TRACKER=cell.tag;
         NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
         [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
-        
-        
-    }
+ 
     }
 }
-
-
-
-- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
-      if(tableView.tag!=1){
-    if (cell.isSelected) {
-        cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark1.png"]]; // No reason to create a new one every time, right?
-        [cell.accessoryView setFrame:CGRectMake(0, 0, 24, 24)];
-        cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
-    }
-    else {
-        cell.accessoryView = nil;
-    }
-      }
-}
-
-
-
 
 
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
      UITableView *tbl = (UITableView *)[self.view viewWithTag:5];
-    if (buttonIndex == 1) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
+    if ([[alertView buttonTitleAtIndex:buttonIndex] isEqualToString:@"Yes"]) { // Set buttonIndex == 0 to handel "Ok"/"Yes" button response
          @try{
        BOOL status=[[SnachItDB database] deleteRecordFromAddress:[[tbl cellForRowAtIndexPath:deletepath] tag] Userid:user.userID];
         if(status){
             RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
-            [snachItAddressInfo removeObjectAtIndex:deletepath.row];
-            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationLeft];
+            [tbl beginUpdates];
+            @try{
+                [snachItAddressInfo removeObjectAtIndex: deletepath.row];
+            }
+            @catch(NSException *e){
+            }
+            [tbl deleteRowsAtIndexPaths:@[deletepath] withRowAnimation:UITableViewRowAnimationFade];
+            [tbl endUpdates];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_SHIPPING_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID]];
             
             deletepath=nil;
@@ -306,7 +276,11 @@
 {
     switch (state) {
         case 0:
-           
+            if(hasAccessoryview){
+                cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:CHECKMARK_ICON]]; // No reason to create a new one every time, right?
+                [cell.accessoryView setFrame:CGRectMake(0, 0, 24, 24)];
+                cell.accessoryView.contentMode=UIViewContentModeScaleAspectFit;
+            }
             break;
         case 1:
            
@@ -314,8 +288,12 @@
         case 2:
             if(cell.accessoryView!=nil)
             {
+                hasAccessoryview=true;
                 cell.accessoryView=nil;
-                RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+               // RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
+            }
+            else{
+                hasAccessoryview=false;
             }
             break;
         default:
@@ -373,6 +351,7 @@
     if ([[segue identifier] isEqualToString:EDITSEGUE])
     {
     editInfoViewController.recordIDToEdit = self.recordIDToEdit;
+    editInfoViewController.lastCheckedRecord=lastcheckeckedcelltag;
     }
     else{
         editInfoViewController.recordIDToEdit = -1;

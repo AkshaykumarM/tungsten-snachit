@@ -140,8 +140,8 @@ CGFloat animatedDistance;
     UIButton *btn = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn setFrame:CGRectMake(0.0f, 0.0f, 30.0f, 30.0f)];
     [btn addTarget:self action:@selector(back:) forControlEvents:UIControlEventTouchUpInside];
-    [btn setImage:[UIImage imageNamed:@"back.png"] forState:UIControlStateNormal];
-    btn.imageEdgeInsets=UIEdgeInsetsMake(5,5,4,5);
+    [btn setImage:[UIImage imageNamed:BACKARROW] forState:UIControlStateNormal];
+    btn.imageEdgeInsets=UIEdgeInsetsMake(2,2,2,2);
     UIBarButtonItem *eng_btn = [[UIBarButtonItem alloc] initWithCustomView:btn];
     self.navigationItem.leftBarButtonItem = eng_btn;
     
@@ -260,7 +260,7 @@ CGFloat animatedDistance;
             RECENTLY_ADDED_PAYMENT_INFO_TRACKER=[[info objectForKey:@"lastrow"] intValue];
             }
             else{
-                RECENTLY_ADDED_PAYMENT_INFO_TRACKER=self.recordIDToEdit;
+                RECENTLY_ADDED_SHIPPING_INFO_TRACKER=self.lastCheckedRecord;
             }
             NSUserDefaults *def=[NSUserDefaults standardUserDefaults];
             [def setObject:[NSString stringWithFormat:@"%d",RECENTLY_ADDED_PAYMENT_INFO_TRACKER] forKey:[NSString stringWithFormat:@"%@%@",DEFAULT_BILLING,user.userID]];
@@ -397,7 +397,7 @@ CGFloat animatedDistance;
         return YES;
     }
     if (textField==self.phoneTextField) {
-        if (range.location == 12) {
+        if (range.location == 10) {
             return NO;
         }
         return YES;
@@ -552,13 +552,16 @@ CGFloat animatedDistance;
 }
 
 -(void)setupAlerts{
-    [self.cardNumber addRegx:REGEX_CREDIT_CARD_NO withMsg:@"Please enter valid card no"];
-    [self.expDateTxtField addRegx:REGEX_EXPDATE withMsg:@"Please enter valid cvv"];
-    [self.cvvTextField addRegx:REGEX_CVV withMsg:@"Please enter valid cvv"];
-    [self.fullNameTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid name"];
-    [self.cityTextField addRegx:REGEX_USERNAME withMsg:@"Please enter valid city"];
-    [self.zipTextField addRegx:REGEX_ZIP_CODE withMsg:@"Please enter valid zip code"];
-    [self.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:@"Please enter valid phone no"];
+    [self.cardNumber addRegx:REGEX_CREDIT_CARD_NO withMsg:ERROR_CREDITCARD];
+    [self.expDateTxtField addRegx:REGEX_EXPDATE withMsg:ERROR_EXPDATE];
+    [self.cvvTextField addRegx:REGEX_CVV withMsg:ERROR_CVV];
+    [self.fullNameTextField addRegx:REGEX_USERNAME withMsg:ERROR_USERNAME];
+    [self.phoneTextField addRegx:REGEX_PHONE_DEFAULT withMsg:ERROR_PHONE];
+    [self.zipTextField addRegx:REGEX_ZIP_CODE withMsg:ERROR_ZIPCODE];
+    [self.cityTextField addRegx:REGEX_CITY withMsg:ERROR_CITY];
+    [self.stateTextField addRegx:REGEX_STATE withMsg:ERROR_STATE];
+    [self.streetTextField addRegx:REGEX_ADDRESS withMsg:EROOR_ADDRESS];
+    
     self.cardNumber.isMandatory=YES;
     self.expDateTxtField.isMandatory=YES;
     self.cvvTextField.isMandatory=YES;

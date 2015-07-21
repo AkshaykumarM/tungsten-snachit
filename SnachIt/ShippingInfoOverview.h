@@ -20,5 +20,6 @@
 @property (nonatomic, strong) id<ShippingInfoControllerDelegate> delegate;
 - (IBAction)saveBtn:(id)sender;
 @property (nonatomic) int recordIDToEdit;
-
+@property (nonatomic) int lastCheckedRecord;
 @end
+ 

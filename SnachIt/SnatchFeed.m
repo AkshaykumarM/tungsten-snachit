@@ -91,7 +91,7 @@
     NSDictionary *dictionaryForFriendsCountResponse;
     float viewSize;
     NSNumber *strikeSize;
- 
+    UIActivityIndicatorView *activity;
 }
 
 
@@ -120,8 +120,27 @@
     screenName=nil;
     [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     strikeSize= [NSNumber numberWithInt:2];
-   
-   }
+    activity = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    activity.transform=CGAffineTransformMakeScale(1.5f, 1.5f);
+    activity.center=CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2-60);
+    activity.hidesWhenStopped = YES;
+
+    activity.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin |
+    UIViewAutoresizingFlexibleHeight |
+    UIViewAutoresizingFlexibleLeftMargin |
+    UIViewAutoresizingFlexibleRightMargin |
+    UIViewAutoresizingFlexibleTopMargin |
+    UIViewAutoresizingFlexibleWidth;
+    [self.tableView addSubview:activity];
+    [activity startAnimating];
+    // Add an observer that will respond to loginComplete
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(recievedNotification:)
+                                                 name:@"recievedNotification" object:nil];
+    
+
+    
+}
 
 
 - (void)getLatestProducts
@@ -130,12 +149,22 @@
     if([global isConnected]){
         @try{
             [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@get-all-running-snachs/?customerId=%@",ec2maschineIP,user.userID]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+               
                 if (!error) {
-                    NSArray *latestProducts = [self fetchData:data];
+                    NSArray *latestProduct = [self fetchData:data];
+                    
+                  NSSortDescriptor  *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"snachId"
+                                                                                  ascending:NO selector:@selector(localizedStandardCompare:)];
+                      NSArray *latestProductArray = [latestProduct sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortDescriptor]];
+                    
+                    
+                    
+                    
                     Products = [NSMutableArray arrayWithCapacity:10];
                     
-                    if (latestProducts) {
-                        for (NSDictionary *prodDic in latestProducts) {
+                    
+                    if (latestProductArray) {
+                        for (NSDictionary *prodDic in latestProductArray) {
                             Product *product = [[Product alloc] init];
                             product.productImages=[prodDic objectForKey:PRODUCT_IMAGES];
                             product.productname=[prodDic objectForKey:PRODUCT_NAME];
@@ -153,10 +182,13 @@
                             product.followStatus =[prodDic objectForKey:PRODUCT_FOLLOW_STATUS];
                             product.snooptime=[[SnachItDB database] getSnachTime:[product.snachId intValue] UserId:user.userID SnoopTime:user.snoopTime];
                             if(product.snooptime>0){
+                                
                                 [Products addObject:product];
-                            }
+                                                                                    }
                         }
                     }
+                    
+                 
                     
                     // As this block of code is run in a background thread, we need to ensure the GUI
                     // update is executed in the main thread
@@ -177,6 +209,13 @@
 }
 
 
+-(void)recievedNotification:(NSNotification *)note {
+    [self updateAPNSTokenIfChanged];
+}
+
+
+
+
 
 - (NSArray *)fetchData:(NSData *)response
 {
@@ -195,8 +234,9 @@
 - (void)reloadData
 {
     // Reload table data
-    [self.tableView reloadData];
     
+    [self.tableView reloadData];
+    [activity stopAnimating];
     // End the refreshing
     if (self.refreshControl) {
         
@@ -207,9 +247,10 @@
                                                                     forKey:NSForegroundColorAttributeName];
         NSAttributedString *attributedTitle = [[NSAttributedString alloc] initWithString:title attributes:attrsDictionary];
         self.refreshControl.attributedTitle = attributedTitle;
-        
-        [self.refreshControl endRefreshing];
+      [self.refreshControl endRefreshing];
     }
+    
+    
 }
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 { self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
@@ -238,7 +279,6 @@
 
     if([[defaults stringForKey:LOGGEDIN] isEqual:@"1"]){
         if(!isAllreadyTried){
-            
             [self trySilentLogin];
         }
     }
@@ -308,8 +348,7 @@
             
         }
         else{
-            
-            
+                
                 self.tableView.backgroundView=nil;
         }
     }@catch(NSException *e){}
@@ -357,7 +396,7 @@
         NSString *shipping=[NSString stringWithFormat:@"%@%@",DEFAULT_SHIPPING,user.userID];
         [SnachItLogin signOut];
         for (id key in dict) {
-            if([key string]!=shipping&& [key string]!=billing)
+            if([key string]!=shipping&& [key string]!=billing&& ![[key string] isEqual:SSOUSING])
             [defs removeObjectForKey:key];
         }
         [defs synchronize];
@@ -518,7 +557,7 @@
             snoopTapped.productName=prod.productname;
             snoopTapped.brandName=[NSString stringWithFormat:@"%@", prod.brandname];
             [cell.brandImg setImageWithURL:[NSURL URLWithString:prod.brandimage] placeholderImage:nil];
-            snoopTapped.Price=prod.price;
+            snoopTapped.price=prod.price;
             
             snoopTapped.productId=prod.productId;
             snoopTapped.brandId=prod.brandId;
@@ -763,6 +802,42 @@
 
     }@catch(NSException *e){}
 }
+
+
+
+
+
+/*this method will update the APNS token on the server
+ if it has been changed*/
+-(void)updateAPNSTokenIfChanged{
+    
+    NSUserDefaults *defaults=[NSUserDefaults standardUserDefaults];
+    if(![[defaults valueForKey:TOKEN] isEqualToString:APNSTOKEN])
+    {
+        NSLog(@"TOKEN : %@",APNSTOKEN);
+        [NSURLConnection sendAsynchronousRequest:[[NSURLRequest alloc] initWithURL:[NSURL URLWithString:[NSString stringWithFormat:@"%@update-apns-tocken/?user_id=%@&apns_token=%@",ec2maschineIP,USERID,APNSTOKEN]]] queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
+            if (!error) {
+                [defaults setObject:APNSTOKEN forKey:TOKEN];
+            }
+        }];
+    }
+}
+
+- (NSDictionary *)fetchDataforAPNS:(NSData *)response
+{
+    NSError *error = nil;
+    NSDictionary *data = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableContainers error: &error];
+    
+    if (error != nil) {
+        NSLog(@"Error: %@", error.description);
+        return nil;
+    }
+    return data;
+}
+
+
+
+
 -(void)viewDidDisappear:(BOOL)animated{
     
     

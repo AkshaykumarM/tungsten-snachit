@@ -296,7 +296,7 @@
 -(void)uploadImage:(UIImage*)image ImageName:(NSString*)filename APIname:(NSString*)apiname
 {
     dispatch_queue_t anotherThreadQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0);
-    [SVProgressHUD showWithStatus:@"Uploading" maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:@"Please Wait" maskType:SVProgressHUDMaskTypeBlack];
     dispatch_async(anotherThreadQueue, ^{
         //create request
         @try{

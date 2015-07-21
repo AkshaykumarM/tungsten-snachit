@@ -23,4 +23,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet UIView *subview;
 
+@property (nonatomic,retain)NSIndexPath * checkedIndexPath ;
+@property (nonatomic,assign)int lastcheckeckedcelltag;
+
 @end

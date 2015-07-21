@@ -11,11 +11,12 @@
 #import "UserProfile.h"
 #import "SnatchFeed.h"
 #import "global.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #define APPSHARESEGUE @"appshare"
 @implementation SnatchTimeUp{
     UserProfile *user;
-    UIButton *topProfileBtn;
+    UIImageView *topProfileBtn;
     UINavigationBar *navbar;
 }
 - (void)viewDidLoad {
@@ -73,12 +74,13 @@
     
     //here i am setting the frame of profile pic and assigning it to a button
     CGRect frameimg = CGRectMake(0, 0, 40, 40);
-    topProfileBtn = [[UIButton alloc] initWithFrame:frameimg];
+    topProfileBtn = [[UIImageView alloc] initWithFrame:frameimg];
      [self.view addGestureRecognizer:self.revealViewController.panGestureRecognizer];
     //assigning the default background image
-    [topProfileBtn setBackgroundImage:[UIImage imageNamed:DEFAULTPLACEHOLDER] forState:UIControlStateNormal];
+    
+    [topProfileBtn setImageWithURL:user.profilePicUrl placeholderImage:[UIImage imageNamed:DEFAULTPLACEHOLDER]];
     topProfileBtn.clipsToBounds=YES;
-    [topProfileBtn setShowsTouchWhenHighlighted:YES];
+    
     
     //setting up corner radious, border and border color width to make it circular
     topProfileBtn.layer.cornerRadius = 20.0f;
@@ -86,8 +88,9 @@
     topProfileBtn.layer.borderColor = [[UIColor whiteColor] CGColor];
      [topProfileBtn setContentMode:UIViewContentModeScaleAspectFill];
     // setting action to the button
-    [topProfileBtn addTarget:self.revealViewController action:@selector(revealToggle:) forControlEvents:UIControlEventTouchUpInside];
-    
+    UITapGestureRecognizer *tapped = [[UITapGestureRecognizer alloc] initWithTarget:self.revealViewController action:@selector(revealToggle:)];
+    tapped.numberOfTapsRequired = 1;
+    [topProfileBtn addGestureRecognizer:tapped];
     //assigning button to top bar iterm
     UIBarButtonItem *mailbutton =[[UIBarButtonItem alloc] initWithCustomView:topProfileBtn];
     
@@ -98,19 +101,10 @@
     navbar.topItem.title = @"time's up";
     //checking if profile pic url is nil else download the image and assign it to imageview
     
-    
-    if([global isValidUrl:user.profilePicUrl]){
-        
-        [NSURLConnection sendAsynchronousRequest:[NSURLRequest requestWithURL:user.profilePicUrl] queue:[NSOperationQueue mainQueue] completionHandler:^(NSURLResponse *response, NSData *data, NSError *error) {
-            [topProfileBtn setBackgroundImage:[UIImage imageWithData:data] forState:UIControlStateNormal];
-        }];}
-    
+
 }
 -(void)viewDidDisappear:(BOOL)animated{
-    for(UIView *subview in [self.view subviews]) {
-        [subview removeFromSuperview];
-    }
     [super viewDidDisappear:YES];
-    }
+}
 
 @end

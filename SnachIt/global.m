@@ -53,10 +53,7 @@ int RECENTLY_ADDED_SHIPPING_INFO_TRACKER=-1;
     return responseData;
 }
 
-+(BOOL)isValidUrl:(NSURL *)urlString{
-    NSURLRequest *request = [NSURLRequest requestWithURL:urlString];
-    return [NSURLConnection canHandleRequest:request];
-}
+
 +(void)showAllertForAllreadySignedUp{
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Alert!"
                                                     message:@"You have alreday signed up with snach.it."

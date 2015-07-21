@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6254" systemVersion="14A389" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6246"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
     </dependencies>
     <customFonts key="customFonts">
         <mutableArray key="OpenSans-Regular.ttf">
             <string>OpenSans</string>
         </mutableArray>
         <mutableArray key="OpenSans-Semibold.ttf">
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
+            <string>OpenSans-Semibold</string>
             <string>OpenSans-Semibold</string>
             <string>OpenSans-Semibold</string>
         </mutableArray>
@@ -34,7 +43,7 @@
                                 <button key="customView" opaque="NO" contentMode="scaleAspectFit" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="vqR-oM-QQy">
                                     <rect key="frame" x="16" y="7" width="28" height="28"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" image="closeout_icon.png"/>
+                                    <state key="normal" image="purpleClose"/>
                                     <connections>
                                         <action selector="closeAction:" destination="-1" eventType="touchUpInside" id="Adc-bG-hst"/>
                                     </connections>
@@ -43,99 +52,306 @@
                         </navigationItem>
                     </items>
                 </navigationBar>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="sFP-rv-TQV">
-                    <rect key="frame" x="0.0" y="80" width="320" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="18" id="1tt-Xx-PXQ"/>
-                    </constraints>
-                    <string key="text">SNACH.IT PRIVACY POLICY
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="HMy-J0-Dl6">
+                    <rect key="frame" x="0.0" y="60" width="320" height="508"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gbo-kv-LAP">
+                            <rect key="frame" x="0.0" y="0.0" width="319" height="2628"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="72R-tr-bKu">
+                                    <rect key="frame" x="0.0" y="8" width="319" height="20"/>
+                                    <string key="text">SNACH.IT PRIVACY POLICY
 </string>
-                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="wLk-zc-EJw">
-                    <rect key="frame" x="26" y="113" width="268" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="18" id="TqW-Vv-Gel"/>
-                    </constraints>
-                    <string key="text">(Last Updated 3 May 2015)
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zwt-HU-f3u">
+                                    <rect key="frame" x="16" y="43" width="287" height="18"/>
+                                    <string key="text">(Last Updated 3 May 2015)
 </string>
-                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Provided Information " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tCr-Z2-Qxg">
-                    <rect key="frame" x="26" y="261" width="268" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="18" id="fyx-gw-pl0"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="aEG-79-S5w">
-                    <rect key="frame" x="26" y="131" width="268" height="120"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="120" id="veQ-tu-Bkt"/>
-                    </constraints>
-                    <string key="text">This Privacy Policy governs your use of the Snach.it App (“App”) for mobile devices that was created by Snachit, LLC (“Company”).  The App is a shopping portal which allows users to access great deals on merchandise under a time-limited basis.
+                                    <fontDescription key="fontDescription" name="OpenSans" family="Open Sans" pointSize="13"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Provided Information " lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="C2L-RX-YAZ">
+                                    <rect key="frame" x="16" y="193" width="183" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="lZb-QH-7zl">
+                                    <rect key="frame" x="16" y="58" width="287" height="125"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">This Privacy Policy governs your use of the Snach.it App (“App”) for mobile devices that was created by Snachit, LLC (“Company”).  The App is a shopping portal which allows users to access great deals on merchandise under a time-limited basis.
 </string>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                </textView>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="0Uy-F7-6fm">
-                    <rect key="frame" x="26" y="383" width="268" height="97"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="uor-yJ-vhY">
+                                    <rect key="frame" x="16" y="213" width="287" height="110"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">The App obtains information you provide when you download and register the App.  Registration with us is optional.However, please keep in mind that you may not be able to use some of the features offered by the App unless you register.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="vVR-vE-612">
+                                    <rect key="frame" x="16" y="323" width="287" height="218"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">When you register and use the App, you will be required to provide (a) your name, email address, username, password and other registration information; (b) transaction-related information, such as when you make purchases, respond to any offers, or download or use applications from us; (c) information you provide us when you contact us for help; (d) credit card information for purchase and use of the App, and; (e) information you enter into our system when using the App, such as contact information and project management information.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="11p-mJ-jOw">
+                                    <rect key="frame" x="16" y="541" width="287" height="79"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We may use the information you provide us to contact your from time to time to provide you with important information, required notices and marketing promotions.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Automatically Collected Information" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PsP-GZ-ZFu">
+                                    <rect key="frame" x="16" y="630" width="287" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="kaI-wq-Q1h">
+                                    <rect key="frame" x="16" y="650" width="287" height="141"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">In addition, the App may collect certain information automatically, including, but not limited to, the type of mobile device you use, your mobile device’s unique device ID, the IP address of your mobile device, your mobile operating system, the type of mobile Internet browsers you use, and information about the way you use the App. </string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" text="The App may collect precise information about the location of your mobile device." textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="Pz3-KV-KWk">
+                                    <rect key="frame" x="16" y="791" width="287" height="48"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="NcD-Yz-msk">
+                                    <rect key="frame" x="16" y="839" width="287" height="110"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">Only aggregated, anonymized data is periodically transmitted to external services to help us improve the App and our service.  We will share your information with third parties only in the ways that are described in this Privacy Policy.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Disclosure of Information" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f0Q-pm-anV">
+                                    <rect key="frame" x="16" y="959" width="172" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="E9y-o7-J8d">
+                                    <rect key="frame" x="16" y="979" width="287" height="311"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We may disclose User Provided and Automatically Collected Information as required by law, such as to comply with a subpoena, or similar legal process; when we believe in good faith that disclosure is necessary to protect our rights, protect your safety or the safety of others, investigate fraud, or respond to a government request; with our trusted services providers who work on our behalf, do not have an independent use of the information we disclose to them, and have agreed to adhere to the rules set forth in this privacy statement; if Company is involved in a merger, acquisition, or sale of all or a portion of its assets, you will be notified via email and/or a prominent notice on our website of any change in ownership or uses of this information, as well as any choices you may have regarding this information.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Opt-Out Rights" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="brl-Mc-Kjs">
+                                    <rect key="frame" x="16" y="1300" width="101" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="YDS-xm-f5h">
+                                    <rect key="frame" x="16" y="1320" width="287" height="125"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">You can stop all collection of information by the App easily by uninstalling the App.  You may use the standard uninstall processes as may be available as part of your mobile device or via the mobile application marketplace or network.You can also request to opt-out via email, at privacy@snach.it.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Data Retention Policy, Managing Your Information" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p1L-fr-G0Z">
+                                    <rect key="frame" x="16" y="1455" width="287" height="39"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Children" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1vV-5I-qmV">
+                                    <rect key="frame" x="16" y="1691" width="57" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="XRT-Cd-hyC">
+                                    <rect key="frame" x="16" y="1711" width="287" height="141"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We do not use the App to knowingly solicit data from or market to children under the age of 13. If a parent or guardian becomes aware that his or her child has provided us with information without their consent, he or she should contact us at privacy@snach.it. We will promptly delete such information from our files.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Security" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6TC-ZN-cka">
+                                    <rect key="frame" x="16" y="1862" width="55" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="jgi-Ke-tW5">
+                                    <rect key="frame" x="16" y="1882" width="287" height="218"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We are concerned about safeguarding the confidentiality of your information.We provide physical,electronic, and procedural safeguards to protect information we process and maintain.  For example, we limit access to this information to authorized employees and contractors who need to know that information in order to operate, develop or improve our App.Please be aware that, although we endeavor provide reasonable security for information we process and maintain, no security system can prevent all potential security breaches.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Changes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xfh-Yw-5qk">
+                                    <rect key="frame" x="16" y="2110" width="58" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="C9p-rE-mAf">
+                                    <rect key="frame" x="16" y="2130" width="287" height="141"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">This Privacy Policy may be updated from time to time for any reason.  We will notify you of any changes to our Privacy Policy by posting the new Privacy Policy here and informing you via email, text message or through the App.  You are advised to consult this Privacy Policy regularly for any changes, as continued 
+use is deemed approval of all changes.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Your Consent" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rw8-J2-R2t">
+                                    <rect key="frame" x="16" y="2281" width="91" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="Fdo-bJ-uWH">
+                                    <rect key="frame" x="16" y="2301" width="287" height="218"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">By using the App, you are consenting to our processing of your information as set forth in this Privacy Policy now and as amended by us.  “Processing,” means using cookies on a computer/hand held device or using or touching information in any way, including, but not limited to, collecting, storing, deleting, using, combining and disclosing information, all of which activities will take place in the United States.If you reside outside the United States your information will be transferred, processed and stored there under United States privacy standards.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Contact us" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aVs-Gz-97i">
+                                    <rect key="frame" x="16" y="2529" width="72" height="20"/>
+                                    <fontDescription key="fontDescription" name="OpenSans-Semibold" family="Open Sans" pointSize="14"/>
+                                    <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3Qj-8i-d3f">
+                                    <rect key="frame" x="16" y="2549" width="287" height="79"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">If you have any questions regarding privacy while using the App, or have questions about our practices,please contact us via email at privacy@snach.it.</string>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="n7h-qF-sH1">
+                                    <rect key="frame" x="16" y="1496" width="287" height="187"/>
+                                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <string key="text">We will retain User Provided data for as long as you use the App and for a reasonable time thereafter.We will retain Automatically Collected information for as long as we deem necessary.If you’d like us to delete User Provided Data that you have provided via the App, please contact us at privacy@snach.it and we will respond promptly. Please note that some or all of the User Provided Data may be required in order for the App to function properly.</string>
+                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    <dataDetectorType key="dataDetectorTypes" link="YES" address="YES"/>
+                                </textView>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstItem="lZb-QH-7zl" firstAttribute="top" secondItem="Zwt-HU-f3u" secondAttribute="bottom" constant="-3" id="0RX-Ae-yLS"/>
+                                <constraint firstItem="uor-yJ-vhY" firstAttribute="width" secondItem="vVR-vE-612" secondAttribute="width" id="2Ny-cY-3MZ"/>
+                                <constraint firstAttribute="trailing" secondItem="PsP-GZ-ZFu" secondAttribute="trailing" constant="16" id="2zb-eP-UdQ"/>
+                                <constraint firstItem="Xfh-Yw-5qk" firstAttribute="top" secondItem="jgi-Ke-tW5" secondAttribute="bottom" constant="10" id="4Bj-8K-ha7"/>
+                                <constraint firstItem="XRT-Cd-hyC" firstAttribute="width" secondItem="n7h-qF-sH1" secondAttribute="width" id="72a-lP-6rm"/>
+                                <constraint firstItem="p1L-fr-G0Z" firstAttribute="top" secondItem="YDS-xm-f5h" secondAttribute="bottom" constant="10" id="7fo-qN-9Wu"/>
+                                <constraint firstItem="YDS-xm-f5h" firstAttribute="top" secondItem="brl-Mc-Kjs" secondAttribute="bottom" id="8My-hd-C4a"/>
+                                <constraint firstItem="kaI-wq-Q1h" firstAttribute="top" secondItem="PsP-GZ-ZFu" secondAttribute="bottom" id="8ac-dz-XSm"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="width" secondItem="NcD-Yz-msk" secondAttribute="width" id="8ji-Kw-O6m"/>
+                                <constraint firstItem="11p-mJ-jOw" firstAttribute="top" secondItem="vVR-vE-612" secondAttribute="bottom" id="8xV-XX-M6Q"/>
+                                <constraint firstItem="C9p-rE-mAf" firstAttribute="top" secondItem="Xfh-Yw-5qk" secondAttribute="bottom" id="9sZ-2D-r2b"/>
+                                <constraint firstItem="C2L-RX-YAZ" firstAttribute="top" secondItem="lZb-QH-7zl" secondAttribute="bottom" constant="10" id="BYA-R7-p0a"/>
+                                <constraint firstAttribute="bottom" secondItem="3Qj-8i-d3f" secondAttribute="bottom" id="CJh-jK-cdz"/>
+                                <constraint firstItem="XRT-Cd-hyC" firstAttribute="centerX" secondItem="n7h-qF-sH1" secondAttribute="centerX" id="Dza-mu-mCR"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="centerX" secondItem="NcD-Yz-msk" secondAttribute="centerX" id="EJn-iL-Ttk"/>
+                                <constraint firstItem="1vV-5I-qmV" firstAttribute="leading" secondItem="n7h-qF-sH1" secondAttribute="leading" id="EdW-o4-2nO"/>
+                                <constraint firstItem="XRT-Cd-hyC" firstAttribute="centerX" secondItem="jgi-Ke-tW5" secondAttribute="centerX" id="Eox-qE-zYU"/>
+                                <constraint firstItem="uor-yJ-vhY" firstAttribute="centerX" secondItem="lZb-QH-7zl" secondAttribute="centerX" id="FGo-oe-fbj"/>
+                                <constraint firstItem="jgi-Ke-tW5" firstAttribute="width" secondItem="C9p-rE-mAf" secondAttribute="width" id="FP8-oo-Swg"/>
+                                <constraint firstItem="vVR-vE-612" firstAttribute="centerX" secondItem="11p-mJ-jOw" secondAttribute="centerX" id="Fia-hz-Q69"/>
+                                <constraint firstItem="aVs-Gz-97i" firstAttribute="top" secondItem="Fdo-bJ-uWH" secondAttribute="bottom" constant="10" id="GXd-vf-4WI"/>
+                                <constraint firstItem="uor-yJ-vhY" firstAttribute="centerX" secondItem="vVR-vE-612" secondAttribute="centerX" id="Gl6-TW-NWa"/>
+                                <constraint firstItem="f0Q-pm-anV" firstAttribute="top" secondItem="NcD-Yz-msk" secondAttribute="bottom" constant="10" id="Icj-xZ-d9j"/>
+                                <constraint firstItem="p1L-fr-G0Z" firstAttribute="centerX" secondItem="n7h-qF-sH1" secondAttribute="centerX" id="J2F-yQ-s4N"/>
+                                <constraint firstItem="p1L-fr-G0Z" firstAttribute="width" secondItem="YDS-xm-f5h" secondAttribute="width" id="Jzk-Ja-eAH"/>
+                                <constraint firstItem="6TC-ZN-cka" firstAttribute="top" secondItem="XRT-Cd-hyC" secondAttribute="bottom" constant="10" id="L38-aC-9RB"/>
+                                <constraint firstItem="3Qj-8i-d3f" firstAttribute="width" secondItem="Fdo-bJ-uWH" secondAttribute="width" id="L9f-0Y-44T"/>
+                                <constraint firstItem="lZb-QH-7zl" firstAttribute="centerX" secondItem="Zwt-HU-f3u" secondAttribute="centerX" id="Ldu-cs-ceU"/>
+                                <constraint firstItem="Pz3-KV-KWk" firstAttribute="width" secondItem="NcD-Yz-msk" secondAttribute="width" id="N9a-7k-pvK"/>
+                                <constraint firstItem="Xfh-Yw-5qk" firstAttribute="leading" secondItem="jgi-Ke-tW5" secondAttribute="leading" id="NNZ-PF-Wiq"/>
+                                <constraint firstItem="PsP-GZ-ZFu" firstAttribute="leading" secondItem="Gbo-kv-LAP" secondAttribute="leading" constant="16" id="NP0-Mn-98x"/>
+                                <constraint firstItem="lZb-QH-7zl" firstAttribute="width" secondItem="Zwt-HU-f3u" secondAttribute="width" id="NXg-XV-72B"/>
+                                <constraint firstItem="Zwt-HU-f3u" firstAttribute="leading" secondItem="Gbo-kv-LAP" secondAttribute="leading" constant="16" id="POH-i4-Si6"/>
+                                <constraint firstItem="Zwt-HU-f3u" firstAttribute="top" secondItem="72R-tr-bKu" secondAttribute="bottom" constant="15" id="PYR-B6-2AI"/>
+                                <constraint firstAttribute="height" relation="lessThanOrEqual" priority="750" constant="2850" id="Qzd-jG-iq6"/>
+                                <constraint firstItem="XRT-Cd-hyC" firstAttribute="width" secondItem="jgi-Ke-tW5" secondAttribute="width" id="RpW-6X-WEB"/>
+                                <constraint firstItem="n7h-qF-sH1" firstAttribute="top" secondItem="p1L-fr-G0Z" secondAttribute="bottom" id="SGM-vU-fUq"/>
+                                <constraint firstItem="11p-mJ-jOw" firstAttribute="centerX" secondItem="kaI-wq-Q1h" secondAttribute="centerX" id="TmB-JT-tS1"/>
+                                <constraint firstItem="Pz3-KV-KWk" firstAttribute="centerX" secondItem="NcD-Yz-msk" secondAttribute="centerX" id="Uyn-uG-aRR"/>
+                                <constraint firstItem="C9p-rE-mAf" firstAttribute="width" secondItem="Fdo-bJ-uWH" secondAttribute="width" id="VlY-sr-XCK"/>
+                                <constraint firstItem="p1L-fr-G0Z" firstAttribute="leading" secondItem="YDS-xm-f5h" secondAttribute="leading" id="XjS-NF-LxP"/>
+                                <constraint firstAttribute="trailing" secondItem="Zwt-HU-f3u" secondAttribute="trailing" constant="16" id="ZCX-U6-Bku"/>
+                                <constraint firstItem="PsP-GZ-ZFu" firstAttribute="top" secondItem="11p-mJ-jOw" secondAttribute="bottom" constant="10" id="ZIT-bT-02g"/>
+                                <constraint firstItem="C2L-RX-YAZ" firstAttribute="leading" secondItem="lZb-QH-7zl" secondAttribute="leading" id="ZwT-LZ-khp"/>
+                                <constraint firstAttribute="trailing" secondItem="72R-tr-bKu" secondAttribute="trailing" id="a8F-Hi-9JA"/>
+                                <constraint firstItem="72R-tr-bKu" firstAttribute="top" secondItem="Gbo-kv-LAP" secondAttribute="top" constant="8" id="aDj-GE-4Ii"/>
+                                <constraint firstItem="NcD-Yz-msk" firstAttribute="top" secondItem="Pz3-KV-KWk" secondAttribute="bottom" id="aqH-Gz-3kB"/>
+                                <constraint firstItem="3Qj-8i-d3f" firstAttribute="top" secondItem="aVs-Gz-97i" secondAttribute="bottom" id="bMg-z7-TAE"/>
+                                <constraint firstItem="uor-yJ-vhY" firstAttribute="width" secondItem="lZb-QH-7zl" secondAttribute="width" id="f8D-gl-JBc"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="top" secondItem="f0Q-pm-anV" secondAttribute="bottom" id="ftA-LF-h73"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="centerX" secondItem="YDS-xm-f5h" secondAttribute="centerX" id="g6d-xS-D1X"/>
+                                <constraint firstItem="Rw8-J2-R2t" firstAttribute="top" secondItem="C9p-rE-mAf" secondAttribute="bottom" constant="10" id="gN4-u7-Va5"/>
+                                <constraint firstItem="6TC-ZN-cka" firstAttribute="leading" secondItem="XRT-Cd-hyC" secondAttribute="leading" id="h9l-oW-NKi"/>
+                                <constraint firstItem="kaI-wq-Q1h" firstAttribute="width" secondItem="Pz3-KV-KWk" secondAttribute="width" id="iah-MP-VW9"/>
+                                <constraint firstItem="XRT-Cd-hyC" firstAttribute="top" secondItem="1vV-5I-qmV" secondAttribute="bottom" id="iap-Bl-yfS"/>
+                                <constraint firstItem="1vV-5I-qmV" firstAttribute="top" secondItem="n7h-qF-sH1" secondAttribute="bottom" constant="10" id="luP-Lh-y9O"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="width" secondItem="YDS-xm-f5h" secondAttribute="width" id="mks-wT-WbP"/>
+                                <constraint firstItem="jgi-Ke-tW5" firstAttribute="centerX" secondItem="C9p-rE-mAf" secondAttribute="centerX" id="msI-O9-C1n"/>
+                                <constraint firstItem="3Qj-8i-d3f" firstAttribute="centerX" secondItem="Fdo-bJ-uWH" secondAttribute="centerX" id="muR-jE-xJH"/>
+                                <constraint firstItem="Fdo-bJ-uWH" firstAttribute="top" secondItem="Rw8-J2-R2t" secondAttribute="bottom" id="o2J-RT-NP3"/>
+                                <constraint firstItem="f0Q-pm-anV" firstAttribute="leading" secondItem="NcD-Yz-msk" secondAttribute="leading" id="oBO-hY-dcw"/>
+                                <constraint firstItem="vVR-vE-612" firstAttribute="top" secondItem="uor-yJ-vhY" secondAttribute="bottom" id="oTa-6M-zQj"/>
+                                <constraint firstItem="11p-mJ-jOw" firstAttribute="width" secondItem="kaI-wq-Q1h" secondAttribute="width" id="qdt-nI-uuT"/>
+                                <constraint firstItem="p1L-fr-G0Z" firstAttribute="width" secondItem="n7h-qF-sH1" secondAttribute="width" id="r33-uh-pVq"/>
+                                <constraint firstItem="uor-yJ-vhY" firstAttribute="top" secondItem="C2L-RX-YAZ" secondAttribute="bottom" id="rsD-im-qHp"/>
+                                <constraint firstItem="Rw8-J2-R2t" firstAttribute="leading" secondItem="C9p-rE-mAf" secondAttribute="leading" id="s0A-ie-5ZY"/>
+                                <constraint firstItem="jgi-Ke-tW5" firstAttribute="top" secondItem="6TC-ZN-cka" secondAttribute="bottom" id="tgC-zh-LtA"/>
+                                <constraint firstItem="C9p-rE-mAf" firstAttribute="centerX" secondItem="Fdo-bJ-uWH" secondAttribute="centerX" id="uRN-5M-IzG"/>
+                                <constraint firstItem="Pz3-KV-KWk" firstAttribute="top" secondItem="kaI-wq-Q1h" secondAttribute="bottom" id="vUs-YY-b1a"/>
+                                <constraint firstItem="vVR-vE-612" firstAttribute="width" secondItem="11p-mJ-jOw" secondAttribute="width" id="vZb-s1-lnP"/>
+                                <constraint firstItem="E9y-o7-J8d" firstAttribute="leading" secondItem="brl-Mc-Kjs" secondAttribute="leading" id="wRx-6e-fLd"/>
+                                <constraint firstItem="kaI-wq-Q1h" firstAttribute="centerX" secondItem="Pz3-KV-KWk" secondAttribute="centerX" id="wo4-VM-9U5"/>
+                                <constraint firstItem="72R-tr-bKu" firstAttribute="leading" secondItem="Gbo-kv-LAP" secondAttribute="leading" id="xDO-0p-7um"/>
+                                <constraint firstItem="brl-Mc-Kjs" firstAttribute="top" secondItem="E9y-o7-J8d" secondAttribute="bottom" constant="10" id="yuN-cF-h7O"/>
+                                <constraint firstItem="aVs-Gz-97i" firstAttribute="leading" secondItem="Fdo-bJ-uWH" secondAttribute="leading" id="zST-Cl-WR6"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="97" id="FWV-Pm-Uyh"/>
+                        <constraint firstItem="Gbo-kv-LAP" firstAttribute="top" secondItem="HMy-J0-Dl6" secondAttribute="top" id="2XD-hU-Hs5"/>
+                        <constraint firstItem="Gbo-kv-LAP" firstAttribute="leading" secondItem="HMy-J0-Dl6" secondAttribute="leading" id="B7n-A8-3uM"/>
+                        <constraint firstAttribute="bottom" secondItem="Gbo-kv-LAP" secondAttribute="bottom" id="IqB-I0-VsR"/>
+                        <constraint firstAttribute="trailing" secondItem="Gbo-kv-LAP" secondAttribute="trailing" id="fZn-4h-MoL"/>
+                        <constraint firstItem="Gbo-kv-LAP" firstAttribute="centerX" secondItem="HMy-J0-Dl6" secondAttribute="centerX" id="rbd-2y-q5l"/>
                     </constraints>
-                    <string key="text">When you register and use the App, you will be required to provide (a) your name, email address, user name, password and other registration information; (b) transaction-related information, such as 
-</string>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                </textView>
-                <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="QYb-nj-V7E">
-                    <rect key="frame" x="26" y="279" width="268" height="104"/>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="104" id="Yiv-TQ-d0D"/>
-                    </constraints>
-                    <string key="text">The App obtains information you provide when you download and register the App.  Registration with us is optional.  However, please keep in mind that you may not be able to use some of the features offered by the App unless you register.</string>
-                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
-                    <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                </textView>
+                </scrollView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="sFP-rv-TQV" secondAttribute="trailing" id="7Kr-fx-3UU"/>
-                <constraint firstItem="tCr-Z2-Qxg" firstAttribute="centerX" secondItem="aEG-79-S5w" secondAttribute="centerX" id="AGI-Sg-Yg6"/>
-                <constraint firstItem="0Uy-F7-6fm" firstAttribute="top" secondItem="QYb-nj-V7E" secondAttribute="bottom" id="BFx-yS-cMv"/>
+                <constraint firstItem="HMy-J0-Dl6" firstAttribute="leading" secondItem="2bf-Iz-voS" secondAttribute="leading" id="BtI-Lr-g8F"/>
+                <constraint firstAttribute="bottom" secondItem="HMy-J0-Dl6" secondAttribute="bottom" id="DQ3-He-5Gj"/>
                 <constraint firstAttribute="trailing" secondItem="2bf-Iz-voS" secondAttribute="trailing" id="DVu-hp-r2S"/>
-                <constraint firstItem="aEG-79-S5w" firstAttribute="centerX" secondItem="sFP-rv-TQV" secondAttribute="centerX" id="EBq-TC-1a9"/>
-                <constraint firstAttribute="trailing" secondItem="wLk-zc-EJw" secondAttribute="trailing" constant="26" id="Frr-li-HNf"/>
                 <constraint firstItem="2bf-Iz-voS" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="J6C-D6-zcR"/>
-                <constraint firstItem="QYb-nj-V7E" firstAttribute="width" secondItem="aEG-79-S5w" secondAttribute="width" id="PAa-LP-l2H"/>
-                <constraint firstItem="QYb-nj-V7E" firstAttribute="centerX" secondItem="aEG-79-S5w" secondAttribute="centerX" id="PNW-y3-Jp1"/>
-                <constraint firstItem="tCr-Z2-Qxg" firstAttribute="top" secondItem="aEG-79-S5w" secondAttribute="bottom" constant="10" id="Tv4-9m-xwr"/>
-                <constraint firstItem="0Uy-F7-6fm" firstAttribute="centerX" secondItem="QYb-nj-V7E" secondAttribute="centerX" id="bfM-a2-eT7"/>
+                <constraint firstItem="HMy-J0-Dl6" firstAttribute="trailing" secondItem="2bf-Iz-voS" secondAttribute="trailing" id="f6r-pF-hiW"/>
                 <constraint firstItem="2bf-Iz-voS" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" constant="16" id="ftg-n5-aPF"/>
-                <constraint firstItem="tCr-Z2-Qxg" firstAttribute="width" secondItem="aEG-79-S5w" secondAttribute="width" id="jcv-p8-Euz"/>
-                <constraint firstItem="aEG-79-S5w" firstAttribute="top" secondItem="wLk-zc-EJw" secondAttribute="bottom" id="nBl-09-2QC"/>
-                <constraint firstItem="sFP-rv-TQV" firstAttribute="top" secondItem="2bf-Iz-voS" secondAttribute="bottom" constant="20" id="qtF-dL-rO6"/>
-                <constraint firstItem="0Uy-F7-6fm" firstAttribute="width" secondItem="QYb-nj-V7E" secondAttribute="width" id="s7D-54-iJO"/>
-                <constraint firstItem="aEG-79-S5w" firstAttribute="width" secondItem="sFP-rv-TQV" secondAttribute="width" constant="-52" id="sqR-E3-6uQ"/>
-                <constraint firstItem="wLk-zc-EJw" firstAttribute="top" secondItem="sFP-rv-TQV" secondAttribute="bottom" constant="15" id="vAe-AV-Rzy"/>
-                <constraint firstItem="QYb-nj-V7E" firstAttribute="top" secondItem="tCr-Z2-Qxg" secondAttribute="bottom" id="xah-B7-J0Y"/>
-                <constraint firstItem="wLk-zc-EJw" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" constant="26" id="xsb-pC-6YO"/>
-                <constraint firstItem="sFP-rv-TQV" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="ziv-Vl-3KP"/>
+                <constraint firstItem="HMy-J0-Dl6" firstAttribute="top" secondItem="2bf-Iz-voS" secondAttribute="bottom" id="lQ5-Oo-zQp"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <point key="canvasLocation" x="39" y="190"/>
         </view>
     </objects>
     <resources>
-        <image name="closeout_icon.png" width="48" height="48"/>
+        <image name="purpleClose" width="32" height="32"/>
     </resources>
 </document>
