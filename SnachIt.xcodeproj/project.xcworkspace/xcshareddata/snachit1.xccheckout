@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>1B1119E9-2221-4575-95E7-4E7C270A855B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>snachit1</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>954C7A2EBAFEB75E5D7AF458AC9A010E35C9816B</key>
+		<string>https://github.com/AkshaykumarM/tungsten-snachit.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>snachit1.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>954C7A2EBAFEB75E5D7AF458AC9A010E35C9816B</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/AkshaykumarM/tungsten-snachit.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>954C7A2EBAFEB75E5D7AF458AC9A010E35C9816B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>954C7A2EBAFEB75E5D7AF458AC9A010E35C9816B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SnachIt</string>
+		</dict>
+	</array>
+</dict>
+</plist>
